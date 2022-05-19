@@ -2,14 +2,18 @@
   "name": "agile-poker",
   "version": "0.0.1",
   "description": "An agile poker planning app built with Svelt, Pulumi, and AWS",
+  "author": "dave-burke",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/dave-burke/agile-poker#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dave-burke/agile-poker.git"
   },
-  "author": "dave-burke",
-  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/dave-burke/agile-poker/issues"
   },
-  "homepage": "https://github.com/dave-burke/agile-poker#readme"
+  "workspaces": [
+    "frontend",
+    "infra"
+  ]
 }
