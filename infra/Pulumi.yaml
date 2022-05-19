@@ -1,0 +1,3 @@
+name: agile-poker-infra
+runtime: nodejs
+description: IaC for agile poker backend
