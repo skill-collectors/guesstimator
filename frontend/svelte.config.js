@@ -14,6 +14,11 @@ const config = {
 			plugins: [
 					WindiCSS(),
 			],
+			test: {
+				globals: true,
+				environment: 'happy-dom',
+				include: ['test/**/*.test.ts'],
+			}
 		},
 	}
 };
