@@ -5,6 +5,10 @@
   import { browser } from "$app/env";
   if (browser) import("virtual:windi-devtools")
 </script>
-<header>Header</header>
-<slot></slot>
-<footer>Footer</footer>
+<div class="h-full flex flex-col">
+	<header>Header</header>
+	<main class="flex-grow">
+		<slot></slot>
+	</main>
+	<footer>Footer</footer>
+</div>
