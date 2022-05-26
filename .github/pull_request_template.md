@@ -2,7 +2,8 @@
 
 ## Submitter checklist
 
-- [ ] All PR checks pass
+- [ ] All styles are applied with Windi CSS
 - [ ] I have added tests for my change
 - [ ] I have updated the documentation
+- [ ] All PR checks pass
 
