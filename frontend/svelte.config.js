@@ -17,7 +17,7 @@ const config = {
 			test: {
 				globals: true,
 				environment: 'happy-dom',
-				include: ['test/**/*.test.ts'],
+				include: ['tests/unit/**/*.test.ts'],
 			}
 		},
 	}
