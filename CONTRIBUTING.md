@@ -6,7 +6,7 @@ be done. If you have a new idea, please use the chat to discuss it.
 See the project wiki for detailed documentation of architecture, coding style, and best
 practices.
 
-### Recommended IDE Setup
+## Recommended IDE Setup
 
 The recommended IDE is VSCode. You can open the workspace file and VSCode will
 offer to install the following recommended extensions:
@@ -16,7 +16,7 @@ offer to install the following recommended extensions:
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
-### Getting started
+## Getting started
 
 Clone the project
 
@@ -36,14 +36,14 @@ Install dependencies
 npm install --workspaces
 ```
 
-#### Frontend
+### Frontend
 
 The web interface uses the [Svelte](https://svelte.dev/) framework with
 [SveltKit](https://kit.svelte.dev/). If these are new to you, we recommend you
 try the [Svelte tutorial](https://svelte.dev/tutorial/basics) and review the
 [SvelteKit documentation](https://kit.svelte.dev/docs/introduction).
 
-##### Quickstart guide
+#### Quickstart guide
 
 Start the frontend server
 
@@ -53,7 +53,42 @@ npm run dev --workspace=frontend
 
 Browse to http://localhost:3000
 
-#### Infrastructure
+#### Styles
+
+This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
+a [utility-first](https://utilitycss.com/) CSS framework. It is compatible with
+[Tailwinds](https://tailwindcss.com/) which means you can use [this
+cheatsheet](https://tailwindcomponents.com/cheatsheet/).
+
+Basically, instead of this:
+
+```html
+<button class="myButton">Click me!</button>
+<style>
+.myButton {
+	background-color: #047857; /* Green */
+	border: none;
+	color: white;
+	padding: 1rem;
+	text-align: center;
+}
+</style>
+```
+
+You do this:
+
+```html
+<button class="bg-green-700 border-none text-white p-4 text-center">
+	Click me!
+</button>
+```
+
+Why would you do this? [Read
+this](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/)
+for more context. The short answer is that it works well with scoped CSS in
+component frameworks like Svelte.
+
+### Infrastructure
 
 This project uses [Pulumi]() to create the necessary AWS resources for the
 project. That includes S3/Cloudfront for the frontend and Labmda/API
