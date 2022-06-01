@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../"
+    },
+    {
+      "name": "frontend",
+      "path": "../frontend"
+    },
+    {
+      "name": "infra",
+      "path": "../infra"
+    },
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.exclude": {
+      "node_modules/": true,
+      "frontend/": true,
+      "infra/": true
+    },
+  },
+}
