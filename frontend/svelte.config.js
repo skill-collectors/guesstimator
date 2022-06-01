@@ -11,15 +11,13 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		vite: {
-			plugins: [
-					WindiCSS(),
-			],
+			plugins: [WindiCSS()],
 			test: {
 				globals: true,
 				environment: 'happy-dom',
-				include: ['tests/unit/**/*.test.ts'],
+				include: ['tests/unit/**/*.test.ts']
 			}
-		},
+		}
 	}
 };
 

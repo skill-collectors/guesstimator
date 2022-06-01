@@ -1,4 +1,4 @@
-import { extractFromSvelteConfig } from "vitest-svelte-kit"
+import { extractFromSvelteConfig } from 'vitest-svelte-kit';
 
 /*
  * Without this, Vitest fails to parse .svelte files. Unfortunately,
@@ -7,4 +7,4 @@ import { extractFromSvelteConfig } from "vitest-svelte-kit"
  * eye out for when we update dependencies, but if our tests pass we should be
  * good.
  */
-export default extractFromSvelteConfig()
+export default extractFromSvelteConfig();

@@ -7,11 +7,11 @@
 	// @ts-ignore See https://github.com/windicss/vite-plugin-windicss/issues/294
 	if (browser) import('virtual:windi-devtools');
 
-	import Header from '$lib/Header.svelte'
+	import Header from '$lib/Header.svelte';
 </script>
 
 <div class="h-full flex flex-col">
-	<Header></Header>
+	<Header />
 	<main class="flex-grow">
 		<slot />
 	</main>
