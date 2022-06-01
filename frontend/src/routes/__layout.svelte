@@ -4,7 +4,7 @@
 	// if you want to enable windi devtools
 	import { browser } from '$app/env';
 
-	// @ts-ignore See https://github.com/windicss/vite-plugin-windicss/issues/294
+	// @ts-ignore: See https://github.com/windicss/vite-plugin-windicss/issues/294
 	if (browser) import('virtual:windi-devtools');
 
 	import Header from '$lib/Header.svelte';
