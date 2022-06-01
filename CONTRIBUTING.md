@@ -8,13 +8,17 @@ practices.
 
 ## Recommended IDE Setup
 
-The recommended IDE is VSCode. You can open the workspace file and VSCode will
-offer to install the following recommended extensions:
+The recommended IDE is [VSCode](https://code.visualstudio.com/). Select `File
+-> Open Workspace from File...` and choose `.vscode/project.code-workspace`.
 
-- [VSCode](https://code.visualstudio.com/)
+VSCode will offer to install the following recommended extensions:
+
 - [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+
+Workspace settings should be configured to lint and format-on-save correctly.
 
 ## Getting started
 

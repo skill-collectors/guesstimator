@@ -1,7 +1,5 @@
 {
-  "recommendations": [
-    "svelte.svelte-vscode",
-    "editorconfig.editorconfig",
-    "dbaeumer.vscode-eslint"
-  ]
+	"recommendations": [
+		"svelte.svelte-vscode"
+	]
 }

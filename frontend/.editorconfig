@@ -1,0 +1,29 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = false
+
+# SvelteKit uses tabs for indentation, which is not really idiomatic for the
+# JavaScript community in general. Our root .editorconfig sticks to community
+# standards, but this overrides them to be in line with SvelteKit.
+
+# HTML
+[*.{htm,html}]
+indent_size = 2
+indent_style = tab
+
+# JavaScript, JSON, JSX, JavaScript Modules, TypeScript
+[*.{cjs,js,json,jsx,mjs,ts,tsx,*.code-workspace}]
+indent_size = 2
+indent_style = tab
+
+# Shell
+[*.{bash,sh,zsh}]
+indent_size = 2
+indent_style = tab
+
+# Svelte
+[*.svelte]
+indent_size = 2
+indent_style = tab
+
