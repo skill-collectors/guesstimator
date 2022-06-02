@@ -34,10 +34,10 @@ Go to the project directory
 cd agile-poker
 ```
 
-Install dependencies
+Run the bootstrap script.
 
 ```bash
-npm install --workspaces
+./bootstrap.sh
 ```
 
 ### Frontend
@@ -94,17 +94,31 @@ component frameworks like Svelte.
 
 ### Infrastructure
 
-This project uses [Pulumi]() to create the necessary AWS resources for the
-project. That includes S3/Cloudfront for the frontend and Labmda/API
-Gateway/DynamoDB for the backend.
+This project uses [Pulumi](https://www.pulumi.com/) to create the necessary AWS
+resources for the project. That includes S3/Cloudfront for the frontend and
+Labmda/API Gateway/DynamoDB for the backend.
 
-### Deploy
+#### Local development
 
-Deploy to AWS (you need the [Pulumi](https://www.pulumi.com/) CLI and the the
-[AWS CLI](https://aws.amazon.com/cli/) installed and configured).
+This project uses [LocalStack](https://localstack.cloud) to mock cloud services
+locally using [Docker](https://docs.docker.com/).  This enables you to "deploy"
+the infrastructure and run it locally to test without needing an AWS account or
+even an internet connection!
+
+If you ran `bootstrap.sh` successfully, then you should now have `localstack`
+installed. Run the following commands to bring up the project infrastructure on
+your localstack:
 
 ```
+localstack start -d
 pulumi stack select dev
 pulumi up
 ```
+
+#### Deploying to AWS
+
+To deploy to AWS you need the [Pulumi](https://www.pulumi.com/) CLI and the the
+[AWS CLI](https://aws.amazon.com/cli/) installed and configured.
+
+Then you will need to run `pulumi up` for a stack other than dev.
 
