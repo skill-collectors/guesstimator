@@ -62,8 +62,11 @@ Browse to http://localhost:3000
 The frontend uses [Vitest](https://vitest.dev/) for unit testing and
 [Playwright](https://playwright.dev/) for end-to-end (e2e) testing.
 
-Unit test coverage should be as close to 100% as is reasonable. E2E tests
-should cover basic scenarios mostly for sanity checking after a deploy.
+Unit test coverage should be as close to 100% as is reasonable. You can check
+code coverage by running `npm run coverage`.
+
+E2E tests should cover basic scenarios mostly for sanity checking after a
+deploy.
 
 #### Styles
 
