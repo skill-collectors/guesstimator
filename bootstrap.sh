@@ -23,4 +23,5 @@ npm install --workspaces
 
 python3 -m ensurepip
 python3 -m pip install localstack
+python3 -m pip install awscli-local
 
