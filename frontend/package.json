@@ -12,7 +12,8 @@
 		"prepare": "svelte-kit sync",
 		"preview": "svelte-kit preview",
 		"test:e2e": "playwright test tests/e2e",
-		"test:unit": "vitest"
+		"test:unit": "vitest run",
+		"test:unit:watch": "vitest",
 		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
