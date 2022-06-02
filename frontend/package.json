@@ -13,6 +13,7 @@
 		"preview": "svelte-kit preview",
 		"test:e2e": "playwright test tests/e2e",
 		"test:unit": "vitest"
+		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.21.0",
