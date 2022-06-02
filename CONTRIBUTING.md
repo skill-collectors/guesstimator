@@ -34,11 +34,18 @@ Go to the project directory
 cd agile-poker
 ```
 
-Run the bootstrap script.
+Run the bootstrap script
 
 ```bash
 ./bootstrap.sh
 ```
+
+This script should work on Linux and MacOS. A Windows script would need to be
+written.
+
+The bootstrap script is meant to be repeatable; if you run it a second time it
+should not hurt anything. That means if we add something to it later, people
+who already ran it before can just run it again to gain the additional setup.
 
 ### Frontend
 
