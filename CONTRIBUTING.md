@@ -75,6 +75,9 @@ code coverage by running `npm run coverage`.
 E2E tests should cover basic scenarios mostly for sanity checking after a
 deploy.
 
+The infrastructure also uses Vitest. Unit tests should validate basic
+functionality as well as best practices, such as the presence of tags.
+
 #### Styles
 
 This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
