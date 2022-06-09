@@ -4,6 +4,9 @@ Welcome to the agile-poker development community! We're glad you're here. This
 document is designed to help you get your bearings and then to find something
 fun to work on.
 
+Have questions, or just want to say "Hi"? [Join the chat on
+gitter.im](https://gitter.im/skill-collectors/agile-poker)!
+
 ## Getting started
 
 Clone the project
