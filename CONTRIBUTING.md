@@ -1,24 +1,8 @@
 # Contributing to agile-poker
 
-If you'd like to join the project, see the project board for tasks that need to
-be done. If you have a new idea, please use the chat to discuss it.
-
-See the project wiki for detailed documentation of architecture, coding style, and best
-practices.
-
-## Recommended IDE Setup
-
-The recommended IDE is [VSCode](https://code.visualstudio.com/). Select `File
--> Open Workspace from File...` and choose `.vscode/project.code-workspace`.
-
-VSCode will offer to install the following recommended extensions:
-
-- [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
-- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-Workspace settings should be configured to lint and format-on-save correctly.
+Welcome to the agile-poker development community! We're glad you're here. This
+document is designed to help you get your bearings and then to find something
+fun to work on.
 
 ## Getting started
 
@@ -47,6 +31,22 @@ The bootstrap script is meant to be repeatable; if you run it a second time it
 should not hurt anything. That means if we add something to it later, people
 who already ran it before can just run it again to gain the additional setup.
 
+## Recommended IDE Setup
+
+The recommended IDE is [VSCode](https://code.visualstudio.com/). Select `File
+-> Open Workspace from File...` and choose `.vscode/project.code-workspace`.
+
+VSCode will offer to install the following recommended extensions:
+
+- [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+
+Workspace settings should be configured to lint and format-on-save correctly.
+
+## Running the code
+
 ### Frontend
 
 The web interface uses the [Svelte](https://svelte.dev/) framework with
@@ -54,12 +54,11 @@ The web interface uses the [Svelte](https://svelte.dev/) framework with
 try the [Svelte tutorial](https://svelte.dev/tutorial/basics) and review the
 [SvelteKit documentation](https://kit.svelte.dev/docs/introduction).
 
-#### Quickstart guide
-
-Start the frontend server
+To start the frontend server:
 
 ```bash
-npm run dev --workspace=frontend
+cd frontend
+npm run dev
 ```
 
 Browse to http://localhost:3000
@@ -74,9 +73,6 @@ code coverage by running `npm run coverage`.
 
 E2E tests should cover basic scenarios mostly for sanity checking after a
 deploy.
-
-The infrastructure also uses Vitest. Unit tests should validate basic
-functionality as well as best practices, such as the presence of tags.
 
 #### Styles
 
@@ -135,6 +131,12 @@ localstack start -d
 pulumi stack select dev
 pulumi up
 ```
+
+#### Unit testing
+
+Like the frontend, the infrastructure also uses [Vitest](https://vitest.dev/).
+Unit tests should validate basic functionality as well as best practices, such
+as the presence of tags.
 
 #### Deploying to AWS
 
