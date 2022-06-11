@@ -152,7 +152,10 @@ Then you will need to run `pulumi up` for a stack other than dev.
 
 If you have a feature idea or a bug report, first search the existing issues in this repository to make sure it's not a duplicate. If it does not exist already, please create a new issue in this repository using one of the templates and set the "project" field to `agile-poker backlog`. Be sure to fill out all the information requested in the issue template. Do not create tasks directly on the project board.
 
-If you want to work on a task, open it from this repo, and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
+If you want to work on a task:
 
-When you are ready for your work to be reviewed, open a PR and complete the contributor checklist. Do not add the PR to the `agile-poker backlog` project.
+1. Ensure it is in "Ready" status.
+1. Open it from this repo, or if you open it from the project board click "Open in new tab".
+1. Set the project status to "In progress". and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
+1. When you are ready for your work to be reviewed, open a PR and complete the contributor checklist. Do not add the PR to the `agile-poker backlog` project.
 
