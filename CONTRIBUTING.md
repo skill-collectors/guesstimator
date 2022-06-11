@@ -154,5 +154,5 @@ If you have a feature idea or a bug report, first search the existing issues in 
 
 If you want to work on a task, open it from this repo, and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
 
-When you are ready for your work to be reviewed, open a PR and complete the contributor checklist.
+When you are ready for your work to be reviewed, open a PR and complete the contributor checklist. Do not add the PR to the `agile-poker backlog` project.
 
