@@ -148,3 +148,11 @@ To deploy to AWS you need the [Pulumi](https://www.pulumi.com/) CLI and the the
 
 Then you will need to run `pulumi up` for a stack other than dev.
 
+## Managing issues and tasks
+
+If you have a feature idea or a bug report, first search the existing issues in this repository to make sure it's not a duplicate. If it does not exist already, please create a new issue in this repository using one of the templates and set the "project" field to `agile-poker backlog`. Be sure to fill out all the information requested in the issue template. Do not create tasks directly on the project board.
+
+If you want to work on a task, open it from this repo, and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
+
+When you are ready for your work to be reviewed, open a PR and complete the contributor checklist.
+
