@@ -5,8 +5,8 @@ Closes # <!-- Add the ID of the related issue here -->
 
 ## Submitter checklist
 
-- [ ] All styles are applied with Windi CSS
-- [ ] I have added tests for my change
-- [ ] I have updated the documentation
+- [ ] All styles are applied with Windi CSS **OR** this PR does not include style changes
+- [ ] I have added tests for my change **OR** this PR does not include code changes
+- [ ] I have updated the documentation as needed
 - [ ] All PR checks pass
 
