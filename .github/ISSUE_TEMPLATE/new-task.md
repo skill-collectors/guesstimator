@@ -6,6 +6,7 @@ labels: ''
 assignees: ''
 
 ---
+<!-- REMEMBER: Add this issue to the `agile-poker backlog` project! -->
 
 ## Summary
 <!-- What needs to be done? -->
