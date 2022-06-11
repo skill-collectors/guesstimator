@@ -1,4 +1,7 @@
-<!-- CONTEXT: Summarie the change and why you are making it -->
+## Context
+<!-- Summarize the change and why you are making it -->
+
+Closes # <!-- Add the ID of the related issue here -->
 
 ## Submitter checklist
 
