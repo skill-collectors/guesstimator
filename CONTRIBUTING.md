@@ -9,17 +9,34 @@ gitter.im](https://gitter.im/skill-collectors/agile-poker)!
 
 ## Getting started
 
-See the [tutorial](https://skill-collectors.github.io/agile-poker/tutorials/getting-started) in our docs.
+If you're new to this project, your first stop should be our [Getting Started tutorial](https://skill-collectors.github.io/agile-poker/tutorials/getting-started).
 
-## Tests
+## Getting things done
+
+Once you have the project up and running on your device, check out the [list of beginner tasks](https://github.com/orgs/skill-collectors/projects/1/views/6) on our project board.
+
+When you find a task you want to work on:
+
+1. Ensure it is in "Ready" status.
+1. Open it from this repo, or if you open it from the project board click "Open in new tab".
+1. Set the project status to "In progress". and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
+1. When you are ready for your work to be reviewed, open a PR and complete the contributor checklist. Do not add the PR to the `agile-poker backlog` project.
+
+## If you have a feature idea or a bug report
+
+First search the existing issues in this repository to make sure it's not a duplicate. If it does not exist already, please [create a new issue](https://github.com/skill-collectors/agile-poker/issues/new/choose) in this repository using one of the templates and set the "project" field to `agile-poker backlog`. Be sure to fill out all the information requested in the issue template. Do not create tasks directly on the project board.
+
+## Best practices
+
+### Tests
 
 Unit test coverage should be as close to 100% as is reasonable. You can check
 code coverage by running `npm run coverage`.
 
 E2E tests should cover basic scenarios mostly for sanity checking after a
-deploy.
+deploy or validating visual appearance.
 
-## Styles
+### Styles
 
 This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
 a [utility-first](https://utilitycss.com/) CSS framework. It is compatible with
@@ -53,14 +70,3 @@ Why would you do this? [Read
 this](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/)
 for more context. The short answer is that it works well with scoped CSS in
 component frameworks like Svelte.
-
-## Managing issues and tasks
-
-If you have a feature idea or a bug report, first search the existing issues in this repository to make sure it's not a duplicate. If it does not exist already, please create a new issue in this repository using one of the templates and set the "project" field to `agile-poker backlog`. Be sure to fill out all the information requested in the issue template. Do not create tasks directly on the project board.
-
-If you want to work on a task:
-
-1. Ensure it is in "Ready" status.
-1. Open it from this repo, or if you open it from the project board click "Open in new tab".
-1. Set the project status to "In progress". and click "Create a branch" in the "Development" section on the right. Check out the new branch locally and do your work on that branch.
-1. When you are ready for your work to be reviewed, open a PR and complete the contributor checklist. Do not add the PR to the `agile-poker backlog` project.
