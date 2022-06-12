@@ -5,6 +5,10 @@
       "path": "../"
     },
     {
+      "name": "docs",
+      "path": "../docs"
+    },
+    {
       "name": "frontend",
       "path": "../frontend"
     },
@@ -17,6 +21,7 @@
     "editor.formatOnSave": true,
     "files.exclude": {
       "node_modules/": true,
+      "docs/": true,
       "frontend/": true,
       "infra/": true
     },
