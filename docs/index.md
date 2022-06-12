@@ -5,13 +5,13 @@
 layout: home
 ---
 
-Welcome to the developer documentation for the Agile Poker app!
+Welcome to the developer documentation for the Agile Poker app! The documentation is divided into different sections depending on what kind of information you are looking for.
+
+If you're new to the project, start with our [Getting Started](/tutorials/getting-started.md) tutorial.
 
 ## Tutorials
 
-Start with our [Getting Started](/tutorials/getting-started.md) tutorial.
-
-Then check out this curated list of learning resources related to our tech stack. These are meant to help you get up to speed if something is new to you.
+These are useful for learning how to work with our tech stack. This curated list of tutorials is meant to help you get up to speed if something is new to you.
 
 - [Svelte Tutorial](https://svelte.dev/tutorial/basics)
 - [Testing with Vitest](https://www.thisdot.co/blog/testing-with-vitest)
@@ -27,7 +27,7 @@ These docs are useful if you need to know how to do a particular kind of task.
 
 These docs are useful if you need to look something up while you're working.
 
-- [Tech stack](/reference/tech-stack.md)
+- [Tech stack](/reference/tech-stack.md) links to external documentation for the technology we use.
 
 ## Context
 

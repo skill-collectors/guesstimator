@@ -21,7 +21,7 @@ Briefly, the steps are:
 
 ### How these docs are organized
 
-The documentation is divided into sections on the home page, depending on what kind of information you are looking for. This is inspired by [the documentation system](https://documentation.divio.com/) described by Divio on their site.
+The different sections of this site are inspired by [the documentation system](https://documentation.divio.com/) described by Divio on their site. New content should be organized as follows:
 
 - **Tutorials** that walk someone through a learning exercise go in the `tutorials` directory.
 - **How-to guides** that explain how to perform a specific task go in the `how-to` directory.
