@@ -12,16 +12,4 @@ If you'd like to help build this app, welcome! Check out the
 
 ## Tech Stack
 
-These are the tools and platforms we're using. We have interesting work to do
-related to all of them, so if any of these pique your interest, head on over to
-the [CONTRIBUTING](./CONTRIBUTING.md) doc to get started.
-
-- [Typescript](https://www.typescriptlang.org/)
-- [Svelte](https://svelte.dev/)
-- [SvelteKit](https://kit.svelte.dev/)
-- [Vitest](https://vitest.dev/)
-- [Playwright](https://playwright.dev/)
-- [Pulumi](https://www.pulumi.com/)
-- [AWS Lambda](https://aws.amazon.com/lambda/)
-- [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
-
+This app primarily uses Svelte, Pulumi, and AWS. For more details see our [tech stack](https://skill-collectors.github.io/agile-poker/reference/tech-stack) page in the project docs.
