@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About the documentation
-permalink: /explanation/docs
+permalink: /context/docs
 ---
 
 This page explains how and why we document.

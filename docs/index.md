@@ -13,11 +13,11 @@ The documentation is divided into sections, depending on what kind of informatio
 
 These docs are useful if you need to know how to do a particular kind of task.
 
-## Explanations
+## Context
 
 These docs are useful if you want to understand why the project is the way it is.
 
-- [About the docs](/explanation/docs.md)
+- [About the docs](/context/docs.md)
 
 ## Reference documentation
 
