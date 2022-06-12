@@ -21,12 +21,12 @@ A curated list of learning resources related to our tech stack. These are meant 
 
 These docs are useful if you need to know how to do a particular kind of task.
 
+## Reference documentation
+
+These docs are useful if you need to look something up while you're working.
+
 ## Context
 
 These docs are useful if you want to understand why the project is the way it is.
 
 - [About the docs](/context/docs.md)
-
-## Reference documentation
-
-These docs are useful if you need to look something up while you're working.
