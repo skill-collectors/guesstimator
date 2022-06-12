@@ -11,7 +11,9 @@ The documentation is divided into sections, depending on what kind of informatio
 
 ## Tutorials
 
-A curated list of learning resources related to our tech stack. These are meant to help you get up to speed if something is new to you.
+Start with our [Getting Started](/tutorials/getting-started.md) tutorial.
+
+Then check out this curated list of learning resources related to our tech stack. These are meant to help you get up to speed if something is new to you.
 
 - [Svelte Tutorial](https://svelte.dev/tutorial/basics)
 - [Testing with Vitest](https://www.thisdot.co/blog/testing-with-vitest)
