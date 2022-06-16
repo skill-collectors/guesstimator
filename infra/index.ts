@@ -16,9 +16,14 @@ const siteBucket = new aws.s3.Bucket('siteBucket', {
   tags
 })
 
-const hostedZone = aws.route53.getZone({
-  name: apexDomain
-})
+let hostedZoneId;
+if(stack === 'dev') {
+  const newZone = new aws.route53.Zone(apexDomain)
+  hostedZoneId = newZone.id;
+} else {
+  const hostedZone = aws.route53.getZone({name: apexDomain})
+  hostedZoneId = hostedZone.then(hostedZone => hostedZone.zoneId)
+}
 
 const certificate = new aws.acm.Certificate('certificate', {
   domainName: domain,
@@ -28,7 +33,7 @@ const certificate = new aws.acm.Certificate('certificate', {
 
 const certificateValidationDomain = new aws.route53.Record('dnsRecordValidation', {
   name: certificate.domainValidationOptions[0].resourceRecordName,
-  zoneId: hostedZone.then(hostedZone => hostedZone.zoneId),
+  zoneId: hostedZoneId,
   type: certificate.domainValidationOptions[0].resourceRecordType,
   records: [certificate.domainValidationOptions[0].resourceRecordValue],
   ttl: 300
@@ -94,7 +99,7 @@ const cdn = new aws.cloudfront.Distribution('cdn', {
 
 const record = new aws.route53.Record('dnsRecord', {
   name: domain,
-  zoneId: hostedZone.then(hostedZone => hostedZone.zoneId),
+  zoneId: hostedZoneId,
   type: 'A',
   aliases: [{
     name: cdn.domainName,
