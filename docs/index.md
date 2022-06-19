@@ -34,3 +34,7 @@ These docs are useful if you need to look something up while you're working.
 These docs are useful if you want to understand why the project is the way it is.
 
 - [About the docs](/context/docs.md)
+
+### Frontend
+
+- [Deploy configuration](/context/frontend/deploy.md) - Why we (currently) deploy as a static SPA
