@@ -23,8 +23,14 @@ describe('infrastructure', () => {
 
   it('creates an S3 bucket', async () => {
     const bucketName = await new Promise((resolve, reject) => {
-      infra.bucketName.apply(bucketName => resolve(bucketName))
+      infra?.bucketName?.apply(bucketName => resolve(bucketName))
     })
-    expect(bucketName).toBe('my-bucket_id')
+    expect(bucketName).toBe('siteBucket_id')
+  })
+  it('creates a CloudFront Distribution', async () => {
+    const distributionId = await new Promise((resolve, reject) => {
+      infra?.distributionId?.apply(distributionId => resolve(distributionId))
+    })
+    expect(distributionId).toBe('cdn_id')
   })
 })
