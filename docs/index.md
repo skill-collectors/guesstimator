@@ -22,6 +22,7 @@ These are useful for learning how to work with our tech stack. This curated list
 These docs are useful if you need to know how to do a particular kind of task.
 
 - [How to edit these docs](/how-to/edit-docs.md)
+- [How to manually deploy the app](/how-to/deploy-manually.md)
 
 ## Reference documentation
 
@@ -34,3 +35,7 @@ These docs are useful if you need to look something up while you're working.
 These docs are useful if you want to understand why the project is the way it is.
 
 - [About the docs](/context/docs.md)
+
+### Frontend
+
+- [Deploy configuration](/context/frontend/deploy.md) - Why we (currently) deploy as a static SPA
