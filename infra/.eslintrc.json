@@ -5,7 +5,9 @@
     "@typescript-eslint"
   ],
   "extends": [
-    "standard-with-typescript"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
