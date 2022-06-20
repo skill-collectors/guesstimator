@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       bucketName: ${{ steps.pulumi.outputs.bucketName }}
+      distributionId: ${{ steps.pulumi.outputs.distributionId }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -102,7 +103,7 @@ jobs:
           AWS_REGION: "us-east-1"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DISTRIBUTION_ID: ${{ steps.pulumi.outputs.distributionId }}
+          DISTRIBUTION_ID: ${{ needs.deploy-infra.outputs.distributionId }}
 
       - name: Install playwright
         working-directory: frontend
