@@ -1,3 +1,5 @@
 {
-	"recommendations": ["svelte.svelte-vscode", "kingwl.vscode-vitest-runner"]
+	"recommendations": [
+		"svelte.svelte-vscode"
+	]
 }
