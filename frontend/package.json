@@ -2,6 +2,7 @@
   "name": "agile-poker-frontend",
   "version": "0.0.1",
   "scripts": {
+    "check-all": "npm run check && npm run lint && npm run test:unit && npm run test:e2e",
     "build": "svelte-kit build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
