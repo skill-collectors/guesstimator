@@ -1,7 +1,10 @@
-name: Deploy to qa
+name: Build and Deploy
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   check-frontend:
@@ -57,12 +60,14 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Deploy infrastructure to qa
+      - name: Deploy infrastructure
         id: pulumi
         uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: qa
+          # GitHub actions does not currently support a ternary operator in conditions.
+          # This is an ugly way to fake a ternary operator, but it works.
+          stack-name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'qa' }}
           work-dir: infra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
@@ -110,8 +115,10 @@ jobs:
         run: |
           npx playwright install-deps
           npx playwright install
+        if: github.ref != 'main'
 
       - name: Run Playwright Tests
         working-directory: frontend
         run: |
           npx playwright test e2e --reporter=html --config playwright.qa.config.ts
+        if: github.ref != 'main'
