@@ -17,3 +17,11 @@ Both the frontend and backend use the following configurations in their respecti
 Prettier uses the default settings. Each project contains an empty .prettierrc file in case users have `requireConfig` set to `true` on the [vscode extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
 
 [editorconfig](https://editorconfig.org/) files are used to specify general defaults (which align with Prettier defaults). Using editorconfig provides some more standard hinting for editors other than VSCode, but unless your editor actually runs Prettier for you, you will need to run it manually before you push (see above).
+
+## Debugging formatting problems in VSCode
+
+If VSCode is not formatting code automatically, or correctly such that the build fails:
+
+- Verify that you have all the recommended extensions intalled
+- Verify that you have no global or user settings that override the workspace settings
+  - One example is if you have a `defaultFormatter` configured for `[TypeScript]` which will have precedence over the workspace default formatter (prettier).
