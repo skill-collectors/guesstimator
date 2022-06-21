@@ -15,15 +15,22 @@
     {
       "name": "infra",
       "path": "../infra"
-    },
+    }
   ],
   "settings": {
-    "editor.formatOnSave": true,
     "files.exclude": {
       "node_modules/": true,
       "docs/": true,
       "frontend/": true,
       "infra/": true
     },
-  },
+    "eslint.format.enable": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "svelte.enable-ts-plugin": true,
+    "eslint.validate": ["javascript", "typescript", "svelte"]
+  }
 }

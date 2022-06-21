@@ -1,5 +1,8 @@
 {
   "recommendations": [
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    "kingwl.vscode-vitest-runner",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ]
 }

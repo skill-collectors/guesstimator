@@ -43,8 +43,13 @@ VSCode will offer to install the following recommended extensions:
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Vitest Runner](https://marketplace.visualstudio.com/items?itemName=kingwl.vscode-vitest-runner)
+- [Playwright](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 
-Workspace settings should be configured to lint and format-on-save correctly.
+Workspace settings should be configured to lint and format-on-save correctly. To test this:
+
+1. Add a new line to any `.svelte` or `.ts` file like so: `const foo = 'bar'` and save the file.
+2. Verify that the line was updated to `const foo = "bar";` and a warning is highlighted that `'foo' is assigned a value but never used.`
 
 ## Running the code
 

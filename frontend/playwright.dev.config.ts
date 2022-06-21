@@ -1,10 +1,9 @@
 import type { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
-  webServer: {
-    command: "npm run build && npm run preview",
-    port: 3000,
+  use: {
+    headless: false,
+    baseURL: "https://agile-poker-dev.superfun.link",
   },
 };
-
 export default config;
