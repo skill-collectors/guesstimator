@@ -115,10 +115,10 @@ jobs:
         run: |
           npx playwright install-deps
           npx playwright install
-        if: github.ref != 'main'
+        if: github.ref != 'refs/heads/main'
 
       - name: Run Playwright Tests
         working-directory: frontend
         run: |
           npx playwright test e2e --reporter=html --config playwright.qa.config.ts
-        if: github.ref != 'main'
+        if: github.ref != 'refs/heads/main'
