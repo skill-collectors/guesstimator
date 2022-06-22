@@ -55,6 +55,16 @@ At this point it's s little more likely that something will break. You will have
 - If it's not clear what dependency caused the break, you could `git checkout . && npm install` to undo the update and then try updating one item at a time.
 - Don't be afraid to ask for help in the [Gitter chat](https://gitter.im/skill-collectors/agile-poker)!
 
+## Update GitHub Pages dependencies
+
+From the `docs` directory, run:
+
+```sh
+bundle update
+```
+
+[Check the page locally]({{ site.baseurl }}/how-to/edit-docs) and commit the updated `Gemfile.lock` if everything looks good.
+
 ## Conclusion
 
 When you are finished and the `check-all` task succeeds, push your branch and open a PR for review. If any of the GitHub actions checks fail, please investigate and resolve the issue.
