@@ -24,6 +24,13 @@ E2E tests will **not** be run against that URL.
 
 **NOTE: That means that when you merge, your change goes to "prod" automatically.**
 
+## Exceptions
+
+Some steps will not run on forks:
+
+- Steps requiring secrets (mostly because dependabot can't access secrets).
+- Playwright will not run on forks (which would not deploy to our domain).
+
 ## Build and deploy flowchart
 
 If the flowchart below does not render, then GitHub pages doesn't support [Mermaid](https://mermaid-js.github.io/) syntax on GitHub pages yet. Maybe someday they will. Otherwise `.github/workflows/ci.yml` is always the canonical source for how the build and deploy works.
