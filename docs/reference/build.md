@@ -10,7 +10,7 @@ This page describes our build and deploy workflow:
 
 When you open or push commits to a pull request, the app will be checked, built and deployed to:
 
-[agile-poker-qa.superfun.link](https://agile-poker-qa.superfun.link).
+[agile-poker-qa.superfun.link](https://agile-poker-qa.superfun.link)
 
 E2E tests will be run against that URL.
 
@@ -18,7 +18,7 @@ E2E tests will be run against that URL.
 
 When you merge into `main`, the app will be checked, built and deployed to:
 
-[agile-poker.superfun.link](https://agile-poker.superfun.link).
+[agile-poker.superfun.link](https://agile-poker.superfun.link)
 
 E2E tests will **not** be run against that URL.
 
