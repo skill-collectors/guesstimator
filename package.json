@@ -12,6 +12,11 @@
   "bugs": {
     "url": "https://github.com/dave-burke/agile-poker/issues"
   },
+  "scripts": {
+    "check-frontend": "cd frontend && npm run check-all",
+    "check-infra": "cd infra && npm run check-all",
+    "check-all": "npm run check-frontend && npm run check-infra"
+  },
   "workspaces": [
     "frontend",
     "infra"

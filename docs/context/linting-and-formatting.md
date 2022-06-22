@@ -6,7 +6,7 @@ permalink: /context/linting-and-formatting
 
 The project uses [eslint](https://eslint.org/) for linting and [prettier](https://prettier.io/) for formatting, and this is enforced at build time.
 
-If you open the project in VSCode and install the [recommended extensions](/tutorials/getting-started#set-up-your-editor), then your code should be formatted and fixed automatically wheneer you save and eslint problems will be highlighted. Otherwise, you will need to run `npm run format` before you push or the build will fail.
+If you open the project in VSCode and install the [recommended extensions]({{ site.baseurl }}/tutorials/getting-started#set-up-your-editor), then your code should be formatted and fixed automatically wheneer you save and eslint problems will be highlighted. Otherwise, you will need to run `npm run format` before you push or the build will fail.
 
 Both the frontend and backend use the following configurations in their respective `.eslintrc` files:
 

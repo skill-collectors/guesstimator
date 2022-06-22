@@ -59,6 +59,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        if: github.repository == 'skill-collectors/agile-poker'
 
       - name: Deploy infrastructure
         id: pulumi
@@ -71,6 +72,7 @@ jobs:
           work-dir: infra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        if: github.repository == 'skill-collectors/agile-poker'
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -100,6 +102,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           SOURCE_DIR: "frontend/build"
+        if: github.repository == 'skill-collectors/agile-poker'
 
       - name: Invalidate Cloudfront cache
         uses: awact/cloudfront-action@master
@@ -109,16 +112,17 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DISTRIBUTION_ID: ${{ needs.deploy-infra.outputs.distributionId }}
+        if: github.repository == 'skill-collectors/agile-poker'
 
       - name: Install playwright
         working-directory: frontend
         run: |
           npx playwright install-deps
           npx playwright install
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/agile-poker'
 
       - name: Run Playwright Tests
         working-directory: frontend
         run: |
           npx playwright test e2e --reporter=html --config playwright.qa.config.ts
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/agile-poker'
