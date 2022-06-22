@@ -55,6 +55,14 @@ At this point it's s little more likely that something will break. You will have
 - If it's not clear what dependency caused the break, you could `git checkout . && npm install` to undo the update and then try updating one item at a time.
 - Don't be afraid to ask for help in the [Gitter chat](https://gitter.im/skill-collectors/agile-poker)!
 
+### About dependabot
+
+Dependabot will automatically open PRs each week when our dependencies are out of date. This is a good reminder, but the problem is that it will open a separate PR for each dependency. It's certainly possible to merge one at a time (and wait for the rebase + build every time), but that's really tedious. It might be easier to just follow the instructions above, or cherry-pick all the updates into one branch. In the latter case resolving conflicts in `package-lock.json` will be annoying. Perhaps this could be automated somehow.
+
+#### A note about dependabot and @types/node
+
+`@types/node` is the TypeScript type definitions for Node. The versions corresponde to Node releases. At the time of this writing `16.x` is the latest LTS, but `18.x` is the latest. Dependabot blindly tries to update to the latest, so in `dependabot.yml` we ignore non-LTS versions. Unfortunately this requires periodic updates. Eventually `18.x` will be LTS and we should stop ignoring it, but maybe start ignoring the next major version. Such is life.
+
 ## Update GitHub Pages dependencies
 
 From the `docs` directory, run:
