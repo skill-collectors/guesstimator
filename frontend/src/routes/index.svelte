@@ -1,3 +1,10 @@
+<script>
+  import Link from "$lib/components/base/Link.svelte";
+</script>
+
 <p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
+  Visit <Link href="https://skill-collectors.github.io/agile-poker/"
+    >the developer page</Link
+  >
+  to read the documentation
 </p>

@@ -1,4 +1,4 @@
-<script>
+<script type="ts">
   import "virtual:windi.css";
 
   // if you want to enable windi devtools
@@ -7,13 +7,11 @@
   // @ts-ignore: See https://github.com/windicss/vite-plugin-windicss/issues/294
   if (browser) import("virtual:windi-devtools");
 
-  import Header from "$lib/Header.svelte";
+  import PageHeader from "$lib/components/PageHeader.svelte";
+  import PageMain from "$lib/components/PageMain.svelte";
 </script>
 
 <div class="h-full flex flex-col">
-  <Header />
-  <main class="flex-grow">
-    <slot />
-  </main>
-  <footer>Footer</footer>
+  <PageHeader />
+  <PageMain class="flex-grow"><slot /></PageMain>
 </div>
