@@ -1,3 +1,7 @@
 {
-  "recommendations": ["svelte.svelte-vscode", "ms-playwright.playwright"]
+  "recommendations": [
+    "svelte.svelte-vscode",
+    "ms-playwright.playwright",
+    "voorjaar.windicss-intellisense"
+  ]
 }
