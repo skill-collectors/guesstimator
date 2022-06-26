@@ -2,5 +2,9 @@
   "[svelte]": {
     "editor.defaultFormatter": "svelte.svelte-vscode"
   },
-  "windicss.sortOnSave": true
+  "windicss.sortOnSave": true,
+  // Prevents false positives for Windi's @apply rule
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
 }

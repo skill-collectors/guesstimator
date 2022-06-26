@@ -3,8 +3,9 @@ import colors from "windicss/colors";
 
 export default defineConfig({
   shortcuts: {
-    "ap-heading": "font-bold uppercase font-sans",
-    "ap-button": "rounded-md font-semibold text-stone-50 p-2",
+    "btn-primary": "bg-sky-700 text-sky-50",
+    "btn-secondary": "bg-stone-800 text-stone-50",
+    "btn-danger": "bg-red-800 text-red-50",
   },
   safelist: [
     colors.stone.toString(),

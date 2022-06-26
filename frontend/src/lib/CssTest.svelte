@@ -1,21 +1,16 @@
-<script>
-  import Button from "./components/base/Button.svelte";
-  import ButtonType from "./components/base/ButtonType";
-  import Heading from "./components/base/Heading.svelte";
-  import Link from "./components/base/Link.svelte";
-  import Paragraph from "./components/base/Paragraph.svelte";
-</script>
-
 <section>
-  {#each [1, 2, 3, 4, 5, 6] as level}
-    <Heading {level}>Heading {level}</Heading>
-  {/each}
-  <Paragraph>
-    Visit a <Link href="example.com">Link</Link>
-  </Paragraph>
+  <h1>Heading 1</h1>
+  <h2>Heading 2</h2>
+  <h3>Heading 3</h3>
+  <h4>Heading 4</h4>
+  <h5>Heading 5</h5>
+  <h6>Heading 6</h6>
+  <p>
+    Visit a <a href="example.com">Link</a>
+  </p>
   <form>
-    <Button type={ButtonType.Primary}>Primary</Button>
-    <Button type={ButtonType.Secondary}>Secondary</Button>
-    <Button type={ButtonType.Danger}>Danger</Button>
+    <button class="btn-primary">Primary</button>
+    <button class="btn-secondary">Secondary</button>
+    <button class="btn-danger">Danger</button>
   </form>
 </section>
