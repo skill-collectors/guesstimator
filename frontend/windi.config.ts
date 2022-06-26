@@ -11,7 +11,6 @@ export default defineConfig({
     "h-title": "uppercase text-6xl",
     "h-main": "text-4xl",
     "h-sub": "text-2xl text-gray-700",
-    paragraph: "mb-2",
     link: "text-sky-600 font-medium",
   },
 });
