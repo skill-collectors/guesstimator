@@ -3,4 +3,4 @@
   export { href };
 </script>
 
-<a {href} class="text-secondary1-300"><slot /></a>
+<a {href} class="text-sky-600 font-medium"><slot /></a>

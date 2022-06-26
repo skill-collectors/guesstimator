@@ -1,7 +1,7 @@
-<script type="ts">
-  import HeadingMain from "./base/HeadingMain.svelte";
+<script>
+  import Heading from "./base/Heading.svelte";
 </script>
 
-<header class="bg-primary-100 text-neutral-800 text-center p-6">
-  <HeadingMain>Agile Planning Poker</HeadingMain>
+<header class="text-center p-6">
+  <Heading level={1}>Agile Planning Poker</Heading>
 </header>

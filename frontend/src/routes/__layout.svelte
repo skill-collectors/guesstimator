@@ -15,3 +15,6 @@
   <PageHeader />
   <PageMain class="flex-grow"><slot /></PageMain>
 </div>
+
+<style windi:preflights:global windi:safelist:global>
+</style>
