@@ -13,4 +13,7 @@
       >Read the docs</a
     >
   </li>
+  <li>
+    View the <a class="link" href="/style">style demo</a>
+  </li>
 </ul>
