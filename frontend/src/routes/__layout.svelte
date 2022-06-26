@@ -58,4 +58,10 @@
   p {
     @apply mt-2 mb-2;
   }
+  fieldset {
+    @apply border border-gray-500 p-2;
+  }
+  fieldset legend {
+    @apply font-bold;
+  }
 </style>
