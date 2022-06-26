@@ -57,3 +57,5 @@ You do this:
 Because of this you will generally not create a `<style>` section in your component.
 
 If you find yourself needing to repeat a set of classes over and over, you can create a shortcut in `windi.config.ts` (you can look at the existing shortcuts there for examples).
+
+**NOTE:** Windi applies a CSS "reset" (see [Preflight](https://tailwindcss.com/docs/preflight)) so by default elements like `<h1>` or `<a>` _do not_ have any styles applied. This gives us a blank canvas to start from and avoids any browser-specific default styles. When you create a component, you will need to define your own style or consider using the shortcuts that are already defined in `windi.config.ts`.
