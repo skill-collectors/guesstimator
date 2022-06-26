@@ -65,8 +65,3 @@ You do this:
   Click me!
 </button>
 ```
-
-Why would you do this? [Read
-this](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/)
-for more context. The short answer is that it works well with scoped CSS in
-component frameworks like Svelte.
