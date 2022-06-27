@@ -35,38 +35,3 @@ code coverage by running `npm run coverage`.
 
 E2E tests should cover basic scenarios mostly for sanity checking after a
 deploy or validating visual appearance.
-
-### Styles
-
-This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
-a [utility-first](https://utilitycss.com/) CSS framework. It is compatible with
-[Tailwinds](https://tailwindcss.com/) which means you can use [this
-cheatsheet](https://tailwindcomponents.com/cheatsheet/).
-
-Basically, instead of this:
-
-```html
-<button class="myButton">Click me!</button>
-<style>
-  .myButton {
-    background-color: #047857; /* Green */
-    border: none;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-  }
-</style>
-```
-
-You do this:
-
-```html
-<button class="bg-green-700 border-none text-white p-4 text-center">
-  Click me!
-</button>
-```
-
-Why would you do this? [Read
-this](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/)
-for more context. The short answer is that it works well with scoped CSS in
-component frameworks like Svelte.
