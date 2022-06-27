@@ -69,7 +69,16 @@ export default class SvelteApp extends pulumi.ComponentResource {
     this.cdn = new aws.cloudfront.Distribution("cdn", {
       enabled: true,
       aliases: [this.domain],
-
+      // If the user requests a deep link, the page "file" will not exist in S3
+      // and S3 will return an error.  In this case we want CloudFront to
+      // redirect the request back to '/' so the app can decide how it wants to
+      // serve the content at that path.
+      customErrorResponses: [400, 403].map((errorCode) => ({
+        errorCode,
+        responseCode: 200,
+        responsePagePath: "/",
+        errorCachingMinTtl: 1,
+      })),
       origins: [
         {
           originId: this.siteBucket.arn,
