@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { describe, it, expect, beforeAll } from "vitest";
+import * as aws from "@pulumi/aws";
 
 pulumi.runtime.setMocks({
   newResource: function (args: pulumi.runtime.MockResourceArgs): {
@@ -37,5 +38,15 @@ describe("infrastructure", () => {
       infra?.distributionId?.apply((distributionId) => resolve(distributionId));
     });
     expect(distributionId).toBe("cdn_id");
+  });
+  it("Creates custom error responses for 400 and 403 errors", async () => {
+    const customErrorResponses:
+      | aws.types.output.cloudfront.DistributionCustomErrorResponse[]
+      | undefined = await new Promise((resolve) => {
+      infra?.cdn?.customErrorResponses.apply((responses) => resolve(responses));
+    });
+    expect(customErrorResponses?.map((response) => response.errorCode)).toEqual(
+      [400, 403]
+    );
   });
 });
