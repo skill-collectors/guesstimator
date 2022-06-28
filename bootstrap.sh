@@ -41,3 +41,10 @@ cd ${rootDir}
 cd ${rootDir}/frontend
 npx playwright install
 cd ${rootDir}
+
+cd ${rootDir}/infra
+localstack start -d
+localstack update all
+# TODO when we require local dynamoDB, ensure 'localdev' pulumi stack is
+# created, select it and deploy it IFF this script creates it.
+cd ${rootDir}
