@@ -14,4 +14,4 @@ updates:
       - dependency-name: "@types/node"
         # Ignore 18.x for now since it's not LTS.
         # this will need to be updated manually every so often.
-        versions: ["18.x", "19.x"]
+        versions: ["17.x", "18.x", "19.x"]
