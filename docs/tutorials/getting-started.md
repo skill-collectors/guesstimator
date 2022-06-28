@@ -4,6 +4,18 @@ title: Getting started
 permalink: /tutorials/getting-started
 ---
 
+## Required development software
+
+You will need to install the following software to work on this project.
+
+<!-- If you update this list, also update bootstrap.sh -->
+
+1. [Node](https://nodejs.org/en/download/). We recommend the LTS version.
+1. [Python3](https://www.python.org/downloads/).
+1. [Docker](https://docs.docker.com/get-docker/).
+1. [Pulumi](https://www.pulumi.com/docs/get-started/install/).
+1. [Ruby](https://www.ruby-lang.org/en/downloads/).
+
 ## First steps
 
 Clone the project
@@ -56,11 +68,7 @@ Workspace settings should be configured to lint and format-on-save correctly. To
 
 ### Backend
 
-Follow [these instructions](https://docs.docker.com/get-docker/) to install Docker.
-
-Follow [these instructions](https://www.pulumi.com/docs/get-started/aws/begin/) to install Pulumi, including the steps to install Node as the TypeScript language runtime.
-
-Then run the infrastructure locally using localstack:
+Run the infrastructure locally using localstack:
 
 ```
 localstack start -d
