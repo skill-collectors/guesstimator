@@ -4,6 +4,18 @@ title: Getting started
 permalink: /tutorials/getting-started
 ---
 
+## Required development software
+
+You will need to install the following software to work on this project.
+
+<!-- If you update this list, also update bootstrap.sh -->
+
+1. [Node](https://nodejs.org/en/download/). We recommend the LTS version.
+1. [Python3](https://www.python.org/downloads/).
+1. [Docker](https://docs.docker.com/get-docker/).
+1. [Pulumi](https://www.pulumi.com/docs/get-started/install/).
+1. [Ruby](https://www.ruby-lang.org/en/downloads/).
+
 ## First steps
 
 Clone the project
@@ -25,7 +37,8 @@ Run the bootstrap script
 ```
 
 This script should work on Linux and MacOS. A Windows script would need to be
-written.
+written. As a workaround, you can read the script and execute the commands it
+runs.
 
 The bootstrap script is meant to be repeatable; if you run it a second time it
 should not hurt anything. That means if we add something to it later, people
@@ -47,24 +60,24 @@ VSCode will offer to install the following recommended extensions:
 - [Vitest Runner](https://marketplace.visualstudio.com/items?itemName=kingwl.vscode-vitest-runner)
 - [Playwright](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 
+You should install all recommended dependencies.
+
 Workspace settings should be configured to lint and format-on-save correctly. To test this:
 
 1. Add a new line to any `.svelte` or `.ts` file like so: `const foo = 'bar'` and save the file.
 2. Verify that the line was updated to `const foo = "bar";` and a warning is highlighted that `'foo' is assigned a value but never used.`
+3. `git checkout .` to undo your test change.
 
 ## Running the code
 
 ### Backend
 
-Follow [these instructions](https://docs.docker.com/get-docker/) to install Docker.
-
-Follow [these instructions](https://www.pulumi.com/docs/get-started/aws/begin/) to install Pulumi, including the steps to install Node as the TypeScript language runtime.
-
-Then run the infrastructure locally using localstack:
+Run the infrastructure locally using localstack:
 
 ```
+cd infra
 localstack start -d
-pulumi stack select dev
+pulumi stack select localdev
 pulumi up
 ```
 
