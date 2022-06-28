@@ -37,7 +37,8 @@ Run the bootstrap script
 ```
 
 This script should work on Linux and MacOS. A Windows script would need to be
-written.
+written. As a workaround, you can read the script and execute the commands it
+runs.
 
 The bootstrap script is meant to be repeatable; if you run it a second time it
 should not hurt anything. That means if we add something to it later, people
@@ -71,8 +72,9 @@ Workspace settings should be configured to lint and format-on-save correctly. To
 Run the infrastructure locally using localstack:
 
 ```
+cd infra
 localstack start -d
-pulumi stack select dev
+pulumi stack select localdev
 pulumi up
 ```
 
