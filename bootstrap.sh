@@ -37,3 +37,7 @@ gem install bundler jekyll
 cd ${rootDir}/docs
 bundle install
 cd ${rootDir}
+
+cd ${rootDir}/frontend
+npx playwright install
+cd ${rootDir}
