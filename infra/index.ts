@@ -1,4 +1,5 @@
 import SvelteApp from "./lib/SvelteApp";
+import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 
 const stack = pulumi.getStack();
@@ -17,9 +18,12 @@ const svelteApp = isLocalDev
       tags,
     });
 
+const database = new Database("agile-poker-db", { tags });
+
 // These are needed by deploy-dev.sh (so it doesn't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
 // These are needed for testing
 export const bucket = svelteApp?.siteBucket;
 export const cdn = svelteApp?.cdn;
+export const dbTable = database.table;

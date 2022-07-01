@@ -49,4 +49,11 @@ describe("infrastructure", () => {
       [400, 403]
     );
   });
+
+  it("Creates a DynamoDB table", async () => {
+    const tableId = await new Promise((resolve) => {
+      infra?.dbTable?.id.apply((id) => resolve(id));
+    });
+    expect(tableId).toBe("table_id");
+  });
 });
