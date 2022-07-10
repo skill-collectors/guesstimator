@@ -33,6 +33,7 @@ python3 -m ensurepip
 python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade localstack
 python3 -m pip install --upgrade awscli-local
+python3 -m pip install --upgrade pulumi-local
 
 gem install bundler jekyll
 cd ${rootDir}/docs
