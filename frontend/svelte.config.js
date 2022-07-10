@@ -1,6 +1,5 @@
 import adapter from "@sveltejs/adapter-static";
 import preprocess from "svelte-preprocess";
-import WindiCSS from "vite-plugin-windicss";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,14 +11,6 @@ const config = {
     adapter: adapter({
       fallback: "index.html",
     }),
-    vite: {
-      plugins: [WindiCSS()],
-      test: {
-        globals: true,
-        environment: "happy-dom",
-        include: ["tests/unit/**/*.test.ts"],
-      },
-    },
   },
 };
 
