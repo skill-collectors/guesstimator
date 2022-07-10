@@ -6,7 +6,7 @@ const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
 const apexDomain = "superfun.link";
 const tags = { iac: "pulumi", project: "agile-poker", stack };
 
-const isLocalDev = stack === "localdev";
+const isLocalDev = stack === "localstack";
 
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
