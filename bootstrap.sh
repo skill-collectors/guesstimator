@@ -30,8 +30,9 @@ cd ${rootDir}
 npm install --workspaces
 
 python3 -m ensurepip
-python3 -m pip install localstack
-python3 -m pip install awscli-local
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade localstack
+python3 -m pip install --upgrade awscli-local
 
 gem install bundler jekyll
 cd ${rootDir}/docs
