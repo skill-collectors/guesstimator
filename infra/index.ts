@@ -1,6 +1,7 @@
 import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
+import Api from "./lib/Api";
 
 const stack = pulumi.getStack();
 const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
@@ -19,7 +20,9 @@ const svelteApp = isLocalDev
     });
 
 const database = new Database("agile-poker-db", { tags });
+const api = new Api("agile-poker-api", { tags });
 
+export const apiUrl = api.url;
 // These are needed by deploy-dev.sh (so it doesn't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;

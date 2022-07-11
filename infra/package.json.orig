@@ -8,7 +8,6 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.101",
     "@types/node": "^16",
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/parser": "^5.35.1",
@@ -18,8 +17,13 @@
     "vitest": "^0.22.1"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@pulumi/aws": "^5.13.0",
-    "@pulumi/aws-apigateway": "^0.0.11",
     "@pulumi/pulumi": "^3.38.0"
+=======
+    "@pulumi/aws": "^5.10.0",
+    "@pulumi/pulumi": "^3.38.0",
+    "@pulumi/aws-apigateway": "^0.0.11"
+>>>>>>> a9a552f (Get hello-lambda example working)
   }
 }

@@ -45,6 +45,7 @@ npx playwright install
 cd ${rootDir}
 
 cd ${rootDir}/infra
+pulumi plugin install resource aws v4.30.0 # required by @pulumi/aws-apigateway
 localstack start -d
 localstack update all
 # TODO when we require local dynamoDB, ensure 'localdev' pulumi stack is
