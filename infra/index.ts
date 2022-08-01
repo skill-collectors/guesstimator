@@ -22,6 +22,7 @@ const svelteApp = isLocalDev
 const database = new Database("agile-poker-db", { tags });
 const api = new Api("agile-poker-api", { tags });
 
+export const apiUrl = api.url;
 // These are needed by deploy-dev.sh (so it doesn't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
