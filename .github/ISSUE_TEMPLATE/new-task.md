@@ -11,7 +11,7 @@ assignees: ''
 ## Summary
 <!-- What needs to be done? -->
 
-## Step
+## Steps
 <!-- What changes need to be made and where? This may not always be known specifically, but the task should include as much detail as possible.. -->
 
 ## Tests
