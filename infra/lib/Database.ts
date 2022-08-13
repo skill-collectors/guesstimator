@@ -17,7 +17,7 @@ export default class Database extends pulumi.ComponentResource {
 
     const tags = args.tags;
 
-    this.table = new aws.dynamodb.Table("table", {
+    this.table = new aws.dynamodb.Table(`${name}Table`, {
       attributes: [
         {
           name: "PK",
