@@ -7,6 +7,8 @@ import helloHandler from "./lib/lambda/hello";
 
 const stack = pulumi.getStack();
 const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
+const apiSubDomain =
+  stack === "prod" ? "agile-poker-api" : `agile-poker-api-${stack}`;
 const apexDomain = "superfun.link";
 const tags = { iac: "pulumi", project: "agile-poker", stack };
 
@@ -25,7 +27,9 @@ const database = new Database("AgilePokerDb", { tags });
 const tableAccessPolicy = database.table.arn.apply((arn) =>
   dynamoTableAccessPolicy("AgilePokerTable", arn, tags)
 );
-const api = new Api("agile-poker-api", {
+const api = new Api("AgilePokerApi", {
+  subDomain: apiSubDomain,
+  apexDomain: apexDomain,
   endpoints: [
     {
       name: "hello-handler",
