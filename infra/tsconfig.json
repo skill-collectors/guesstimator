@@ -12,5 +12,5 @@
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["*.ts", "lib/**/*.ts"]
+  "include": ["*.ts", "lib/**/*.ts", "tests/**/*.ts"]
 }
