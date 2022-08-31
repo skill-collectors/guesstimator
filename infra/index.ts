@@ -42,11 +42,24 @@ const api = new Api("AgilePokerApi", {
   tags,
 });
 
-export const apiUrl = api.url;
 // These are needed by deploy-dev.sh (so it doesn't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
-// These are needed for testing
-export const bucket = svelteApp?.siteBucket;
-export const cdn = svelteApp?.cdn;
-export const dbTable = database.table;
+export const appOutput = {
+  bucket: {
+    arn: svelteApp?.siteBucket.arn,
+    name: svelteApp?.siteBucket.id,
+  },
+  cdn: {
+    arn: svelteApp?.cdn.arn,
+    id: svelteApp?.cdn.id,
+    domain: svelteApp?.cdn.domainName,
+  },
+};
+export const apiOutput = {
+  url: api.url,
+};
+export const dbOutput = {
+  arn: database.table.arn,
+  name: database.table.name,
+};
