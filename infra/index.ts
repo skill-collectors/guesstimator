@@ -3,7 +3,7 @@ import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 import dynamoTableAccessPolicy from "./lib/policies/DynamoTableAccessPolicy";
-import helloHandler from "./lib/lambda/hello";
+import createRoomHandler from "./lib/lambda/room/CreateRoom";
 
 const stack = pulumi.getStack();
 const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
@@ -32,11 +32,11 @@ const api = new Api("AgilePokerApi", {
   apexDomain: apexDomain,
   endpoints: [
     {
-      name: "hello-handler",
+      name: "create-room",
       method: "GET",
-      path: "/hello",
+      path: "/rooms/new",
       policy: tableAccessPolicy,
-      handler: helloHandler(database.table.name),
+      handler: createRoomHandler(database.table.name),
     },
   ],
   tags,
