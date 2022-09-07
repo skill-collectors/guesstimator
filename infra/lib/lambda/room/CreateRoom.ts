@@ -4,13 +4,14 @@ import * as aws from "@pulumi/aws";
 import * as crypto from "crypto";
 
 // Alpha-numeric without similar looking characters like I and l or 0 and O
-const validRoomIdCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-const roomIdLength = 6;
-function generateRoomId() {
+const VALID_ID_CHARACTERS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const ROOM_ID_LENGTH = 6;
+const HOST_KEY_LENGTH = 4;
+function generateId(length: number) {
   let roomId = "";
-  for (let i = 0; i < roomIdLength; i++) {
-    const index = crypto.randomInt(0, validRoomIdCharacters.length);
-    roomId += validRoomIdCharacters.charAt(index);
+  for (let i = 0; i < length; i++) {
+    const index = crypto.randomInt(0, VALID_ID_CHARACTERS.length);
+    roomId += VALID_ID_CHARACTERS.charAt(index);
   }
   return roomId;
 }
@@ -22,11 +23,18 @@ export default function (tableName: pulumi.Output<string>) {
     console.log(`Executing ${event.httpMethod}: ${event.path}`);
     try {
       const client = new aws.sdk.DynamoDB.DocumentClient();
-      const roomId = generateRoomId();
+      const roomId = generateId(ROOM_ID_LENGTH);
+      const hostKey = generateId(HOST_KEY_LENGTH);
+      const validSizes = "1 2 3 5 8 13 20 ? ∞";
       await client
         .put({
           TableName: tableName.get(),
-          Item: { PK: "hello", roomId },
+          Item: {
+            PK: `ROOM:${roomId}`,
+            hostKey,
+            validSizes,
+            isRevealed: false,
+          },
         })
         .promise();
       console.log(`Created room ${roomId}`);
@@ -35,6 +43,8 @@ export default function (tableName: pulumi.Output<string>) {
         body: JSON.stringify({
           message: "Success",
           roomId,
+          hostKey,
+          validSizes,
         }),
       };
     } catch (err) {
