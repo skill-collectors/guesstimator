@@ -2,7 +2,7 @@
   import "virtual:windi.css";
 
   // if you want to enable windi devtools
-  import { browser } from "$app/env";
+  import { browser } from "$app/environment";
 
   // @ts-ignore: See https://github.com/windicss/vite-plugin-windicss/issues/294
   if (browser) import("virtual:windi-devtools");
