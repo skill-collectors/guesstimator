@@ -23,7 +23,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
 
     const tags = args.tags;
 
-    this.siteBucket = new aws.s3.Bucket(`${name}SiteBucket`, {
+    this.siteBucket = new aws.s3.Bucket(`${name}-SiteBucket`, {
       bucket: this.domain,
       website: {
         indexDocument: "index.html",
@@ -34,14 +34,14 @@ export default class SvelteApp extends pulumi.ComponentResource {
     const hostedZone = aws.route53.getZone({ name: args.apexDomain });
     const hostedZoneId = hostedZone.then((hostedZone) => hostedZone.zoneId);
 
-    const certificate = new aws.acm.Certificate(`${name}Certificate`, {
+    const certificate = new aws.acm.Certificate(`${name}-Certificate`, {
       domainName: this.domain,
       validationMethod: "DNS",
       tags,
     });
 
     const certificateValidationDomain = new aws.route53.Record(
-      `${name}DnsValidationDomain`,
+      `${name}-DnsValidationDomain`,
       {
         name: certificate.domainValidationOptions[0].resourceRecordName,
         zoneId: hostedZoneId,
@@ -52,7 +52,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
     );
 
     const certificateValidation = new aws.acm.CertificateValidation(
-      `${name}CertificateValidation`,
+      `${name}-CertificateValidation`,
       {
         certificateArn: certificate.arn,
         validationRecordFqdns: [certificateValidationDomain.fqdn],
@@ -60,13 +60,13 @@ export default class SvelteApp extends pulumi.ComponentResource {
     );
 
     const originAccessIdentity = new aws.cloudfront.OriginAccessIdentity(
-      `${name}OriginAccessIdentity`,
+      `${name}-OriginAccessIdentity`,
       {
         comment: "this is needed to setup s3 polices and make s3 not public.",
       }
     );
 
-    this.cdn = new aws.cloudfront.Distribution(`${name}Cdn`, {
+    this.cdn = new aws.cloudfront.Distribution(`${name}-Cdn`, {
       enabled: true,
       aliases: [this.domain],
       // If the user requests a deep link, the page "file" will not exist in S3
@@ -125,7 +125,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
       tags,
     });
 
-    const record = new aws.route53.Record(`${name}DnsRecord`, {
+    const record = new aws.route53.Record(`${name}-DnsRecord`, {
       name: this.domain,
       zoneId: hostedZoneId,
       type: "A",
@@ -138,7 +138,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
       ],
     });
 
-    const bucketPolicy = new aws.s3.BucketPolicy(`${name}BucketPolicy`, {
+    const bucketPolicy = new aws.s3.BucketPolicy(`${name}-BucketPolicy`, {
       bucket: this.siteBucket.id, // refer to the bucket created earlier
       policy: pulumi
         .all([originAccessIdentity.iamArn, this.siteBucket.arn])

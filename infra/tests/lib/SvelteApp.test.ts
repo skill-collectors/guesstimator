@@ -35,14 +35,14 @@ describe("infrastructure", () => {
     const bucketName = await new Promise((resolve) => {
       theApp.siteBucket.id.apply((bucketName) => resolve(bucketName));
     });
-    expect(bucketName).toBe("AgilePokerAppSiteBucketId");
+    expect(bucketName).toBe("AgilePokerApp-SiteBucketId");
   });
 
   it("creates a CloudFront Distribution", async () => {
     const distributionId = await new Promise((resolve) => {
       theApp.cdn.id.apply((distributionId) => resolve(distributionId));
     });
-    expect(distributionId).toBe("AgilePokerAppCdnId");
+    expect(distributionId).toBe("AgilePokerApp-CdnId");
   });
 
   it("Creates custom error responses for 400 and 403 errors", async () => {

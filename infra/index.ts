@@ -17,17 +17,17 @@ const isLocalDev = stack === "localstack";
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
   ? null
-  : new SvelteApp("AgilePokerApp", {
+  : new SvelteApp(`AgilePoker-${stack}-App`, {
       subDomain,
       apexDomain,
       tags,
     });
 
-const database = new Database("AgilePokerDb", { tags });
+const database = new Database(`AgilePoker-${stack}-Database`, { tags });
 const tableAccessPolicy = database.table.arn.apply((arn) =>
   dynamoTableAccessPolicy("AgilePokerTable", arn, tags)
 );
-const api = new Api("AgilePokerApi", {
+const api = new Api(`AgilePoker-${stack}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: apexDomain,
   endpoints: [
