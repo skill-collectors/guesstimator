@@ -46,6 +46,10 @@ export default function (tableName: pulumi.Output<string>) {
           hostKey,
           validSizes,
         }),
+        headers: {
+          "Access-Control-Allow-Methods": "POST",
+          "Access-Control-Allow-Origin": "*",
+        },
       };
     } catch (err) {
       console.log(`Failed to create new room: ${err}`);

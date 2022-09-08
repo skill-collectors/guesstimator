@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as apigateway from "@pulumi/aws-apigateway";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { endpoints } from "@pulumi/aws/config";
 
 interface ApiEndpoint {
   name: string;

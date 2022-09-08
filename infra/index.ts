@@ -33,7 +33,7 @@ const api = new Api(`AgilePoker-${stack}-Api`, {
   endpoints: [
     {
       name: "create-room",
-      method: "GET",
+      method: "POST",
       path: "/rooms/new",
       policy: tableAccessPolicy,
       handler: createRoomHandler(database.table.name),
