@@ -1,11 +1,18 @@
-<script>
+<script lang="ts">
+  interface RoomData {
+    roomId: string;
+    hostKey: string;
+    validSizes: string;
+  }
+  let roomData: RoomData | null = null;
   async function createNewRoom() {
     console.log("click!");
     const response = await fetch(
-      "https://agile-poker-api-dev.superfun.link/rooms/new"
+      "https://agile-poker-api-dev.superfun.link/rooms/new",
+      { method: "POST", mode: "cors" }
     );
     if (response.ok) {
-      console.log(await response.json());
+      roomData = await response.json();
     } else {
       console.log(await response.text());
     }
@@ -18,4 +25,11 @@
   </p>
   <button on:click={createNewRoom} class="btn btn-primary">Create a room</button
   >
+  {#if roomData != null}
+    <ul>
+      <li><strong>Room ID:</strong>{roomData?.roomId}</li>
+      <li><strong>Host Key:</strong>{roomData?.hostKey}</li>
+      <li><strong>Valid sizes:</strong>{roomData?.validSizes}</li>
+    </ul>
+  {/if}
 </div>
