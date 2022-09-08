@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { post } from "$lib/services/rest";
+
   interface RoomData {
     roomId: string;
     hostKey: string;
@@ -6,16 +8,7 @@
   }
   let roomData: RoomData | null = null;
   async function createNewRoom() {
-    console.log("click!");
-    const response = await fetch(
-      "https://agile-poker-api-dev.superfun.link/rooms/new",
-      { method: "POST", mode: "cors" }
-    );
-    if (response.ok) {
-      roomData = await response.json();
-    } else {
-      console.log(await response.text());
-    }
+    roomData = await post("/rooms/new");
   }
 </script>
 
