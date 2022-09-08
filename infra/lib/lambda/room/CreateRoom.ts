@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as crypto from "crypto";
+import { corsAllowApp } from "../../CorsHeaders";
 
 // Alpha-numeric without similar looking characters like I and l or 0 and O
 const VALID_ID_CHARACTERS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -26,6 +27,7 @@ export default function (tableName: pulumi.Output<string>) {
       const roomId = generateId(ROOM_ID_LENGTH);
       const hostKey = generateId(HOST_KEY_LENGTH);
       const validSizes = "1 2 3 5 8 13 20 ? ∞";
+      const createdOn = new Date().toISOString();
       await client
         .put({
           TableName: tableName.get(),
@@ -34,6 +36,8 @@ export default function (tableName: pulumi.Output<string>) {
             hostKey,
             validSizes,
             isRevealed: false,
+            createdOn,
+            updatedOn: createdOn,
           },
         })
         .promise();
@@ -47,8 +51,7 @@ export default function (tableName: pulumi.Output<string>) {
           validSizes,
         }),
         headers: {
-          "Access-Control-Allow-Methods": "POST",
-          "Access-Control-Allow-Origin": "*",
+          ...corsAllowApp(event),
         },
       };
     } catch (err) {

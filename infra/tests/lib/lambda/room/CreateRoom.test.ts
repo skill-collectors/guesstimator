@@ -28,7 +28,7 @@ describe("CreateRoom", () => {
   it("Creates a room in DynamoDB", async () => {
     // Given
     const event: APIGatewayProxyEvent = {
-      httpMethod: "GET",
+      httpMethod: "POST",
       path: "/rooms/new",
     } as unknown as APIGatewayProxyEvent;
 
@@ -37,5 +37,25 @@ describe("CreateRoom", () => {
 
     // Then
     expect(response.statusCode).toBe(200);
+  });
+
+  it("Includes CORS headers", async () => {
+    // Given
+    const event: APIGatewayProxyEvent = {
+      httpMethod: "POST",
+      path: "/rooms/new",
+      headers: {
+        origin: "http://localhost:5173",
+      },
+    } as unknown as APIGatewayProxyEvent;
+
+    // When
+    const response = await handler(event);
+
+    // Then
+    expect(response.headers?.["Access-Control-Allow-Methods"]).toBe("POST");
+    expect(response.headers?.["Access-Control-Allow-Origin"]).toBe(
+      event.headers.origin
+    );
   });
 });
