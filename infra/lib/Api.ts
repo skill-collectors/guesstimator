@@ -61,6 +61,13 @@ export default class Api extends pulumi.ComponentResource {
           policyArn: endpoint.policy.arn,
         }
       );
+      new aws.iam.RolePolicyAttachment(
+        `${name}-${endpoint.name}BasicExecutionRolePolicyAttachment`,
+        {
+          role: lambdaRole,
+          policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
+        }
+      );
       const callbackFunction = new aws.lambda.CallbackFunction(
         `${name}-${endpoint.name}Function`,
         {
