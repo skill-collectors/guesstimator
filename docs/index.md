@@ -30,6 +30,7 @@ These docs are useful if you need to know how to do a particular kind of task.
 
 These docs are useful if you need to look something up while you're working.
 
+- [API Reference](/reference/api.md) Describes the backend API
 - [Deploy pipeline](/reference/build.md) describes our GitHub Actions
 - [Tech stack](/reference/tech-stack.md) links to external documentation for the technology we use.
 
