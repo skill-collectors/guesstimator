@@ -21,7 +21,7 @@
     "@sveltejs/adapter-static": "^1.0.0-next.42",
     "@sveltejs/kit": "next",
     "@testing-library/svelte": "^3.2.1",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.36.2",
     "c8": "^7.12.0",
     "eslint": "^8.23.0",
