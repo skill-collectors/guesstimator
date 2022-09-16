@@ -77,8 +77,7 @@ Run the infrastructure locally using localstack:
 ```
 cd infra
 localstack start -d
-pulumi stack select localdev
-pulumi up
+pulumilocal up
 ```
 
 ### Frontend

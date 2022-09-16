@@ -62,7 +62,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+      - name: Install Pulumi CLI
+        if: env.HAVE_SECRETS == 'true'
+        uses: pulumi/setup-pulumi@v2
+      - name: Install pulumi aws plugin
+        if: env.HAVE_SECRETS == 'true'
+        run: pulumi plugin install resource aws v4.30.0 # If you update this, also update bootstrap.sh
       - name: Deploy infrastructure
         if: env.HAVE_SECRETS == 'true'
         id: pulumi

@@ -1,6 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import { describe, it, expect, beforeAll } from "vitest";
 import * as aws from "@pulumi/aws";
+import SvelteApp from "../../lib/SvelteApp";
 
 pulumi.runtime.setMocks({
   newResource: function (args: pulumi.runtime.MockResourceArgs): {
@@ -10,7 +11,7 @@ pulumi.runtime.setMocks({
     state: Record<string, any>;
   } {
     return {
-      id: `${args.name}_id`,
+      id: `${args.name}Id`,
       state: args.inputs,
     };
   },
@@ -20,30 +21,35 @@ pulumi.runtime.setMocks({
 });
 
 describe("infrastructure", () => {
-  let infra: typeof import("./index");
+  let theApp: SvelteApp;
 
   beforeAll(async function () {
-    // It's important to import the program _after_ the mocks are defined.
-    infra = await import("./index");
+    theApp = new SvelteApp("AgilePokerApp", {
+      subDomain: "www",
+      apexDomain: "example.com",
+      tags: {},
+    });
   });
 
   it("creates an S3 bucket", async () => {
     const bucketName = await new Promise((resolve) => {
-      infra?.bucketName?.apply((bucketName) => resolve(bucketName));
+      theApp.siteBucket.id.apply((bucketName) => resolve(bucketName));
     });
-    expect(bucketName).toBe("siteBucket_id");
+    expect(bucketName).toBe("AgilePokerApp-SiteBucketId");
   });
+
   it("creates a CloudFront Distribution", async () => {
     const distributionId = await new Promise((resolve) => {
-      infra?.distributionId?.apply((distributionId) => resolve(distributionId));
+      theApp.cdn.id.apply((distributionId) => resolve(distributionId));
     });
-    expect(distributionId).toBe("cdn_id");
+    expect(distributionId).toBe("AgilePokerApp-CdnId");
   });
+
   it("Creates custom error responses for 400 and 403 errors", async () => {
     const customErrorResponses:
       | aws.types.output.cloudfront.DistributionCustomErrorResponse[]
       | undefined = await new Promise((resolve) => {
-      infra?.cdn?.customErrorResponses.apply((responses) => resolve(responses));
+      theApp.cdn.customErrorResponses.apply((responses) => resolve(responses));
     });
     expect(customErrorResponses?.map((response) => response.errorCode)).toEqual(
       [400, 403]

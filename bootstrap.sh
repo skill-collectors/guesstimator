@@ -30,8 +30,10 @@ cd ${rootDir}
 npm install --workspaces
 
 python3 -m ensurepip
-python3 -m pip install localstack
-python3 -m pip install awscli-local
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade localstack
+python3 -m pip install --upgrade awscli-local
+python3 -m pip install --upgrade pulumi-local
 
 gem install bundler jekyll
 cd ${rootDir}/docs
@@ -43,6 +45,7 @@ npx playwright install
 cd ${rootDir}
 
 cd ${rootDir}/infra
+pulumi plugin install resource aws v4.30.0 # required by @pulumi/aws-apigateway. If you update this, also update cd.yml
 localstack start -d
 localstack update all
 # TODO when we require local dynamoDB, ensure 'localdev' pulumi stack is
