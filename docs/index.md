@@ -22,6 +22,7 @@ These are useful for learning how to work with our tech stack. This curated list
 These docs are useful if you need to know how to do a particular kind of task.
 
 - [How to create Svelte Components](/how-to/svelte-components.md)
+- [How to create an API endpoint](/how-to/create-api-endpoint.md)
 - [How to update dependencies](/how-to/update-dependencies.md)
 - [How to edit these docs](/how-to/edit-docs.md)
 - [How to manually deploy the app](/how-to/deploy-manually.md)
