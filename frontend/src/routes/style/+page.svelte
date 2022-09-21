@@ -1,3 +1,7 @@
+<script>
+  import Card from "$lib/components/Card.svelte";
+</script>
+
 <h2 class="heading h-main">Main Heading</h2>
 <h3 class="heading h-sub">Subheading</h3>
 <h4 class="heading">Minor heading</h4>
@@ -52,7 +56,18 @@
       </li>
     </ul>
   </div>
-  <button class="btn btn-primary">Primary</button>
-  <button class="btn btn-secondary">Secondary</button>
-  <button class="btn btn-danger">Danger</button>
+  <section class="mb-2">
+    <h4 class="heading">Buttons:</h4>
+    <button class="btn primary">Primary</button>
+    <button class="btn secondary">Secondary</button>
+    <button class="btn success">Success</button>
+    <button class="btn danger">Danger</button>
+  </section>
+  <section>
+    <h4 class="heading">Cards:</h4>
+    <Card username="Alice" />
+    <Card username="Bob" hasValue={true} />
+    <Card username="Carol" isRevealed={true} />
+    <Card username="Daniel" isRevealed={true} value="40" />
+  </section>
 </form>

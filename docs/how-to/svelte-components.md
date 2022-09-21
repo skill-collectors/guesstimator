@@ -24,6 +24,8 @@ lib/components
 
 ## Styling components
 
+**NOTE:** All components in the site should follow our [colorscheme](../context/frontend/colors.md).
+
 This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
 a [utility-first](https://utilitycss.com/) CSS framework. It is compatible with
 [Tailwinds](https://tailwindcss.com/) which means you can use [this

@@ -41,6 +41,7 @@ These docs are useful if you need to look something up while you're working.
 These docs are useful if you want to understand why the project is the way it is.
 
 - [About the docs](/context/docs.md)
+- [Colors](/context/frontend/colors.md)
 - [Linting and Formatting](/context/linting-and-formatting.md)
 - [Why did we pick this tech stack?](/context/why-tech-stack.md)
 
