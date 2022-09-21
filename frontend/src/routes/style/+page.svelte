@@ -52,7 +52,11 @@
       </li>
     </ul>
   </div>
-  <button class="btn btn-primary">Primary</button>
-  <button class="btn btn-secondary">Secondary</button>
-  <button class="btn btn-danger">Danger</button>
+  <section class="mb-2">
+    <h4 class="heading">Buttons:</h4>
+    <button class="btn primary">Primary</button>
+    <button class="btn secondary">Secondary</button>
+    <button class="btn success">Success</button>
+    <button class="btn danger">Danger</button>
+  </section>
 </form>
