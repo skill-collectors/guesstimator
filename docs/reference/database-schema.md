@@ -8,11 +8,11 @@ permalink: /reference/database-schema
 
 We use DynamoDB, which is "schemaless" meaning the fields are not formally defined within the database itself. Nevertheless we obviously have a consistent format for our data, which is described below.
 
-| PK                            | fields                              |
-| ----------------------------- | ----------------------------------- |
-| ROOM:[roomId]                 | hostKey, validSizes, isVoteRevealed |
-| ROOM:[roomId]:USERS:[userKey] | userName                            |
-| ROOM:[roomId]:VOTES:[userKey] | userName, currentVote               |
+| PK                            | fields                                                    |
+| ----------------------------- | --------------------------------------------------------- |
+| ROOM:[roomId]                 | hostKey, validSizes, isVoteRevealed, createdOn, updatedOn |
+| ROOM:[roomId]:USERS:[userKey] | userName                                                  |
+| ROOM:[roomId]:VOTES:[userKey] | userName, currentVote                                     |
 
 ## Fields
 
@@ -22,6 +22,8 @@ We use DynamoDB, which is "schemaless" meaning the fields are not formally defin
 | hostKey        | Randomly generated key (private, known only to the host) |
 | validSizes     | Space-delimited list of valid sizes e.g. `1 2 3`         |
 | isVoteRevealed | `true` if users are allowed to see all votes             |
+| createdOn      | The timestamp the room was created                       |
+| updatedOn      | The timestamp the room was last updated                  |
 | userKey        | Randomly generated key (known only to the given user)    |
 | userName       | A display name to use.                                   |
 | currentVote    | The current vote for the user. One of `validSizes`       |
