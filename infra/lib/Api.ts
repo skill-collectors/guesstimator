@@ -1,21 +1,14 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as apigateway from "@pulumi/aws-apigateway";
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { endpoints } from "@pulumi/aws/config";
-
-interface ApiEndpoint {
-  name: string;
-  method: apigateway.Method;
-  path: string;
-  handler: (event: APIGatewayProxyEvent) => Promise<APIGatewayProxyResult>;
-  policy: pulumi.Output<aws.iam.Policy>;
-}
+import { createRouter } from "./lambda/Router";
+import Database from "./Database";
+import dynamoTableAccessPolicy from "./policies/LambdaPolicy";
 
 interface ApiArgs {
   subDomain: string;
   apexDomain: string;
-  endpoints: ApiEndpoint[];
+  database: Database;
   tags: { [key: string]: string };
 }
 
@@ -48,43 +41,47 @@ export default class Api extends pulumi.ComponentResource {
 
     const tags = args.tags;
 
-    const routes: apigateway.types.input.RouteArgs[] = [];
-    for (const endpoint of args.endpoints) {
-      const lambdaRole = new aws.iam.Role(`${name}-${endpoint.name}Role`, {
-        assumeRolePolicy: LAMBDA_ASSUME_POLICY_ROLE,
+    // Create lambda role with basic execution policy
+    const lambdaRole = new aws.iam.Role(`${name}-ProxyRole`, {
+      assumeRolePolicy: LAMBDA_ASSUME_POLICY_ROLE,
+      tags,
+    });
+
+    new aws.iam.RolePolicyAttachment(
+      `${name}-ProxyBasicExecutionRolePolicyAttachment`,
+      {
+        role: lambdaRole,
+        policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
+      }
+    );
+
+    // Attach policy to allow DB access
+    const tableAccessPolicy = args.database.table.arn.apply((arn) =>
+      dynamoTableAccessPolicy("AgilePokerTable", arn, tags)
+    );
+
+    new aws.iam.RolePolicyAttachment(`${name}-ProxyRolePolicyAttachment`, {
+      role: lambdaRole,
+      policyArn: tableAccessPolicy.arn,
+    });
+
+    const callbackFunction = new aws.lambda.CallbackFunction(
+      `${name}-ProxyFunction`,
+      {
+        role: lambdaRole,
+        callback: createRouter(args.database.table.name),
         tags,
-      });
-      new aws.iam.RolePolicyAttachment(
-        `${name}-${endpoint.name}RolePolicyAttachment`,
-        {
-          role: lambdaRole,
-          policyArn: endpoint.policy.arn,
-        }
-      );
-      new aws.iam.RolePolicyAttachment(
-        `${name}-${endpoint.name}BasicExecutionRolePolicyAttachment`,
-        {
-          role: lambdaRole,
-          policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
-        }
-      );
-      const callbackFunction = new aws.lambda.CallbackFunction(
-        `${name}-${endpoint.name}Function`,
-        {
-          role: lambdaRole,
-          callback: endpoint.handler,
-          tags,
-        }
-      );
-      routes.push({
-        method: endpoint.method,
-        path: endpoint.path,
-        eventHandler: callbackFunction,
-      });
-    }
+      }
+    );
 
     const api = new apigateway.RestAPI(`${name}-Api`, {
-      routes,
+      routes: [
+        {
+          method: "ANY",
+          path: "/{proxy+}",
+          eventHandler: callbackFunction,
+        },
+      ],
     });
 
     const hostedZone = aws.route53.getZone({ name: args.apexDomain });

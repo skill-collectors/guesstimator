@@ -2,8 +2,6 @@ import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
-import dynamoTableAccessPolicy from "./lib/policies/DynamoTableAccessPolicy";
-import createRoomHandler from "./lib/lambda/room/CreateRoom";
 
 const stack = pulumi.getStack();
 const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
@@ -24,21 +22,10 @@ const svelteApp = isLocalDev
     });
 
 const database = new Database(`AgilePoker-${stack}-Database`, { tags });
-const tableAccessPolicy = database.table.arn.apply((arn) =>
-  dynamoTableAccessPolicy("AgilePokerTable", arn, tags)
-);
 const api = new Api(`AgilePoker-${stack}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: apexDomain,
-  endpoints: [
-    {
-      name: "create-room",
-      method: "POST",
-      path: "/rooms/new",
-      policy: tableAccessPolicy,
-      handler: createRoomHandler(database.table.name),
-    },
-  ],
+  database,
   tags,
 });
 
