@@ -1,9 +1,9 @@
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as pulumi from "@pulumi/pulumi";
-import createRoom from "../../../../lib/lambda/room/CreateRoom";
 import { APIGatewayProxyEvent } from "aws-lambda";
+import { createRouter } from "../../../lib/lambda/Router";
 
-describe("CreateRoom", () => {
+describe("Router", () => {
   // Mock the Pulumi DynamoDB client SDK
   vi.mock("@pulumi/aws", () => {
     const client = vi.fn();
@@ -18,14 +18,19 @@ describe("CreateRoom", () => {
       },
     };
   });
+  vi.mock("../../../lib/lambda/DbService", () => {
+    const DbService = vi.fn();
+    DbService.prototype.createRoom = vi.fn();
+    return { default: DbService };
+  });
 
   // Create the handler
   const tableName = "TableName";
   const tableNameOutput = pulumi.Output.create(tableName);
   vi.spyOn(tableNameOutput, "get").mockImplementation(() => tableName);
-  const handler = createRoom(tableNameOutput);
+  const router = createRouter(tableNameOutput);
 
-  it("Creates a room in DynamoDB", async () => {
+  it("Routes GET /rooms/new", async () => {
     // Given
     const event: APIGatewayProxyEvent = {
       httpMethod: "POST",
@@ -33,7 +38,7 @@ describe("CreateRoom", () => {
     } as unknown as APIGatewayProxyEvent;
 
     // When
-    const response = await handler(event);
+    const response = await router(event);
 
     // Then
     expect(response.statusCode).toBe(200);
@@ -50,7 +55,7 @@ describe("CreateRoom", () => {
     } as unknown as APIGatewayProxyEvent;
 
     // When
-    const response = await handler(event);
+    const response = await router(event);
 
     // Then
     expect(response.headers?.["Access-Control-Allow-Methods"]).toBe("POST");
