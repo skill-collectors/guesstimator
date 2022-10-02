@@ -18,6 +18,11 @@ describe("Router", () => {
       },
     };
   });
+  vi.mock("../../../lib/lambda/DbService", () => {
+    const DbService = vi.fn();
+    DbService.prototype.createRoom = vi.fn();
+    return { default: DbService };
+  });
 
   // Create the handler
   const tableName = "TableName";
