@@ -29,6 +29,7 @@ const LAMBDA_ASSUME_POLICY_ROLE = JSON.stringify({
 export default class Api extends pulumi.ComponentResource {
   domain;
   url;
+  apiKey;
 
   constructor(
     name: string,
@@ -77,12 +78,71 @@ export default class Api extends pulumi.ComponentResource {
     const api = new apigateway.RestAPI(`${name}-Api`, {
       routes: [
         {
-          method: "ANY",
+          method: "OPTIONS",
           path: "/{proxy+}",
           eventHandler: callbackFunction,
+          apiKeyRequired: false,
+        },
+        {
+          method: "GET",
+          path: "/{proxy+}",
+          eventHandler: callbackFunction,
+          apiKeyRequired: true,
+        },
+        {
+          method: "POST",
+          path: "/{proxy+}",
+          eventHandler: callbackFunction,
+          apiKeyRequired: true,
+        },
+        {
+          method: "PUT",
+          path: "/{proxy+}",
+          eventHandler: callbackFunction,
+          apiKeyRequired: true,
+        },
+        {
+          method: "DELETE",
+          path: "/{proxy+}",
+          eventHandler: callbackFunction,
+          apiKeyRequired: true,
         },
       ],
     });
+
+    const apiKey = new aws.apigateway.ApiKey(`${name}-GlobalApiKey`, {
+      name: `${name}-GlobalApiKey`,
+      description: "Global API Key",
+      enabled: true,
+      tags,
+    });
+
+    const usagePlan = new aws.apigateway.UsagePlan(`${name}-UsagePlan`, {
+      description: "Global Usage Plan",
+      apiStages: [
+        {
+          apiId: api.api.id,
+          stage: api.stage.stageName,
+        },
+      ],
+      quotaSettings: {
+        limit: 5_000_000,
+        period: "MONTH",
+      },
+      throttleSettings: {
+        burstLimit: 1000,
+        rateLimit: 500,
+      },
+      tags,
+    });
+
+    new aws.apigateway.UsagePlanKey(`${name}-UsagePlanKey`, {
+      keyId: apiKey.id,
+      keyType: "API_KEY",
+      usagePlanId: usagePlan.id,
+    });
+
+    this.apiKey = apiKey.value;
 
     const hostedZone = aws.route53.getZone({ name: args.apexDomain });
     const hostedZoneId = hostedZone.then((hostedZone) => hostedZone.zoneId);

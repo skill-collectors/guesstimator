@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { corsAllowApp } from "../../lib/CorsHeaders";
 
@@ -21,7 +21,9 @@ describe("CorsHeaders", () => {
     const headers = corsAllowApp(event);
 
     // Then
-    expect(headers["Access-Control-Allow-Methods"]).toBe("POST");
+    expect(headers["Access-Control-Allow-Methods"]).toBe(
+      "OPTIONS, GET, POST, PUT, DELETE"
+    );
     expect(headers["Access-Control-Allow-Origin"]).toBe(event.headers.origin);
   });
   it("allows localhost", async () => {

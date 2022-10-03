@@ -58,7 +58,9 @@ describe("Router", () => {
     const response = await router(event);
 
     // Then
-    expect(response.headers?.["Access-Control-Allow-Methods"]).toBe("POST");
+    expect(response.headers?.["Access-Control-Allow-Methods"]).toBe(
+      "OPTIONS, GET, POST, PUT, DELETE"
+    );
     expect(response.headers?.["Access-Control-Allow-Origin"]).toBe(
       event.headers.origin
     );

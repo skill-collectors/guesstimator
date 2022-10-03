@@ -45,6 +45,7 @@ export const appOutput = {
 };
 export const apiOutput = {
   url: api.url,
+  key: api.apiKey,
 };
 export const dbOutput = {
   arn: database.table.arn,
