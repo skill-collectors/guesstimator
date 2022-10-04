@@ -15,6 +15,18 @@ function headers() {
   return baseHeaders;
 }
 
+function handleFailure(path: string, response: Response) {
+  if (!response.ok) {
+    if (response.status === 429) {
+      window.location.href = "/overload";
+    } else {
+      throw new Error(
+        `${path} => ${response.status} (${response.statusText}): ${response.body}`
+      );
+    }
+  }
+}
+
 export async function post(path: string, options: RequestInit = {}) {
   const response = await fetch(`${baseUrl}${path}`, {
     ...options,
@@ -22,11 +34,6 @@ export async function post(path: string, options: RequestInit = {}) {
     method: "POST",
     mode: "cors",
   });
-  if (response.ok) {
-    return response.json();
-  } else {
-    throw new Error(
-      `${path} => ${response.status} (${response.statusText}): ${response.body}`
-    );
-  }
+  handleFailure(path, response);
+  return response.json();
 }
