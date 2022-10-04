@@ -1,6 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
 import { describe, it, expect, beforeAll } from "vitest";
-import * as aws from "@pulumi/aws";
 import Database from "../../lib/Database";
 
 pulumi.runtime.setMocks({
