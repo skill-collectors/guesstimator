@@ -28,7 +28,9 @@ export function createRouter(tableName: pulumi.Output<string>) {
     const client = new aws.sdk.DynamoDB.DocumentClient();
     const db = new DbService(client, tableName.get());
     try {
-      if (httpMethod === "POST" && path === "/rooms/new") {
+      if (httpMethod === "OPTIONS") {
+        return responseEntity(event, 200, "");
+      } else if (httpMethod === "POST" && path === "/rooms/new") {
         const room = await db.createRoom();
         return responseEntity(event, 200, JSON.stringify(room));
       } else {

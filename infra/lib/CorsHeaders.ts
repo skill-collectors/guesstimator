@@ -6,11 +6,9 @@ function isValidDomain(origin: string) {
   return localdevOriginRegex.test(origin) || appDomainRegex.test(origin);
 }
 
-export function corsAllowApp(event: APIGatewayProxyEvent):
-  | {
-      [header: string]: string | number | boolean;
-    }
-  | undefined {
+export function corsAllowApp(event: APIGatewayProxyEvent): {
+  [header: string]: string | number | boolean;
+} {
   const origin = event.headers?.origin;
   const method = event.httpMethod;
   if (origin === undefined) {
@@ -27,8 +25,9 @@ export function corsAllowApp(event: APIGatewayProxyEvent):
   }
   if (isValidDomain(origin)) {
     return {
-      "Access-Control-Allow-Methods": method,
+      "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
       "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Headers": "x-api-key",
     };
   } else {
     console.log(`Invalid origin: ${origin}`);
