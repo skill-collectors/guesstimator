@@ -35,6 +35,8 @@ jobs:
     outputs:
       bucketName: ${{ steps.pulumi.outputs.bucketName }}
       distributionId: ${{ steps.pulumi.outputs.distributionId }}
+      apiUrl: ${{ steps.pulumi.outputs.apiUrl }}
+      apiKey: ${{ steps.pulumi.outputs.apiKey }}
     env:
       HAVE_SECRETS: ${{ secrets.PULUMI_ACCESS_TOKEN != '' && secrets.AWS_REGION != '' && secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' }}
     steps:
