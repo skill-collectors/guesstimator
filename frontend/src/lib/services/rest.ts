@@ -28,12 +28,21 @@ function handleFailure(path: string, response: Response) {
 }
 
 export async function post(path: string, options: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers: headers(),
-    method: "POST",
-    mode: "cors",
-  });
-  handleFailure(path, response);
-  return response.json();
+  try {
+    const response = await fetch(`${baseUrl}${path}`, {
+      ...options,
+      headers: headers(),
+      method: "POST",
+      mode: "cors",
+    });
+    handleFailure(path, response);
+    return response.json();
+  } catch (err) {
+    // This happens when the API Gateway responds with 429 status, but WITHOUT
+    // the CORS headers. In that case we can't see the response (including the
+    // 429 status). It's unknown if this happens in other situations.
+    // This is an opportunity to improve the code so we don't need this catch.
+    console.log(err);
+    window.location.href = "/overload";
+  }
 }
