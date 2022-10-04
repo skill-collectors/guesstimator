@@ -201,6 +201,6 @@ export default class Api extends pulumi.ComponentResource {
       tags
     );
 
-    this.url = api.url;
+    this.url = `https://${this.domain}`;
   }
 }
