@@ -44,6 +44,7 @@ These docs are useful if you want to understand why the project is the way it is
 - [Colors](/context/frontend/colors.md)
 - [Linting and Formatting](/context/linting-and-formatting.md)
 - [Why did we pick this tech stack?](/context/why-tech-stack.md)
+- [API Rate Limits](/context/infra/rate-limits.md)
 
 ### Frontend
 
