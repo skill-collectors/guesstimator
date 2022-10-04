@@ -6,8 +6,8 @@
  * - throws errors if the response is not ok
  */
 
-const baseUrl = "https://agile-poker-api-dev.superfun.link";
-const apiKey = "25ZGtwoMAa3zr8jGGPZna8oyuIWQItjn5nYVARBG";
+const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
 
 function headers() {
   const baseHeaders = new Headers();
