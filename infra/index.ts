@@ -24,7 +24,7 @@ const svelteApp = isLocalDev
 const database = new Database(`AgilePoker-${stack}-Database`, { tags });
 const api = new Api(`AgilePoker-${stack}-Api`, {
   subDomain: apiSubDomain,
-  apexDomain: apexDomain,
+  apexDomain: isLocalDev ? null : apexDomain,
   database,
   tags,
 });

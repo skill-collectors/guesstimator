@@ -5,15 +5,14 @@ import { createRouter } from "./lambda/Router";
 import Database from "./Database";
 import dynamoTableAccessPolicy from "./policies/LambdaPolicy";
 
-interface ApiArgs {
+export interface ApiArgs {
   subDomain: string;
-  apexDomain: string;
+  apexDomain: string | null;
   database: Database;
   tags: { [key: string]: string };
 }
 
 export default class Api extends pulumi.ComponentResource {
-  domain;
   url;
   apiKey;
 
@@ -23,8 +22,6 @@ export default class Api extends pulumi.ComponentResource {
     opts?: pulumi.ComponentResourceOptions
   ) {
     super("pkg:index:Api", name, args, opts);
-
-    this.domain = `${args.subDomain}.${args.apexDomain}`;
 
     const tags = args.tags;
 
@@ -69,19 +66,23 @@ export default class Api extends pulumi.ComponentResource {
     const apiKey = addApiUsagePlan();
     this.apiKey = apiKey.value;
 
-    const apiDomainName = addDomainName(this.domain);
-
-    new aws.apigateway.BasePathMapping(
-      `${name}-BasePathMapping`,
-      {
-        restApi: api.api.id,
-        stageName: api.stage.stageName,
-        domainName: apiDomainName.domainName,
-      },
-      tags
-    );
-
-    this.url = `https://${this.domain}`;
+    if (args.apexDomain === null) {
+      this.url = api.url;
+    } else {
+      const apiDomainName = addDomainName(args.subDomain, args.apexDomain);
+      new aws.apigateway.BasePathMapping(
+        `${name}-BasePathMapping`,
+        {
+          restApi: api.api.id,
+          stageName: api.stage.stageName,
+          domainName: apiDomainName.domainName,
+        },
+        tags
+      );
+      this.url = apiDomainName.domainName.apply(
+        (domain) => `https://${domain}`
+      );
+    }
 
     function buildCallbackFunction() {
       const lambdaRole = new aws.iam.Role(`${name}-ProxyRole`, {
@@ -166,12 +167,14 @@ export default class Api extends pulumi.ComponentResource {
       return apiKey;
     }
 
-    function addDomainName(domain: string) {
-      const hostedZone = aws.route53.getZone({ name: args.apexDomain });
+    function addDomainName(subDomain: string, apexDomain: string) {
+      const fullDomain = `${subDomain}.${apexDomain}`;
+
+      const hostedZone = aws.route53.getZone({ name: apexDomain });
       const hostedZoneId = hostedZone.then((hostedZone) => hostedZone.zoneId);
 
       const certificate = new aws.acm.Certificate(`${name}-Certificate`, {
-        domainName: domain,
+        domainName: fullDomain,
         validationMethod: "DNS",
         tags,
       });
@@ -200,14 +203,14 @@ export default class Api extends pulumi.ComponentResource {
         `${name}-DomainName`,
         {
           certificateArn: certificateValidation.certificateArn,
-          domainName: domain,
+          domainName: fullDomain,
           tags,
         }
       );
       new aws.route53.Record(`${name}-DnsRecord`, {
         zoneId: hostedZoneId,
         type: "A",
-        name: domain,
+        name: fullDomain,
         aliases: [
           {
             name: apiDomainName.cloudfrontDomainName,

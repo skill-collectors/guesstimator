@@ -1,14 +1,7 @@
+import { ApiArgs } from "../../lib/Api";
 import * as pulumi from "@pulumi/pulumi";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  beforeEach,
-  afterEach,
-  vi,
-} from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import Api from "../../lib/Api";
 import Database from "../../lib/Database";
 
@@ -22,7 +15,8 @@ pulumi.runtime.setMocks({
     return {
       id: `${args.name}Id`,
       state: {
-        value: "API_KEY",
+        url: "https://raw.apigatewayurl.com",
+        value: "API_KEY", // for the key
       },
     };
   },
@@ -32,23 +26,7 @@ pulumi.runtime.setMocks({
 });
 
 describe("infrastructure", () => {
-  let theApi: Api;
-
   beforeAll(async function () {
-    theApi = new Api("AgilePokerDatabase", {
-      database: {
-        table: {
-          arn: pulumi.Output.create("foo"),
-          name: pulumi.Output.create("bar"),
-        },
-      } as unknown as Database,
-      apexDomain: "example.com",
-      subDomain: "www",
-      tags: {},
-    });
-  });
-
-  beforeEach(() => {
     vi.mock("../../lib/lambda/Router", () => {
       const mockHandler = function () {
         return async function handleDocument(
@@ -65,13 +43,42 @@ describe("infrastructure", () => {
     });
   });
 
+  function buildApi(
+    apexDomain: string | null = "example.com",
+    subDomain = "www"
+  ) {
+    return new Api("AgilePokerDatabase", {
+      database: {
+        table: {
+          arn: pulumi.Output.create("tableArn"),
+          name: pulumi.Output.create("tableName"),
+        },
+      } as unknown as Database,
+      apexDomain,
+      subDomain,
+      tags: {},
+    });
+  }
+
   it("Creates an API url", async () => {
-    expect(theApi.url).toBe("https://www.example.com");
+    const api = buildApi();
+    const apiUrl = await new Promise((resolve) => {
+      api.url.apply((url) => resolve(url));
+    });
+    expect(apiUrl).toBe("https://www.example.com");
+  });
+  it("Skips base path mapping if apexDomain is null", async () => {
+    const api = buildApi(null);
+    const apiUrl = await new Promise((resolve) => {
+      api.url.apply((url) => resolve(url));
+    });
+    expect(apiUrl).toBe("https://raw.apigatewayurl.com");
   });
 
   it("Creates an API key", async () => {
+    const api = buildApi();
     const apiKey = await new Promise((resolve) => {
-      theApi.apiKey.apply((key) => resolve(key));
+      api.apiKey.apply((key) => resolve(key));
     });
     expect(apiKey).toBe("API_KEY");
   });
