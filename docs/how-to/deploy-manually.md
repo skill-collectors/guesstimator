@@ -35,6 +35,7 @@ From the project root, run
 This will:
 
 1. Run `pulumi up` for the `dev` stack
-2. Build the frontend
-3. Sync the frontend build output to the app's S3 bucket
-4. Invalidate the CloudFront cache
+2. Generate an `.env.development` file for the frontend using outputs from the infrastructure deploy.
+3. Build the frontend
+4. Sync the frontend build output to the app's S3 bucket
+5. Invalidate the CloudFront cache
