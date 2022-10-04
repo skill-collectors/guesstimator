@@ -33,27 +33,11 @@ Some steps will not run on forks:
 
 ## Build and deploy flowchart
 
-If the flowchart below does not render, then GitHub pages doesn't support [Mermaid](https://mermaid-js.github.io/) syntax on GitHub pages yet. Maybe someday they will. Otherwise `.github/workflows/ci.yml` is always the canonical source for how the build and deploy works.
+Below is a summary. `.github/workflows/cd.yml` is always the canonical source for how the build and deploy works.
 
-```mermaid
-flowchart LR
-  subgraph check-front [Check frontend]
-  direction LR
-    FC(Check TS) --> FL(Lint) --> FT(Unit Test)
-  end
-  subgraph check-infra [Check infrastructure]
-  direction LR
-    IL(Lint) --> IT(Unit Test)
-  end
-  subgraph deploy-infra [Deploy infrastructure]
-  direction LR
-    ID("Pulumi up")
-  end
-  subgraph deploy-front [Deploy frontend]
-  direction LR
-    FB("Build") --> FD("Deploy to AWS") --> FE("E2E tests")
-  end
-
-  check-infra --> deploy-infra
-  check-front & deploy-infra --> deploy-front
-```
+1. Lint and unit test front and backends
+2. Deploy infrastructure
+3. Build the frontend
+4. Sync the frontend to S3
+5. Invalidate Cloudfront
+6. Install and run Playwright tests
