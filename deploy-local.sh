@@ -7,7 +7,7 @@ cd $(dirname $0)
 echo "Deploying infrastructure locally"
 cd infra
 pulumi stack select localstack
-pulumi up -y
+pulumi up --refresh --yes
 
 apiUrl=$(pulumi stack output apiUrl 2>/dev/null)
 apiKey=$(pulumi stack output --show-secrets apiKey 2>/dev/null)
