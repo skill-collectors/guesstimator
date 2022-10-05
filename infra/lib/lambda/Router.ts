@@ -47,7 +47,8 @@ export function createRouter(tableName: pulumi.Output<string>) {
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: err,
+          message: "Error thrown by handler",
+          error: JSON.stringify(err),
         }),
       };
     }
