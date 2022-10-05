@@ -6,8 +6,7 @@ cd $(dirname $0)
 
 echo "Deploying infrastructure locally"
 cd infra
-pulumi stack select localstack
-pulumi up --refresh --yes
+pulumilocal up --yes
 
 apiUrl=$(pulumi stack output apiUrl 2>/dev/null)
 apiKey=$(pulumi stack output --show-secrets apiKey 2>/dev/null)
@@ -24,5 +23,5 @@ localUrl=${localUrl%/}
 echo "VITE_PUBLIC_API_URL=${localUrl}" > .env.development
 echo "VITE_PUBLIC_API_KEY=${apiKey}" >> .env.development
 
-echo "You can now use 'npm run dev' and it will use localstack"
+echo "You can now use 'npm run dev --workspace=frontend' and it will use localstack"
 

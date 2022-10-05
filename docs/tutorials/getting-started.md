@@ -75,9 +75,7 @@ Workspace settings should be configured to lint and format-on-save correctly. To
 Run the infrastructure locally using localstack:
 
 ```
-cd infra
-localstack start -d
-pulumilocal up
+./deploy-local.sh
 ```
 
 ### Frontend
@@ -89,4 +87,5 @@ cd frontend
 npm run dev
 ```
 
-Browse to http://localhost:3000
+Browse to http://localhost:5173
+
