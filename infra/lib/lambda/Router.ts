@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as pulumi from "@pulumi/pulumi";
-import * as aws from "@pulumi/aws";
 import { corsAllowApp } from "../CorsHeaders";
 import DbService from "./DbService";
 
@@ -25,8 +24,7 @@ export function createRouter(tableName: pulumi.Output<string>) {
     const { httpMethod, path } = event;
     console.log(`Executing ${httpMethod}: ${path}`);
 
-    const client = new aws.sdk.DynamoDB.DocumentClient();
-    const db = new DbService(client, tableName.get());
+    const db = new DbService(tableName.get());
     try {
       if (httpMethod === "OPTIONS") {
         return responseEntity(event, 200, "");

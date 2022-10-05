@@ -2,35 +2,36 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import DbService from "../../../lib/lambda/DbService";
 
-describe("Router", () => {
-  let mockDynamoDbClient: DocumentClient;
-  beforeEach(() => {
-    mockDynamoDbClient = {
-      put: vi.fn().mockImplementation(() => ({
-        promise: () => new Promise((resolve) => resolve("done")),
-      })),
-    } as unknown as DocumentClient;
+describe("DbService", () => {
+  vi.mock("@pulumi/aws", () => {
+    const client = vi.fn();
+    client.prototype.put = vi.fn(() => ({
+      promise: () => new Promise((resolve) => resolve(1)),
+    }));
+    return {
+      sdk: {
+        DynamoDB: {
+          DocumentClient: client,
+        },
+      },
+    };
   });
   const tableName = "TableName";
 
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
-
   it("Puts a ROOM item in the table", async () => {
     // Given
-    const service = new DbService(mockDynamoDbClient, tableName);
+    const service = new DbService(tableName);
 
     // When
     await service.createRoom();
 
     // Then
-    expect(mockDynamoDbClient.put).toHaveBeenCalled();
+    expect(service.client.put).toHaveBeenCalled();
   });
 
   it("Generates a room ID", async () => {
     // Given
-    const service = new DbService(mockDynamoDbClient, tableName);
+    const service = new DbService(tableName);
 
     // When
     const result = await service.createRoom();

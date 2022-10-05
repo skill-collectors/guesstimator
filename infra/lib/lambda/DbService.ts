@@ -1,5 +1,6 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
+import * as aws from "@pulumi/aws";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -8,8 +9,15 @@ export default class DbService {
   client: DocumentClient;
   tableName: string;
 
-  constructor(client: DocumentClient, tableName: string) {
-    this.client = client;
+  constructor(tableName: string) {
+    const { LOCALSTACK_HOSTNAME } = process.env;
+    this.client =
+      LOCALSTACK_HOSTNAME !== undefined
+        ? new aws.sdk.DynamoDB.DocumentClient({
+            endpoint: `http://${LOCALSTACK_HOSTNAME}:4566`,
+          })
+        : new aws.sdk.DynamoDB.DocumentClient();
+
     this.tableName = tableName;
   }
 

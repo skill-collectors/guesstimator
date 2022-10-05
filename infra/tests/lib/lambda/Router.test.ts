@@ -5,19 +5,6 @@ import { createRouter } from "../../../lib/lambda/Router";
 
 describe("Router", () => {
   // Mock the Pulumi DynamoDB client SDK
-  vi.mock("@pulumi/aws", () => {
-    const client = vi.fn();
-    client.prototype.put = vi.fn(() => ({
-      promise: () => new Promise((resolve) => resolve(1)),
-    }));
-    return {
-      sdk: {
-        DynamoDB: {
-          DocumentClient: client,
-        },
-      },
-    };
-  });
   vi.mock("../../../lib/lambda/DbService", () => {
     const DbService = vi.fn();
     DbService.prototype.createRoom = vi.fn();
