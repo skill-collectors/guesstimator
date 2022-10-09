@@ -45,6 +45,17 @@ export function createRouter(tableName: pulumi.Output<string>) {
         } else {
           return responseEntity(event, 200, JSON.stringify(room));
         }
+      } else if (
+        httpMethod === "DELETE" &&
+        /^\/rooms\/[A-Z0-9]+$/i.test(path)
+      ) {
+        const roomId = path.substring("/rooms/".length);
+        await db.deleteRoom(roomId.toUpperCase());
+        return responseEntity(
+          event,
+          200,
+          JSON.stringify({ message: `Room ${roomId} was deleted.` })
+        );
       } else {
         return responseEntity(
           event,

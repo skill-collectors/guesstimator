@@ -14,6 +14,9 @@ describe("DbService", () => {
           resolve({ roomId: "abc123", validSizes: "1 2 3", isRevealed: false })
         ),
     }));
+    client.prototype.delete = vi.fn(() => ({
+      promise: () => new Promise((resolve) => resolve(1)),
+    }));
     return {
       sdk: {
         DynamoDB: {
@@ -57,6 +60,18 @@ describe("DbService", () => {
 
       // Then
       expect(service.client.get).toHaveBeenCalled();
+    });
+  });
+  describe("deleteRoom", () => {
+    it("Deletes a ROOM item from the table", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.deleteRoom("abc123");
+
+      // Then
+      expect(service.client.delete).toHaveBeenCalled();
     });
   });
 });

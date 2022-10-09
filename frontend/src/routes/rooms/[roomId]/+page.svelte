@@ -1,8 +1,13 @@
 <script lang="ts">
-  import Card from "$lib/components/Card.svelte";
   import type { PageData } from "./$types";
+  import { del } from "$lib/services/rest";
 
   export let data: PageData;
+
+  async function handleDeleteRoom() {
+    await del(`/rooms/${data.roomData.roomId}`);
+    window.location.href = "/";
+  }
 </script>
 
 <section class="text-center">
@@ -18,4 +23,5 @@
       <strong>not visible</strong>
     {/if}
   </p>
+  <button class="btn danger" on:click={handleDeleteRoom}>Delete room</button>
 </section>

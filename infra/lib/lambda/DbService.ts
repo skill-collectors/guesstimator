@@ -67,4 +67,12 @@ export default class DbService {
 
     return response;
   }
+  async deleteRoom(roomId: string) {
+    await this.client
+      .delete({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}` },
+      })
+      .promise();
+  }
 }
