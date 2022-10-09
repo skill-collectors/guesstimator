@@ -46,4 +46,25 @@ export default class DbService {
       validSizes,
     };
   }
+  async getRoom(roomId: string) {
+    const getItemResponse = await this.client
+      .get({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}` },
+      })
+      .promise();
+    const roomData = getItemResponse.Item;
+    if (roomData === undefined) {
+      return null;
+    }
+
+    console.log(`Got room ${JSON.stringify(roomData)}`);
+    const response = {
+      roomId,
+      validSizes: roomData.validSizes,
+      isRevealed: roomData.isRevealed,
+    };
+
+    return response;
+  }
 }
