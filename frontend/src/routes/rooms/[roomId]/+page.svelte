@@ -21,13 +21,12 @@
   }
 </script>
 
-<h2 class="heading h-sub">
-  Room {data.roomData.roomId}
-</h2>
-Room URL: {url}
-<button class="btn danger m-2" on:click={handleDeleteRoom}>Delete room</button>
+<header class="mt-8">
+  Room URL: {url}
+  <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
+</header>
 <section class="mt-8">
-  <h3 class="heading h-sub">Other players:</h3>
+  <h3 class="heading h-sub">Current votes:</h3>
   <p>
     Cards are
     {#if data.roomData.isRevealed}
@@ -37,7 +36,7 @@ Room URL: {url}
     {/if}
   </p>
 </section>
-<section class="mt-8">
+<section class="mt-32">
   <h3 class="heading h-sub">Your vote:</h3>
   {#each sizeValues as size}
     {#if size === selectedSize}
