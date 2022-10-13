@@ -18,7 +18,7 @@
     "vitest": "^0.23.4"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.180.0",
+    "@aws-sdk/client-dynamodb": "^3.186.0",
     "@pulumi/aws": "^5.14.0",
     "@pulumi/aws-apigateway": "^0.0.11",
     "@pulumi/pulumi": "^3.40.1"
