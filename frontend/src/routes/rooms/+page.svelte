@@ -1,15 +1,13 @@
 <script type="ts">
   import { onMount } from "svelte";
-  import { post } from "$lib/services/rest";
+  import { createRoom } from "$lib/services/rooms";
+  import type { Room } from "$lib/services/rooms";
+  import { setRoom } from "$lib/services/localStorage";
 
-  interface Room {
-    roomId: string;
-    hostKey?: string;
-    validSizes: string;
-  }
   let roomData: Room;
   onMount(async () => {
-    roomData = await post("/rooms/new");
+    roomData = await createRoom();
+    setRoom(roomData);
     window.location.href = `/rooms/${roomData.roomId}`;
   });
 </script>

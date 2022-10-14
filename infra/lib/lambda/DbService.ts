@@ -26,6 +26,7 @@ export default class DbService {
     const hostKey = generateId(HOST_KEY_LENGTH);
     const validSizes = "1 2 3 5 8 13 20 ? ∞";
     const createdOn = new Date().toISOString();
+    const isRevealed = false;
     await this.client
       .put({
         TableName: this.tableName,
@@ -33,7 +34,7 @@ export default class DbService {
           PK: `ROOM:${roomId}`,
           hostKey,
           validSizes,
-          isRevealed: false,
+          isRevealed,
           createdOn,
           updatedOn: createdOn,
         },
@@ -44,6 +45,7 @@ export default class DbService {
       roomId,
       hostKey,
       validSizes,
+      isRevealed,
     };
   }
   async getRoom(roomId: string) {
