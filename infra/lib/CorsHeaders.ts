@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent } from "aws-lambda/trigger/api-gateway-proxy";
 
 const localdevOriginRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-const appDomainRegex = /^https:\/\/agile-poker-(dev|qa|prod)\.superfun\.link$/;
+const appDomainRegex = /^https:\/\/agile-poker(-dev|-qa)?\.superfun\.link$/;
 function isValidDomain(origin: string) {
   return localdevOriginRegex.test(origin) || appDomainRegex.test(origin);
 }
