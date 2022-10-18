@@ -26,6 +26,7 @@ export default class DbService {
     const hostKey = generateId(HOST_KEY_LENGTH);
     const validSizes = "1 2 3 5 8 13 20 ? ∞";
     const createdOn = new Date().toISOString();
+    const isRevealed = false;
     await this.client
       .put({
         TableName: this.tableName,
@@ -33,7 +34,7 @@ export default class DbService {
           PK: `ROOM:${roomId}`,
           hostKey,
           validSizes,
-          isRevealed: false,
+          isRevealed,
           createdOn,
           updatedOn: createdOn,
         },
@@ -44,6 +45,36 @@ export default class DbService {
       roomId,
       hostKey,
       validSizes,
+      isRevealed,
     };
+  }
+  async getRoom(roomId: string) {
+    const getItemResponse = await this.client
+      .get({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}` },
+      })
+      .promise();
+    const roomData = getItemResponse.Item;
+    if (roomData === undefined) {
+      return null;
+    }
+
+    console.log(`Got room ${JSON.stringify(roomData)}`);
+    const response = {
+      roomId,
+      validSizes: roomData.validSizes,
+      isRevealed: roomData.isRevealed,
+    };
+
+    return response;
+  }
+  async deleteRoom(roomId: string) {
+    await this.client
+      .delete({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}` },
+      })
+      .promise();
   }
 }

@@ -31,6 +31,31 @@ export function createRouter(tableName: pulumi.Output<string>) {
       } else if (httpMethod === "POST" && path === "/rooms/new") {
         const room = await db.createRoom();
         return responseEntity(event, 200, JSON.stringify(room));
+      } else if (httpMethod === "GET" && /^\/rooms\/[A-Z0-9]+$/i.test(path)) {
+        const roomId = path.substring("/rooms/".length);
+        const room = await db.getRoom(roomId.toUpperCase());
+        if (room === null) {
+          return responseEntity(
+            event,
+            404,
+            JSON.stringify({
+              message: `Could not find a room with ID '${roomId}'`,
+            })
+          );
+        } else {
+          return responseEntity(event, 200, JSON.stringify(room));
+        }
+      } else if (
+        httpMethod === "DELETE" &&
+        /^\/rooms\/[A-Z0-9]+$/i.test(path)
+      ) {
+        const roomId = path.substring("/rooms/".length);
+        await db.deleteRoom(roomId.toUpperCase());
+        return responseEntity(
+          event,
+          200,
+          JSON.stringify({ message: `Room ${roomId} was deleted.` })
+        );
       } else {
         return responseEntity(
           event,

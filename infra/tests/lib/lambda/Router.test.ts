@@ -8,6 +8,8 @@ describe("Router", () => {
   vi.mock("../../../lib/lambda/DbService", () => {
     const DbService = vi.fn();
     DbService.prototype.createRoom = vi.fn();
+    DbService.prototype.getRoom = vi.fn();
+    DbService.prototype.deleteRoom = vi.fn();
     return { default: DbService };
   });
 
@@ -17,11 +19,39 @@ describe("Router", () => {
   vi.spyOn(tableNameOutput, "get").mockImplementation(() => tableName);
   const router = createRouter(tableNameOutput);
 
-  it("Routes GET /rooms/new", async () => {
+  it("Routes POST /rooms/new", async () => {
     // Given
     const event: APIGatewayProxyEvent = {
       httpMethod: "POST",
       path: "/rooms/new",
+    } as unknown as APIGatewayProxyEvent;
+
+    // When
+    const response = await router(event);
+
+    // Then
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("Routes GET /rooms/{id}", async () => {
+    // Given
+    const event: APIGatewayProxyEvent = {
+      httpMethod: "GET",
+      path: "/rooms/abc123",
+    } as unknown as APIGatewayProxyEvent;
+
+    // When
+    const response = await router(event);
+
+    // Then
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("Routes DELETE /rooms/{id}", async () => {
+    // Given
+    const event: APIGatewayProxyEvent = {
+      httpMethod: "DELETE",
+      path: "/rooms/abc123",
     } as unknown as APIGatewayProxyEvent;
 
     // When
