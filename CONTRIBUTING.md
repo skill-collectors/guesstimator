@@ -1,6 +1,6 @@
-# Contributing to agile-poker
+# Contributing to The Guesstimator
 
-Welcome to the agile-poker development community! We're glad you're here. This
+Welcome to the Guesstimator development community! We're glad you're here. This
 document is designed to help you get your bearings and then to find something
 fun to work on.
 
