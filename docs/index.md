@@ -5,7 +5,7 @@
 layout: home
 ---
 
-Welcome to the developer documentation for the Agile Poker app! The documentation is divided into different sections depending on what kind of information you are looking for.
+Welcome to the developer documentation for the Guesstimator app! The documentation is divided into different sections depending on what kind of information you are looking for.
 
 If you're new to the project, start with our [Getting Started](/tutorials/getting-started.md) tutorial.
 
@@ -49,3 +49,4 @@ These docs are useful if you want to understand why the project is the way it is
 ### Frontend
 
 - [Deploy configuration](/context/frontend/deploy.md) - Why we (currently) deploy as a static SPA
+
