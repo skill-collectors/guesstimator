@@ -1,5 +1,5 @@
 {
-  "name": "agile-poker-frontend",
+  "name": "guesstimator-frontend",
   "version": "0.0.1",
   "scripts": {
     "check-all": "npm run check && npm run lint && npm run test:unit && npm run test:e2e",

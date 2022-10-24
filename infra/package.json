@@ -1,5 +1,5 @@
 {
-  "name": "agile-poker-infra",
+  "name": "guesstimator-infra",
   "scripts": {
     "check-all": "npm run lint &&  npm run test",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
