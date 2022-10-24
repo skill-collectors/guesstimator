@@ -4,9 +4,9 @@ import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 
 const stack = pulumi.getStack();
-const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
+const subDomain = stack === "prod" ? "guesstimator" : `guesstimator-${stack}`;
 const apiSubDomain =
-  stack === "prod" ? "agile-poker-api" : `agile-poker-api-${stack}`;
+  stack === "prod" ? "guesstimator-api" : `guesstimator-api-${stack}`;
 const apexDomain = "superfun.link";
 const tags = { iac: "pulumi", project: "agile-poker", stack };
 

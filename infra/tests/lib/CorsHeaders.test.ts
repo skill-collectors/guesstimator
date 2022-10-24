@@ -15,7 +15,7 @@ describe("CorsHeaders", () => {
 
   it("allows prod", async () => {
     // Given
-    const event = eventForOrigin("https://agile-poker.superfun.link");
+    const event = eventForOrigin("https://guesstimator.superfun.link");
 
     // When
     const headers = corsAllowApp(event);
