@@ -8,21 +8,21 @@ const subDomain = stack === "prod" ? "guesstimator" : `guesstimator-${stack}`;
 const apiSubDomain =
   stack === "prod" ? "guesstimator-api" : `guesstimator-api-${stack}`;
 const apexDomain = "superfun.link";
-const tags = { iac: "pulumi", project: "agile-poker", stack };
+const tags = { iac: "pulumi", project: "guesstimator", stack };
 
 const isLocalDev = stack === "localstack";
 
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
   ? null
-  : new SvelteApp(`AgilePoker-${stack}-App`, {
+  : new SvelteApp(`Guesstimator-${stack}-App`, {
       subDomain,
       apexDomain,
       tags,
     });
 
-const database = new Database(`AgilePoker-${stack}-Database`, { tags });
-const api = new Api(`AgilePoker-${stack}-Api`, {
+const database = new Database(`Guesstimator-${stack}-Database`, { tags });
+const api = new Api(`Guesstimator-${stack}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: isLocalDev ? null : apexDomain,
   database,

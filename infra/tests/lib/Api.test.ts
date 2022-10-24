@@ -47,7 +47,7 @@ describe("infrastructure", () => {
     apexDomain: string | null = "example.com",
     subDomain = "www"
   ) {
-    return new Api("AgilePokerDatabase", {
+    return new Api("GuesstimatorApi", {
       database: {
         table: {
           arn: pulumi.Output.create("tableArn"),

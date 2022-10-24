@@ -5,7 +5,7 @@ export default function dynamoTableAccessPolicy(
   tableArn: string,
   tags: { [key: string]: string }
 ) {
-  return new aws.iam.Policy(`${name}AccessPolicy`, {
+  return new aws.iam.Policy(name, {
     policy: JSON.stringify({
       Version: "2012-10-17",
       Statement: [

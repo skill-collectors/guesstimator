@@ -24,7 +24,7 @@ describe("infrastructure", () => {
   let theApp: SvelteApp;
 
   beforeAll(async function () {
-    theApp = new SvelteApp("AgilePokerApp", {
+    theApp = new SvelteApp("GuesstimatorApp", {
       subDomain: "www",
       apexDomain: "example.com",
       tags: {},
@@ -35,14 +35,14 @@ describe("infrastructure", () => {
     const bucketName = await new Promise((resolve) => {
       theApp.siteBucket.id.apply((bucketName) => resolve(bucketName));
     });
-    expect(bucketName).toBe("AgilePokerApp-SiteBucketId");
+    expect(bucketName).toBe("GuesstimatorApp-SiteBucketId");
   });
 
   it("creates a CloudFront Distribution", async () => {
     const distributionId = await new Promise((resolve) => {
       theApp.cdn.id.apply((distributionId) => resolve(distributionId));
     });
-    expect(distributionId).toBe("AgilePokerApp-CdnId");
+    expect(distributionId).toBe("GuesstimatorApp-CdnId");
   });
 
   it("Creates custom error responses for 400 and 403 errors", async () => {

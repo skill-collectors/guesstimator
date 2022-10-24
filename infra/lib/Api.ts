@@ -112,7 +112,7 @@ export default class Api extends pulumi.ComponentResource {
 
       // Attach policy to allow DB access
       const tableAccessPolicy = args.database.table.arn.apply((arn) =>
-        dynamoTableAccessPolicy("AgilePokerTable", arn, tags)
+        dynamoTableAccessPolicy(`${name}-AccessPolicy`, arn, tags)
       );
 
       new aws.iam.RolePolicyAttachment(`${name}-ProxyRolePolicyAttachment`, {

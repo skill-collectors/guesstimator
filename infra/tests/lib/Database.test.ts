@@ -23,13 +23,13 @@ describe("infrastructure", () => {
   let theDb: Database;
 
   beforeAll(async function () {
-    theDb = new Database("AgilePokerDatabase", { tags: {} });
+    theDb = new Database("GuesstimatorDatabase", { tags: {} });
   });
 
   it("Creates a DynamoDB table", async () => {
     const tableId = await new Promise((resolve) => {
       theDb.table.id.apply((id) => resolve(id));
     });
-    expect(tableId).toBe("AgilePokerDatabase-TableId");
+    expect(tableId).toBe("GuesstimatorDatabase-TableId");
   });
 });
