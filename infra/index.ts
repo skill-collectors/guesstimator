@@ -2,15 +2,17 @@ import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
+import { registerAutoTags } from "./lib/AutoTag";
 
 const stack = pulumi.getStack();
 const subDomain = stack === "prod" ? "guesstimator" : `guesstimator-${stack}`;
 const apiSubDomain =
   stack === "prod" ? "guesstimator-api" : `guesstimator-api-${stack}`;
 const apexDomain = "superfun.link";
-const tags = { iac: "pulumi", project: "guesstimator", stack };
 
 const isLocalDev = stack === "localstack";
+
+registerAutoTags({ org: "tsc", iac: "pulumi", project: "guesstimator", stack });
 
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
@@ -18,15 +20,13 @@ const svelteApp = isLocalDev
   : new SvelteApp(`Guesstimator-${stack}-App`, {
       subDomain,
       apexDomain,
-      tags,
     });
 
-const database = new Database(`Guesstimator-${stack}-Database`, { tags });
+const database = new Database(`Guesstimator-${stack}-Database`);
 const api = new Api(`Guesstimator-${stack}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: isLocalDev ? null : apexDomain,
   database,
-  tags,
 });
 
 // These are needed by deploy-dev.sh or GitHub actions

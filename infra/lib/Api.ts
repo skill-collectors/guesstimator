@@ -9,7 +9,6 @@ export interface ApiArgs {
   subDomain: string;
   apexDomain: string | null;
   database: Database;
-  tags: { [key: string]: string };
 }
 
 export default class Api extends pulumi.ComponentResource {
@@ -22,8 +21,6 @@ export default class Api extends pulumi.ComponentResource {
     opts?: pulumi.ComponentResourceOptions
   ) {
     super("pkg:index:Api", name, args, opts);
-
-    const tags = args.tags;
 
     // Create lambda role with basic execution policy
     const callbackFunction = buildCallbackFunction();
@@ -70,15 +67,11 @@ export default class Api extends pulumi.ComponentResource {
       this.url = api.url;
     } else {
       const apiDomainName = addDomainName(args.subDomain, args.apexDomain);
-      new aws.apigateway.BasePathMapping(
-        `${name}-BasePathMapping`,
-        {
-          restApi: api.api.id,
-          stageName: api.stage.stageName,
-          domainName: apiDomainName.domainName,
-        },
-        tags
-      );
+      new aws.apigateway.BasePathMapping(`${name}-BasePathMapping`, {
+        restApi: api.api.id,
+        stageName: api.stage.stageName,
+        domainName: apiDomainName.domainName,
+      });
       this.url = apiDomainName.domainName.apply(
         (domain) => `https://${domain}`
       );
@@ -99,7 +92,6 @@ export default class Api extends pulumi.ComponentResource {
             },
           ],
         }),
-        tags,
       });
 
       new aws.iam.RolePolicyAttachment(
@@ -112,7 +104,7 @@ export default class Api extends pulumi.ComponentResource {
 
       // Attach policy to allow DB access
       const tableAccessPolicy = args.database.table.arn.apply((arn) =>
-        dynamoTableAccessPolicy(`${name}-AccessPolicy`, arn, tags)
+        dynamoTableAccessPolicy(`${name}-AccessPolicy`, arn)
       );
 
       new aws.iam.RolePolicyAttachment(`${name}-ProxyRolePolicyAttachment`, {
@@ -125,7 +117,6 @@ export default class Api extends pulumi.ComponentResource {
         {
           role: lambdaRole,
           callback: createRouter(args.database.table.name),
-          tags,
         }
       );
       return callbackFunction;
@@ -136,7 +127,6 @@ export default class Api extends pulumi.ComponentResource {
         name: `${name}-GlobalApiKey`,
         description: "Global API Key",
         enabled: true,
-        tags,
       });
 
       const usagePlan = new aws.apigateway.UsagePlan(`${name}-UsagePlan`, {
@@ -155,7 +145,6 @@ export default class Api extends pulumi.ComponentResource {
           burstLimit: 1000,
           rateLimit: 500,
         },
-        tags,
       });
 
       new aws.apigateway.UsagePlanKey(`${name}-UsagePlanKey`, {
@@ -176,7 +165,6 @@ export default class Api extends pulumi.ComponentResource {
       const certificate = new aws.acm.Certificate(`${name}-Certificate`, {
         domainName: fullDomain,
         validationMethod: "DNS",
-        tags,
       });
 
       const certificateValidationDomain = new aws.route53.Record(
@@ -187,8 +175,7 @@ export default class Api extends pulumi.ComponentResource {
           type: certificate.domainValidationOptions[0].resourceRecordType,
           records: [certificate.domainValidationOptions[0].resourceRecordValue],
           ttl: 300,
-        },
-        tags
+        }
       );
 
       const certificateValidation = new aws.acm.CertificateValidation(
@@ -204,7 +191,6 @@ export default class Api extends pulumi.ComponentResource {
         {
           certificateArn: certificateValidation.certificateArn,
           domainName: fullDomain,
-          tags,
         }
       );
       new aws.route53.Record(`${name}-DnsRecord`, {

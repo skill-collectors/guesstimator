@@ -4,7 +4,6 @@ import * as aws from "@pulumi/aws";
 interface SvelteAppArgs {
   subDomain: string;
   apexDomain: string;
-  tags: { [key: string]: string };
 }
 
 export default class SvelteApp extends pulumi.ComponentResource {
@@ -21,15 +20,12 @@ export default class SvelteApp extends pulumi.ComponentResource {
 
     this.domain = `${args.subDomain}.${args.apexDomain}`;
 
-    const tags = args.tags;
-
     this.siteBucket = new aws.s3.Bucket(`${name}-SiteBucket`, {
       bucket: this.domain,
       website: {
         indexDocument: "index.html",
       },
       forceDestroy: true,
-      tags,
     });
 
     const hostedZone = aws.route53.getZone({ name: args.apexDomain });
@@ -38,7 +34,6 @@ export default class SvelteApp extends pulumi.ComponentResource {
     const certificate = new aws.acm.Certificate(`${name}-Certificate`, {
       domainName: this.domain,
       validationMethod: "DNS",
-      tags,
     });
 
     const certificateValidationDomain = new aws.route53.Record(
@@ -122,8 +117,6 @@ export default class SvelteApp extends pulumi.ComponentResource {
         acmCertificateArn: certificateValidation.certificateArn,
         sslSupportMethod: "sni-only",
       },
-
-      tags,
     });
 
     const record = new aws.route53.Record(`${name}-DnsRecord`, {
