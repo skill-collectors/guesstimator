@@ -93,14 +93,14 @@ jobs:
           DISTRIBUTION_ID: ${{ steps.pulumi.outputs.distributionId }}
 
       - name: Install playwright
-        if: env.HAVE_SECRETS == 'true' && github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/agile-poker'
+        if: env.HAVE_SECRETS == 'true' && github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/guesstimator'
         working-directory: frontend
         run: |
           npx playwright install-deps
           npx playwright install
 
       - name: Run Playwright Tests
-        if: env.HAVE_SECRETS == 'true' && github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/agile-poker'
+        if: env.HAVE_SECRETS == 'true' && github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/guesstimator'
         working-directory: frontend
         run: |
           npx playwright test e2e --reporter=html --config playwright.qa.config.ts

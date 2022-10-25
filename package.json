@@ -4,13 +4,13 @@
   "description": "An agile story pointing app built with Svelt, Pulumi, and AWS",
   "author": "dave-burke",
   "license": "AGPL-3.0-or-later",
-  "homepage": "https://github.com/dave-burke/agile-poker#readme",
+  "homepage": "https://github.com/dave-burke/guesstimator#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dave-burke/agile-poker.git"
+    "url": "git+https://github.com/dave-burke/guesstimator.git"
   },
   "bugs": {
-    "url": "https://github.com/dave-burke/agile-poker/issues"
+    "url": "https://github.com/dave-burke/guesstimator/issues"
   },
   "scripts": {
     "check-frontend": "cd frontend && npm run check-all",

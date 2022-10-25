@@ -21,13 +21,13 @@ You will need to install the following software to work on this project.
 Clone the project
 
 ```bash
-git clone https://github.com/dave-burke/agile-poker.git
+git clone https://github.com/dave-burke/guesstimator.git
 ```
 
 Go to the project directory
 
 ```bash
-cd agile-poker
+cd guesstimator
 ```
 
 Run the bootstrap script
@@ -88,4 +88,3 @@ npm run dev
 ```
 
 Browse to http://localhost:5173
-

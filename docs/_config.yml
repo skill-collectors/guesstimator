@@ -23,7 +23,7 @@ title: Guesstimator Developer Documentation
 description: >- # this means to ignore newlines until "baseurl:"
   This site is for technical documentation of the Guesstimator project. It is
   meant to help developers get started and keep track of technical decisions.
-baseurl: "/agile-poker" # the subpath of your site, e.g. /blog
+baseurl: "/guesstimator" # the subpath of your site, e.g. /blog
 url: "https://skill-collectors.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 #github_username:  jekyll
