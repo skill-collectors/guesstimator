@@ -3,12 +3,9 @@ import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 import { registerAutoTags } from "./lib/AutoTag";
+import { subDomain, apiSubDomain, apexDomain } from "./lib/DomainName";
 
 const stack = pulumi.getStack();
-const subDomain = stack === "prod" ? "guesstimator" : `guesstimator-${stack}`;
-const apiSubDomain =
-  stack === "prod" ? "guesstimator-api" : `guesstimator-api-${stack}`;
-const apexDomain = "superfun.link";
 
 const isLocalDev = stack === "localstack";
 
@@ -23,6 +20,7 @@ const svelteApp = isLocalDev
     });
 
 const database = new Database(`Guesstimator-${stack}-Database`);
+
 const api = new Api(`Guesstimator-${stack}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: isLocalDev ? null : apexDomain,
