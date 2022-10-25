@@ -4,24 +4,28 @@ import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 import { registerAutoTags } from "./lib/AutoTag";
 import { subDomain, apiSubDomain, apexDomain } from "./lib/DomainName";
+import { capitalize } from "./lib/utils/StringUtils";
 
+const project = pulumi.getProject();
 const stack = pulumi.getStack();
+
+const resourceNamePrefix = `${capitalize(project)}-${capitalize(stack)}`;
 
 const isLocalDev = stack === "localstack";
 
-registerAutoTags({ org: "tsc", iac: "pulumi", project: "guesstimator", stack });
+registerAutoTags({ org: "tsc", iac: "pulumi", project, stack });
 
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
   ? null
-  : new SvelteApp(`Guesstimator-${stack}-App`, {
+  : new SvelteApp(`${resourceNamePrefix}-App`, {
       subDomain,
       apexDomain,
     });
 
-const database = new Database(`Guesstimator-${stack}-Database`);
+const database = new Database(`${resourceNamePrefix}-Database`);
 
-const api = new Api(`Guesstimator-${stack}-Api`, {
+const api = new Api(`${resourceNamePrefix}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: isLocalDev ? null : apexDomain,
   database,
