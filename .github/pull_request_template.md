@@ -11,5 +11,5 @@ Closes # <!-- Add the ID of the related issue here -->
 - [ ] I have updated the documentation as needed
 - [ ] All PR checks pass
 
-View the latest [QA deploy](https://agile-poker-qa.superfun.link).
+View the latest [QA deploy](https://guesstimator-qa.superfun.link).
 

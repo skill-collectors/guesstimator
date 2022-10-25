@@ -49,11 +49,11 @@ At this point it's s little more likely that something will break. You will have
 
 - If you can determine what dependency caused the break, you could research what changed and do the necessary work to migrate our app to the new version. This is the most ideal solution.
 - If migrating is very hard and would be better handled as a dedicated task, you could just downgrade the package that broke and see if the `check-all` script passes.
-  - If you do this, [create a new task](https://github.com/skill-collectors/agile-poker/issues/new?assignees=&labels=&template=new-task.md&title=) immediately.
+  - If you do this, [create a new task](https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=&template=new-task.md&title=) immediately.
   - Include as much detail as possible, including what error message you are seeing, research you've done, and debugging steps you've tried.
   - If the dependency needs to be updated for a security fix, mark the task _Priority_ as **Urgent**.
 - If it's not clear what dependency caused the break, you could `git checkout . && npm install` to undo the update and then try updating one item at a time.
-- Don't be afraid to ask for help in the [Gitter chat](https://gitter.im/skill-collectors/agile-poker)!
+- Don't be afraid to ask for help in the [Gitter chat](https://gitter.im/skill-collectors/guesstimator)!
 
 ### About dependabot
 

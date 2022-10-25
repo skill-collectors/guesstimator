@@ -6,7 +6,7 @@ permalink: /how-to/edit-docs
 
 Everything in this documentation is a draft and subject to change. If you see something that is incorrect or needs clarification, please help us by updating it!
 
-All of the pages on this site are just markdown files inside the ['docs' directory](https://github.com/skill-collectors/agile-poker/tree/main/docs) of the agile-poker project. You can edit them on your locally cloned copy of the project, or even in the GitHub UI. Just make your changes on a new branch and open a PR.
+All of the pages on this site are just markdown files inside the ['docs' directory](https://github.com/skill-collectors/guesstimator/tree/main/docs) of the guesstimator project. You can edit them on your locally cloned copy of the project, or even in the GitHub UI. Just make your changes on a new branch and open a PR.
 
 ### Viewing the documentation locally
 

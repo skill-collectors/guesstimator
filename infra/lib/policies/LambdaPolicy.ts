@@ -2,10 +2,9 @@ import * as aws from "@pulumi/aws";
 
 export default function dynamoTableAccessPolicy(
   name: string,
-  tableArn: string,
-  tags: { [key: string]: string }
+  tableArn: string
 ) {
-  return new aws.iam.Policy(`${name}AccessPolicy`, {
+  return new aws.iam.Policy(name, {
     policy: JSON.stringify({
       Version: "2012-10-17",
       Statement: [
@@ -39,6 +38,5 @@ export default function dynamoTableAccessPolicy(
         },
       ],
     }),
-    tags,
   });
 }

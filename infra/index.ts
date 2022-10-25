@@ -2,31 +2,33 @@ import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
+import { registerAutoTags } from "./lib/AutoTag";
+import { subDomain, apiSubDomain, apexDomain } from "./lib/DomainName";
+import { capitalize } from "./lib/utils/StringUtils";
 
+const project = pulumi.getProject();
 const stack = pulumi.getStack();
-const subDomain = stack === "prod" ? "agile-poker" : `agile-poker-${stack}`;
-const apiSubDomain =
-  stack === "prod" ? "agile-poker-api" : `agile-poker-api-${stack}`;
-const apexDomain = "superfun.link";
-const tags = { iac: "pulumi", project: "agile-poker", stack };
+
+const resourceNamePrefix = `${capitalize(project)}-${capitalize(stack)}`;
 
 const isLocalDev = stack === "localstack";
+
+registerAutoTags({ org: "tsc", iac: "pulumi", project, stack });
 
 // In localdev, we can just run the app with Vite
 const svelteApp = isLocalDev
   ? null
-  : new SvelteApp(`AgilePoker-${stack}-App`, {
+  : new SvelteApp(`${resourceNamePrefix}-App`, {
       subDomain,
       apexDomain,
-      tags,
     });
 
-const database = new Database(`AgilePoker-${stack}-Database`, { tags });
-const api = new Api(`AgilePoker-${stack}-Api`, {
+const database = new Database(`${resourceNamePrefix}-Database`);
+
+const api = new Api(`${resourceNamePrefix}-Api`, {
   subDomain: apiSubDomain,
   apexDomain: isLocalDev ? null : apexDomain,
   database,
-  tags,
 });
 
 // These are needed by deploy-dev.sh or GitHub actions
