@@ -28,6 +28,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
       website: {
         indexDocument: "index.html",
       },
+      forceDestroy: true,
       tags,
     });
 
