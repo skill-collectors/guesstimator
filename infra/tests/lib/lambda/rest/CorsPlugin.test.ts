@@ -15,48 +15,48 @@ describe("CorsPlugin", () => {
   it("Handles CORS preflight requests", async () => {
     // Given
     const event = stubEvent("OPTIONS", "/", "", {
-      Origin: "http://localhost",
+      origin: "http://localhost",
     });
 
     // When
     const result = await corsHandler(event);
 
     // Then
-    expect(result.headers?.["Access-Control-Allow-Origin"]).toBe(
-      event.headers.Origin
+    expect(result.headers?.["access-control-allow-origin"]).toBe(
+      event.headers.origin
     );
   });
 
   it("Allows expected origins", async () => {
     // Given
     const event = stubEvent("GET", "/", "", {
-      Origin: "http://localhost",
+      origin: "http://localhost",
     });
 
     // When
     const result = await corsHandler(event);
 
     // Then
-    expect(result.headers?.["Access-Control-Allow-Origin"]).toBe(
-      event.headers.Origin
+    expect(result.headers?.["access-control-allow-origin"]).toBe(
+      event.headers.origin
     );
   });
   it("Rejects unexpected origins", async () => {
     // Given
     const event = stubEvent("GET", "/", "", {
-      Origin: "http://example.com",
+      origin: "http://example.com",
     });
 
     // When
     const result = await corsHandler(event);
 
     // Then
-    expect(result.headers?.["Access-Control-Allow-Origin"]).toBeUndefined();
+    expect(result.headers?.["access-control-allow-origin"]).toBeUndefined();
   });
   it("Allows the specified methods", async () => {
     // Given
     const event = stubEvent("GET", "/", "", {
-      Origin: "http://localhost",
+      origin: "http://localhost",
     });
 
     // When
@@ -64,13 +64,13 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(
-      result.multiValueHeaders?.["Access-Control-Allow-Methods"]
+      result.multiValueHeaders?.["access-control-allow-methods"]
     ).toContain("GET");
   });
   it("Allows the specified headers", async () => {
     // Given
     const event = stubEvent("GET", "/", "", {
-      Origin: "http://localhost",
+      origin: "http://localhost",
     });
 
     // When
@@ -78,7 +78,7 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(
-      result.multiValueHeaders?.["Access-Control-Allow-Headers"]
+      result.multiValueHeaders?.["access-control-allow-headers"]
     ).toContain("x-api-key");
   });
 });

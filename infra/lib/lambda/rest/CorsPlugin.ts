@@ -8,22 +8,28 @@ type CorsOptions = {
   allowedMethods: string[];
 };
 
-const ORIGIN = "Origin";
+const ORIGIN = "origin";
 
-const ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
-const ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
+const ACCESS_CONTROL_REQUEST_METHOD = "access-control-request-method";
+const ACCESS_CONTROL_REQUEST_HEADERS = "access-control-request-headers";
 
-const ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-const ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
-const ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+const ACCESS_CONTROL_ALLOW_METHODS = "access-control-allow-methods";
+const ACCESS_CONTROL_ALLOW_HEADERS = "access-control-allow-headers";
+const ACCESS_CONTROL_ALLOW_ORIGIN = "access-control-allow-origin";
 
 export function corsRules(opts: CorsOptions) {
+  function isCors(event: APIGatewayProxyEvent) {
+    return event.headers[ORIGIN] !== undefined;
+  }
   function isAllowedOrigin(event: APIGatewayProxyEvent) {
-    if (event.headers["Origin"] === undefined) {
-      // If the client didn't send an "origin" then they aren't doing CORS
-      return true;
+    if (event.headers[ORIGIN] === undefined) {
+      throw Error("Missing Origin header on request.");
     }
-    return opts.allowedOrigins.includes(event.headers["Origin"]);
+    if (opts.allowedOrigins.includes(event.headers[ORIGIN])) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   function handleInvalid() {
@@ -63,14 +69,24 @@ export function corsRules(opts: CorsOptions) {
   return {
     applyTo(handler: LambdaHandler): LambdaHandler {
       return async (event: APIGatewayProxyEvent) => {
-        if (isAllowedOrigin(event) === false) {
-          return handleInvalid();
+        if (isCors(event)) {
+          console.log("Handling CORS");
+          if (isAllowedOrigin(event) === false) {
+            console.log(`Rejecting invalid origin ${event.headers[ORIGIN]}`);
+            return handleInvalid();
+          }
+          if (isPreflight(event)) {
+            console.log("Handling CORS preflight");
+            return handlePreflight(event);
+          }
+          const response = await handler(event);
+          return applyResponseHeaders(event, response);
+        } else {
+          console.log(
+            `Non-cors request. Headers = ${JSON.stringify(event.headers)}`
+          );
+          return await handler(event);
         }
-        if (isPreflight(event)) {
-          return handlePreflight(event);
-        }
-        const response = await handler(event);
-        return applyResponseHeaders(event, response);
       };
     },
   };

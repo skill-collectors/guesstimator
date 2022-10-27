@@ -57,6 +57,7 @@ class Router {
     this.routes.push(new Route("PATCH", path, handler));
   }
   async run(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+    console.log(`Routing: ${event.httpMethod} ${event.path}`);
     for (const route of this.routes) {
       const params = route.match(event);
       if (params !== null) {
