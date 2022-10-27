@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import UrlPattern = require("url-pattern");
 import DbService from "../DbService";
+import { PathParser } from "./PathParser";
 import { notFound, ok } from "./Response";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "PATCH";
@@ -19,7 +19,7 @@ class Route {
 
   constructor(method: HttpMethod, urlPattern: string, handler: RouteHandler) {
     this.method = method;
-    this.urlPattern = new UrlPattern(urlPattern);
+    this.urlPattern = new PathParser(urlPattern);
     this.handle = handler;
   }
 
