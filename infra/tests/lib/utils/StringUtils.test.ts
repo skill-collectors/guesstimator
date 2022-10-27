@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { capitalize } from "../../lib/utils/StringUtils";
+import { capitalize } from "../../../lib/utils/StringUtils";
 
 describe("StringUtils", () => {
   describe("capitalize", () => {

@@ -8,7 +8,7 @@ export interface Room {
 }
 
 export async function createRoom(): Promise<Room> {
-  return await rest.post("/rooms/new");
+  return await rest.post("/rooms");
 }
 
 export async function getRoom(roomId: string): Promise<Room | null> {

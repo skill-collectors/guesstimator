@@ -1,4 +1,3 @@
-import { ApiArgs } from "../../lib/Api";
 import * as pulumi from "@pulumi/pulumi";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { describe, it, expect, beforeAll, vi } from "vitest";
@@ -27,7 +26,7 @@ pulumi.runtime.setMocks({
 
 describe("infrastructure", () => {
   beforeAll(async function () {
-    vi.mock("../../lib/lambda/Router", () => {
+    vi.mock("../../lib/lambda/Main", () => {
       const mockHandler = function () {
         return async function handleDocument(
           event: APIGatewayProxyEvent
@@ -56,7 +55,6 @@ describe("infrastructure", () => {
       } as unknown as Database,
       apexDomain,
       subDomain,
-      tags: {},
     });
   }
 

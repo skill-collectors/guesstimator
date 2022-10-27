@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as apigateway from "@pulumi/aws-apigateway";
-import { createRouter } from "./lambda/Router";
+import { createRouter } from "./lambda/Main";
 import Database from "./Database";
 import dynamoTableAccessPolicy from "./policies/LambdaPolicy";
 
