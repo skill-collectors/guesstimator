@@ -60,6 +60,15 @@ export default class Api extends pulumi.ComponentResource {
       ],
     });
 
+    // These are created just so that CORS headers are included in the response
+    addGatewayResponse(api.api.id, "429", "QUOTA_EXCEEDED");
+    addGatewayResponse(api.api.id, "429", "THROTTLED");
+    addGatewayResponse(api.api.id, "403", "INVALID_API_KEY");
+    addGatewayResponse(api.api.id, "403", "MISSING_AUTHENTICATION_TOKEN");
+    addGatewayResponse(api.api.id, "404", "RESOURCE_NOT_FOUND");
+    addGatewayResponse(api.api.id, "400", "DEFAULT_4XX");
+    addGatewayResponse(api.api.id, "500", "DEFAULT_5XX");
+
     const apiKey = addApiUsagePlan();
     this.apiKey = apiKey.value;
 
@@ -209,6 +218,31 @@ export default class Api extends pulumi.ComponentResource {
         (domain) => `https://${domain}`
       );
       return url;
+    }
+
+    function addGatewayResponse(
+      restApiId: pulumi.Output<string>,
+      statusCode: string,
+      responseType: string
+    ) {
+      new aws.apigateway.Response(`${name}-GatewayResponse-${responseType}`, {
+        restApiId: api.api.id,
+        responseType,
+        statusCode,
+        responseTemplates: {
+          "application/json": JSON.stringify({
+            message: "$context.error.messageString",
+            type: "$context.error.responseType",
+            statusCode,
+            resourcePath: "$context.resourcePath",
+          }),
+        },
+        responseParameters: {
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+          "gatewayresponse.header.Access-Control-Allow-Headers": "'*'",
+          "gatewayresponse.header.Access-Control-Allow-Methods": "'*'",
+        },
+      });
     }
   }
 }
