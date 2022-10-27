@@ -66,15 +66,7 @@ export default class Api extends pulumi.ComponentResource {
     if (args.apexDomain === null) {
       this.url = api.url;
     } else {
-      const apiDomainName = addDomainName(args.subDomain, args.apexDomain);
-      new aws.apigateway.BasePathMapping(`${name}-BasePathMapping`, {
-        restApi: api.api.id,
-        stageName: api.stage.stageName,
-        domainName: apiDomainName.domainName,
-      });
-      this.url = apiDomainName.domainName.apply(
-        (domain) => `https://${domain}`
-      );
+      this.url = addDomainName(args.subDomain, args.apexDomain);
     }
 
     function buildCallbackFunction() {
@@ -193,6 +185,7 @@ export default class Api extends pulumi.ComponentResource {
           domainName: fullDomain,
         }
       );
+
       new aws.route53.Record(`${name}-DnsRecord`, {
         zoneId: hostedZoneId,
         type: "A",
@@ -205,7 +198,17 @@ export default class Api extends pulumi.ComponentResource {
           },
         ],
       });
-      return apiDomainName;
+
+      new aws.apigateway.BasePathMapping(`${name}-BasePathMapping`, {
+        restApi: api.api.id,
+        stageName: api.stage.stageName,
+        domainName: apiDomainName.domainName,
+      });
+
+      const url = apiDomainName.domainName.apply(
+        (domain) => `https://${domain}`
+      );
+      return url;
     }
   }
 }
