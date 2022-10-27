@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import { describe, it, expect, vi } from "vitest";
 import DbService from "../../../lib/lambda/DbService";
 
 describe("DbService", () => {

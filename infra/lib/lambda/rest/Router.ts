@@ -73,6 +73,10 @@ export function initRouter(tableName: string) {
 
   const router = new Router();
 
+  router.get("/status", async () => {
+    return ok({ status: "UP" });
+  });
+
   router.get("/rooms/:id", async (params) => {
     const roomId = params.id;
     const room = await db.getRoom(roomId.toUpperCase());

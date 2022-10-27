@@ -26,7 +26,7 @@ pulumi.runtime.setMocks({
 
 describe("infrastructure", () => {
   beforeAll(async function () {
-    vi.mock("../../lib/lambda/Main", () => {
+    vi.mock("../../lib/lambda/rest/Main", () => {
       const mockHandler = function () {
         return async function handleDocument(
           event: APIGatewayProxyEvent
