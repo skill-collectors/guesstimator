@@ -3,16 +3,30 @@
  *
  * It has been converted to modern TypeScript and simplified to just param parsing.
  *
- * The main reason for this mini-fork is that the package is not compatible with
- * ES6 modules.
  */
 export class PathParser {
   parts;
 
+  /**
+   * Creates a PathParser for the given url pattern.
+   *
+   * @param {string} urlPattern - A pattern with placeholder values beginning with a colon e.g. /room/:roomId
+   */
   constructor(urlPattern: string) {
     this.parts = urlPattern.replace(/^\//, "").split("/");
   }
 
+  /**
+   * Applies the given absolute URL and determines whether it matches this PathParser.
+   *
+   * Example:
+   * new PathParser("/rooms/:roomId/users/:userId").match("/rooms/123/users/abc")
+   * -> { roomId: "123", userId: "abc" }
+   *
+   * @param {string} url - The url to test. Usually APIGatewayProxyEvent.path
+   * @returns {object} An object with keys for each placeholder and it's corresponding value from the input.
+   *
+   */
   match(url: string): Record<string, string> | null {
     if (url.length) {
       url = url

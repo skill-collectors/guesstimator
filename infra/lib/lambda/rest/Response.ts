@@ -1,3 +1,6 @@
+/*
+ * This file provides convenience functions to simplify the creation of APIGatewayProxyResult objects.
+ */
 import { APIGatewayProxyResult } from "aws-lambda";
 
 export function responseOf(

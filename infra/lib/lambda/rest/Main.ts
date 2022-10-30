@@ -3,6 +3,9 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { corsRules } from "./CorsPlugin";
 import { initRouter } from "./Router";
 
+/**
+ * Creates the main Lambda Function for this REST API.
+ */
 export function createRouter(tableName: pulumi.Output<string>) {
   return async function (event: APIGatewayProxyEvent) {
     const corsPlugin = corsRules({
