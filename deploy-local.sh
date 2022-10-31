@@ -8,8 +8,8 @@ echo "Deploying infrastructure locally"
 cd infra
 pulumilocal up --yes --refresh
 
-apiUrl=$(pulumi stack output apiUrl 2>/dev/null)
-apiKey=$(pulumi stack output --show-secrets apiKey 2>/dev/null)
+apiUrl=$(pulumilocal stack output --stack localstack apiUrl 2>/dev/null)
+apiKey=$(pulumilocal stack output --stack localstack --show-secrets apiKey 2>/dev/null)
 
 cd ../frontend
 echo "Setting env vars"
