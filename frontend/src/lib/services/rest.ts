@@ -7,38 +7,6 @@
  * - throws errors if the response is 4xx or 5xx
  */
 
-const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
-
-/**
- * Wraps fetch() with the assumptions described in the jsdoc at the top of this file.
- *
- * @param method The request method, e.g. "GET" or "POST".
- * @param path The path of the request, not including the baseUrl prefix.
- * @param options Additional options to pass to fetch()
- * @param headers Any headers to add to the request. This method automatically includes the correct 'x-api-key'.
- * @returns The result of the fetch call.
- */
-async function doFetch(
-  method: string,
-  path: string,
-  body: object | null,
-  options: RequestInit,
-  headers: Headers
-) {
-  headers.append("x-api-key", apiKey);
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers,
-    body: body === null ? null : JSON.stringify(body),
-    method,
-    mode: "cors",
-  });
-  await throwIfNotOk(method, path, response);
-  const json = await response.json();
-  return json;
-}
-
 /**
  * Performs a GET request for the given path.
  * @param path The path, not including the API baseUrl, e.g. "/rooms".
@@ -99,6 +67,38 @@ export async function del(
 }
 
 /**
+ * Wraps fetch() with the assumptions described in the jsdoc at the top of this file.
+ *
+ * @param method The request method, e.g. "GET" or "POST".
+ * @param path The path of the request, not including the baseUrl prefix.
+ * @param options Additional options to pass to fetch()
+ * @param headers Any headers to add to the request. This method automatically includes the correct 'x-api-key'.
+ * @returns The result of the fetch call.
+ */
+async function doFetch(
+  method: string,
+  path: string,
+  body: object | null,
+  options: RequestInit,
+  headers: Headers
+) {
+  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+  const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
+
+  headers.append("x-api-key", apiKey);
+  const response = await fetch(`${baseUrl}${path}`, {
+    ...options,
+    headers,
+    body: body === null ? null : JSON.stringify(body),
+    method,
+    mode: "cors",
+  });
+  await throwIfNotOk(method, path, response);
+  const json = await response.json();
+  return json;
+}
+
+/**
  * If the given response is not "OK" (status is not 2xx), then this method
  * throws an appropriate Error.
  *
@@ -119,15 +119,16 @@ async function throwIfNotOk(method: string, path: string, response: Response) {
     } else if (response.status === 404) {
       throw new NotFoundError(method, path, await response.text());
     } else {
+      let json;
       try {
-        const json = await response.json();
-        if ("errorId" in json) {
-          const { errorId, timestamp } = json;
-          throw new ServerErrorWithId(method, path, errorId, timestamp);
-        }
+        json = await response.json();
       } catch (err) {
         // In case of errors parsing JSON on the response
         throw new UnknownServerError(method, path, await response.text());
+      }
+      if ("errorId" in json) {
+        const { errorId, timestamp } = json;
+        throw new ServerErrorWithId(method, path, errorId, timestamp);
       }
     }
     throw new UnknownServerError(method, path, await response.text());
@@ -147,7 +148,7 @@ export class ServerOverLoadedError extends Error {
     super("The API rate limit is exceeded or the quota has been reached.");
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, ServerOverLoadedError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -160,7 +161,7 @@ export class NotFoundError extends Error {
     super(`${method} ${path} => 404 (NOT FOUND): ${responseText}`);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, NotFoundError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -186,7 +187,7 @@ export class ServerErrorWithId extends Error {
     this.timestamp = timestamp;
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, ServerErrorWithId.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -199,6 +200,6 @@ export class UnknownServerError extends Error {
     super(`${method} ${path} => 500 (Internal Server Error): ${responseText}`);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, UnknownServerError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
