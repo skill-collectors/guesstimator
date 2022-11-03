@@ -46,9 +46,10 @@ cd ${rootDir}
 
 cd ${rootDir}/infra
 pulumi plugin install resource aws v4.30.0 # required by @pulumi/aws-apigateway. If you update this, also update cd.yml
-localstack start -d
+docker images localstack/localstack -f dangling=true -q | xargs --no-run-if-empty docker rmi # Remove old versions
 localstack update all
-pulumilocal up --yes
+localstack start -d
+pulumilocal up --refresh --yes
 cd ${rootDir}
 
 npm run check-all

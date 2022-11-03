@@ -18,4 +18,20 @@ describe("Main", () => {
     // Then
     expect(JSON.parse(result.body).status).toBe("UP");
   });
+  it("Generates and returns an errorId on unexpected Errors", async () => {
+    // Given
+    const tableName = pulumi.Output.create("TableName");
+    vi.spyOn(tableName, "get").mockImplementation(() => {
+      throw new Error("Boom!");
+    });
+
+    const event = stubEvent("GET", "/status");
+    const main = createRouter(tableName);
+
+    // When
+    const result = await main(event);
+
+    // Then
+    expect(JSON.parse(result.body).errorId).toBeTruthy();
+  });
 });

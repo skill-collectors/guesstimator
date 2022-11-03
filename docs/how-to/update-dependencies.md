@@ -6,6 +6,8 @@ permalink: /how-to/update-dependencies
 
 ## _Before_ you update anything
 
+Fetch the `main` branch and create a new branch from the latest commit on `main`. A good name for the branch would be `[yyyy-mm-dd]-dependency-updates` (as in, `2022-11-01-dependency-updates`).
+
 Run `npm check-all` from the project root directory to verify that everything is currently working on your device.
 
 ## Update minor versions

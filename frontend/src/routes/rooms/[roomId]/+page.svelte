@@ -1,11 +1,13 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import * as localStorage from "$lib/services/localStorage";
+  import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
-  import { error } from "@sveltejs/kit";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
+  import InvalidRoom from "./InvalidRoom.svelte";
 
+  let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
   let roomData: Room | null = null;
@@ -13,14 +15,17 @@
 
   onMount(async () => {
     roomData = localStorage.getRoom(roomId);
-    if (roomData === null) {
-      roomData = await rooms.getRoom(roomId);
+    try {
       if (roomData === null) {
-        throw error(404, "Not found");
+        roomData = await rooms.getRoom(roomId);
+        localStorage.setRoom(roomData);
       }
-      localStorage.setRoom(roomData);
+      sizeValues = roomData.validSizes.split(" ");
+    } catch (err) {
+      if (err instanceof ApiEndpointNotFoundError) {
+        notFound = true;
+      }
     }
-    sizeValues = roomData.validSizes.split(" ");
   });
 
   let selectedSize = "";
@@ -37,13 +42,15 @@
   }
 </script>
 
-<header class="mt-8">
-  Room URL: {url}
-  <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
-</header>
-{#if roomData === null}
+{#if notFound}
+  <InvalidRoom />
+{:else if roomData === null}
   <p>Loading room...</p>
 {:else}
+  <header class="mt-8">
+    Room URL: {url}
+    <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
+  </header>
   <section class="mt-8">
     <h3 class="heading h-sub">Current votes:</h3>
     <p>

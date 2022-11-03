@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <div class="text-center">
   <h2 class="heading h-main">Welcome to</h2>
   <h1 class="heading h-title">The Guesstimator</h1>
