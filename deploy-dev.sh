@@ -7,7 +7,7 @@ cd $(dirname $0)
 echo "Deploying infrastructure"
 cd infra
 pulumi stack select dev
-pulumi up -y
+pulumi up --refresh --yes
 
 bucketName=$(pulumi stack output -s dev bucketName 2>/dev/null)
 distributionId=$(pulumi stack output -s dev distributionId 2>/dev/null)
