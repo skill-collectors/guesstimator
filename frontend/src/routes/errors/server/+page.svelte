@@ -20,7 +20,7 @@
   {#if errorId}
     <p>If you create a bug report, please include the following details:</p>
     <ul class="list-disc">
-      <li><strong>Error ID: </strong>{errorId}</li>
+      <li><strong>Error ID: </strong><span id="errorId">{errorId}</span></li>
       {#if timestamp}
         <li><strong>Timestamp: </strong>{timestamp}</li>
       {/if}

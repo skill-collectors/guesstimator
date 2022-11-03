@@ -12,5 +12,5 @@ test("Displays a custom error for an invalid room", async ({ page }) => {
 
 test("Server error page displays the errorId if provided", async ({ page }) => {
   await page.goto("/errors/server?errorId=123abc");
-  expect(await page.textContent("body")).toContain("123abc");
+  expect(await page.textContent("#errorId")).toBe("123abc");
 });
