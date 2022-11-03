@@ -4,13 +4,15 @@ title: How to create Svelte components
 permalink: /how-to/svelte-components
 ---
 
-If you are new to Svelte, we recommend starting with [the official tutorial](https://svelte.dev/tutorial/basics). You can also learn a lot just reading through [the docs](https://svelte.dev/docs) and reviewing [the examples](https://svelte.dev/examples/hello-world).
+If you are new to Svelte, we recommend starting with [the official tutorial](https://svelte.dev/tutorial/basics). You can also learn a lot just reading through [the docs](https://svelte.dev/docs) and reviewing [the examples](https://svelte.dev/examples/hello-world). This application uses [SvelteKit](https://kit.svelte.dev/) which is an application framework built on top of Svelte to provide things like routing. Reading the [SvelteKit docs](https://kit.svelte.dev/docs/introduction) is also highly recommended.
 
 ## Create a new file
 
-If you are making a whole new page, create a file at `src/routes/[page name].svelte` (example: `routes/my-page.svelte` will be available at `/my-page` when the app is running).
+If you are making a whole new page, create a file at `src/routes/[page name]/+page.svelte` (example: `routes/my-page/+page.svelte` will be available at `/my-page` when the app is running). If you're not used to it, this file naming convention may seem unusual. [Read the docs](https://kit.svelte.dev/docs/routing).
 
-If you are making a new UI element to be used within a page, create a new file in `lib/components` (example: `lib/components/MyComponent.svelte`).
+If you are making a new UI element to be used in a single page, create a new file in `src/routes/[page name]` (example: `src/routes/[page name]/MyComponent.svelte`).
+
+If you are making a new UI element to be used in multiple pages, create a new file in `src/lib/components` (example: `src/lib/components/MyComponent.svelte`).
 
 If you are creating a complex component that is composed of other sub-components, you can create a directory to contain it, like this:
 
