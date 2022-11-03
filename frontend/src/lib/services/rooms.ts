@@ -11,7 +11,7 @@ export async function createRoom(): Promise<Room> {
   return await rest.post("/rooms");
 }
 
-export async function getRoom(roomId: string): Promise<Room | null> {
+export async function getRoom(roomId: string): Promise<Room> {
   return await rest.get(`/rooms/${roomId}`);
 }
 
