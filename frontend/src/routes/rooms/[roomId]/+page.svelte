@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import * as localStorage from "$lib/services/localStorage";
-  import { NotFoundError } from "$lib/services/rest";
+  import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
   import { onMount } from "svelte";
@@ -22,7 +22,7 @@
       }
       sizeValues = roomData.validSizes.split(" ");
     } catch (err) {
-      if (err instanceof NotFoundError) {
+      if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;
       }
     }

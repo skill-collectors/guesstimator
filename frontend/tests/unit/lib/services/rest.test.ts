@@ -76,7 +76,7 @@ describe("rest", () => {
   });
 
   describe("error handling", () => {
-    it("throws ServerOverLoadedError for 429", async () => {
+    it("throws ApiOverloadedError for 429", async () => {
       // Given
       mockFetch.mockImplementationOnce(() => mockResponse(429, "Overloaded!"));
 
@@ -87,10 +87,10 @@ describe("rest", () => {
         await rest.get(path);
       } catch (err) {
         // Then
-        expect(err).toBeInstanceOf(rest.ServerOverLoadedError);
+        expect(err).toBeInstanceOf(rest.ApiOverloadedError);
       }
     });
-    it("throws NotFoundError for 404", async () => {
+    it("throws ApiEndpointNotFoundError for 404", async () => {
       // Given
       mockFetch.mockImplementationOnce(() => mockResponse(404, "Not found!"));
 
@@ -101,10 +101,10 @@ describe("rest", () => {
         await rest.get(path);
       } catch (err) {
         // Then
-        expect(err).toBeInstanceOf(rest.NotFoundError);
+        expect(err).toBeInstanceOf(rest.ApiEndpointNotFoundError);
       }
     });
-    it("throws ServerErrorWithId for 500 if errorId is included in the response", async () => {
+    it("throws ApiErrorWithId for 500 if errorId is included in the response", async () => {
       // Given
       mockFetch.mockImplementationOnce(() =>
         mockResponse(500, {
@@ -120,11 +120,11 @@ describe("rest", () => {
         await rest.get(path);
       } catch (err) {
         // Then
-        expect(err).toBeInstanceOf(rest.ServerErrorWithId);
-        expect((err as rest.ServerErrorWithId).errorId).toBe("ABCD1234");
+        expect(err).toBeInstanceOf(rest.ApiErrorWithId);
+        expect((err as rest.ApiErrorWithId).errorId).toBe("ABCD1234");
       }
     });
-    it("throws UnknownServerError for 500 if errorId is NOT included in the response", async () => {
+    it("throws ApiUnknownError for 500 if errorId is NOT included in the response", async () => {
       // Given
       mockFetch.mockImplementationOnce(() => mockResponse(500, "No error ID!"));
 
@@ -135,7 +135,7 @@ describe("rest", () => {
         await rest.get(path);
       } catch (err) {
         // Then
-        expect(err).toBeInstanceOf(rest.UnknownServerError);
+        expect(err).toBeInstanceOf(rest.ApiUnknownError);
       }
     });
   });

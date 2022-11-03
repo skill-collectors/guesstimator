@@ -12,12 +12,12 @@ Functions in `rest.ts` are `async` and should be called using the `async/await` 
 
 Functions on `rest.ts` will throw the following errors on 4xx or 5xx response codes:
 
-- **ServerOverLoadedError**: If the server returns 429
-- **NotFoundError**: If the server returns 404
-- **ServerErrorWithId**: If the server returns 500 with an 'errorId' on the response JSON.
-- **UnknownServerError**: If the server returns something unexpected.
+- **ApiOverloadedError**: If the server returns 429
+- **ApiEndpointNotFoundError**: If the server returns 404
+- **ApiErrorWithId**: If the server returns 500 with an 'errorId' on the response JSON.
+- **ApiUnknownError**: If the server returns something unexpected.
 
-These are caught and handled with generic error pages in `src/routes/+layout.svelte`, but you should consider whether your page should handle them directly. For example, `src/rooms/[roomId]/+page.svelte` intentionally handles `NotFoundError` in order to explain that the room doesn't exist.
+These are caught and handled with generic error pages in `src/routes/+layout.svelte`, but you should consider whether your page should handle them directly. For example, `src/rooms/[roomId]/+page.svelte` intentionally handles `ApiEndpointNotFoundError` in order to explain that the room doesn't exist.
 
 Putting it all together, here's an example:
 
@@ -26,7 +26,7 @@ async function callApi(myParam: string) {
   try {
     rest.get(`/my/endpoint/${myParam}`);
   } catch (err) {
-    if (err instanceof NotFoundError) {
+    if (err instanceof ApiEndpointNotFoundError) {
       // situation-specific handling of a 404
     }
   }

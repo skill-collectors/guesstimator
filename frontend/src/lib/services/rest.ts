@@ -13,10 +13,10 @@
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
- * @throws {ServerOverLoadedError} If the server returns 429
- * @throws {NotFoundError} If the server returns 404
- * @throws {ServerErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
- * @throws {UnknownServerError} If the server returns something unexpected.
+ * @throws {ApiOverloadedError} If the server returns 429
+ * @throws {ApiEndpointNotFoundError} If the server returns 404
+ * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
+ * @throws {ApiUnknownError} If the server returns something unexpected.
  */
 export async function get(
   path: string,
@@ -33,10 +33,10 @@ export async function get(
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
- * @throws {ServerOverLoadedError} If the server returns 429
- * @throws {NotFoundError} If the server returns 404
- * @throws {ServerErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
- * @throws {UnknownServerError} If the server returns something unexpected.
+ * @throws {ApiOverloadedError} If the server returns 429
+ * @throws {ApiEndpointNotFoundError} If the server returns 404
+ * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
+ * @throws {ApiUnknownError} If the server returns something unexpected.
  */
 export async function post(
   path: string,
@@ -53,10 +53,10 @@ export async function post(
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
- * @throws {ServerOverLoadedError} If the server returns 429
- * @throws {NotFoundError} If the server returns 404
- * @throws {ServerErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
- * @throws {UnknownServerError} If the server returns something unexpected.
+ * @throws {ApiOverloadedError} If the server returns 429
+ * @throws {ApiEndpointNotFoundError} If the server returns 404
+ * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
+ * @throws {ApiUnknownError} If the server returns something unexpected.
  */
 export async function del(
   path: string,
@@ -107,31 +107,31 @@ async function doFetch(
  * @param method The method that was called, e.g. "GET" or "POST".
  * @param path The path requested from the server.
  * @param response The response received from "fetch".
- * @throws {ServerOverLoadedError} If the server returns 429
- * @throws {NotFoundError} If the server returns 404
- * @throws {ServerErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
- * @throws {UnknownServerError} If the server returns something unexpected.
+ * @throws {ApiOverloadedError} If the server returns 429
+ * @throws {ApiEndpointNotFoundError} If the server returns 404
+ * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
+ * @throws {ApiUnknownError} If the server returns something unexpected.
  */
 async function throwIfNotOk(method: string, path: string, response: Response) {
   if (!response.ok) {
     if (response.status === 429) {
-      throw new ServerOverLoadedError();
+      throw new ApiOverloadedError();
     } else if (response.status === 404) {
-      throw new NotFoundError(method, path, await response.text());
+      throw new ApiEndpointNotFoundError(method, path, await response.text());
     } else {
       let json;
       try {
         json = await response.json();
       } catch (err) {
         // In case of errors parsing JSON on the response
-        throw new UnknownServerError(method, path, await response.text());
+        throw new ApiUnknownError(method, path, await response.text());
       }
       if ("errorId" in json) {
         const { errorId, timestamp } = json;
-        throw new ServerErrorWithId(method, path, errorId, timestamp);
+        throw new ApiErrorWithId(method, path, errorId, timestamp);
       }
     }
-    throw new UnknownServerError(method, path, await response.text());
+    throw new ApiUnknownError(method, path, await response.text());
   }
 }
 
@@ -143,7 +143,7 @@ async function throwIfNotOk(method: string, path: string, response: Response) {
 /**
  * Thrown if the gateway response with 429 because the usage plan was exceeded.
  */
-export class ServerOverLoadedError extends Error {
+export class ApiOverloadedError extends Error {
   constructor() {
     super("The API rate limit is exceeded or the quota has been reached.");
 
@@ -156,7 +156,7 @@ export class ServerOverLoadedError extends Error {
  * Thrown if the gateway response with 404. This would happen if the user does
  * something like request a room that no longer exists.
  */
-export class NotFoundError extends Error {
+export class ApiEndpointNotFoundError extends Error {
   constructor(method: string, path: string, responseText: string) {
     super(`${method} ${path} => 404 (NOT FOUND): ${responseText}`);
 
@@ -170,7 +170,7 @@ export class NotFoundError extends Error {
  * errorId and timestamp should be given to the user so they can include it if
  * they create an issue in GitHub.
  */
-export class ServerErrorWithId extends Error {
+export class ApiErrorWithId extends Error {
   errorId;
   timestamp;
 
@@ -195,7 +195,7 @@ export class ServerErrorWithId extends Error {
  * Thrown if we get something other than the other defined error types. This
  * should never happen normally and probably represents a programming error.
  */
-export class UnknownServerError extends Error {
+export class ApiUnknownError extends Error {
   constructor(method: string, path: string, responseText: string) {
     super(`${method} ${path} => 500 (Internal Server Error): ${responseText}`);
 
