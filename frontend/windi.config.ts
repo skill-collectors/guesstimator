@@ -2,7 +2,6 @@ import { defineConfig } from "windicss/helpers";
 
 export default defineConfig({
   shortcuts: {
-    "text-input": "rounded border border-gray-400 pl-1",
     btn: "rounded font-semibold p-2",
     primary: "bg-blue-900 text-blue-50",
     secondary: "bg-slate-800 text-slate-50",

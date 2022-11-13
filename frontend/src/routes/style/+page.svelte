@@ -2,6 +2,7 @@
   import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
   import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgLink from "$lib/components/base/TgLink.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
@@ -31,14 +32,14 @@
     <legend class="font-bold mb-2">Input types</legend>
     <div class="mb-2">
       <label for="text">Text:</label>
-      <input name="text" type="text" class="text-input" value="text input" />
+      <TgInputText name="text" value="text input" />
     </div>
     <div class="mb-2">
       <label for="number">Numeric:</label>
       <input
         name="number"
         type="numeric"
-        class="text-input"
+        class="rounded border border-gray-400 pl-1"
         min="0"
         max="10"
         step="1"
