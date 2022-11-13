@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import * as localStorage from "$lib/services/localStorage";
@@ -51,7 +52,7 @@
 {:else}
   <header class="mt-8">
     Room URL: {url}
-    <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
+    <TgButton type="danger" class="m-2" on:click={handleDeleteRoom}>X</TgButton>
   </header>
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
@@ -68,12 +69,14 @@
     <TgHeadingSub>Your votes:</TgHeadingSub>
     {#each sizeValues as size}
       {#if size === selectedSize}
-        <button class="btn primary m-2" on:click={() => setSelection()}
-          >{size}</button
+        <TgButton type="primary" class="m-2" on:click={() => setSelection()}
+          >{size}</TgButton
         >
       {:else}
-        <button class="btn secondary m-2" on:click={() => setSelection(size)}
-          >{size}</button
+        <TgButton
+          type="secondary"
+          class="m-2"
+          on:click={() => setSelection(size)}>{size}</TgButton
         >
       {/if}
     {/each}

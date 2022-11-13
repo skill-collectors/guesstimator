@@ -1,4 +1,5 @@
 <script>
+  import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
   import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
@@ -77,10 +78,10 @@
   </div>
   <section class="mb-2">
     <h4 class="heading">Buttons:</h4>
-    <button class="btn primary">Primary</button>
-    <button class="btn secondary">Secondary</button>
-    <button class="btn success">Success</button>
-    <button class="btn danger">Danger</button>
+    <TgButton type="primary">Primary</TgButton>
+    <TgButton type="secondary">Secondary</TgButton>
+    <TgButton type="success">Success</TgButton>
+    <TgButton type="danger">Danger</TgButton>
   </section>
   <section>
     <h4 class="heading">Cards:</h4>
