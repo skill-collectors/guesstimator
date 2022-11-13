@@ -1,12 +1,13 @@
 <script>
   import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
+  import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import Card from "$lib/components/Card.svelte";
 </script>
 
 <TgHeadingMain>Main Heading</TgHeadingMain>
 <TgHeadingSub>Subheading</TgHeadingSub>
-<h4 class="heading">Minor heading</h4>
+<TgHeadingMinor>Minor heading</TgHeadingMinor>
 <p>
   This is a paragraph. Visit a <a class="link" href="example.com">Link</a>
 </p>
