@@ -1,1 +1,8 @@
-<h1 class="font-bold font-sans mb-2 uppercase text-6xl"><slot /></h1>
+<script type="ts">
+  let additionalClasses = "";
+  export { additionalClasses as class };
+</script>
+
+<h1 class={`font-bold font-sans mb-2 uppercase text-6xl ${additionalClasses}`}>
+  <slot />
+</h1>
