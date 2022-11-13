@@ -3,6 +3,7 @@
   import { createRoom } from "$lib/services/rooms";
   import type { Room } from "$lib/services/rooms";
   import { setRoom } from "$lib/services/localStorage";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 
   let roomData: Room;
   onMount(async () => {
@@ -13,5 +14,5 @@
 </script>
 
 {#if roomData == null}
-  <p>Hang on while we get a room ready for you...</p>
+  <TgParagraph>Hang on while we get a room ready for you...</TgParagraph>
 {/if}

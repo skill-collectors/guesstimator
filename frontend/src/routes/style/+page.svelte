@@ -2,28 +2,29 @@
   import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
   import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
 </script>
 
 <TgHeadingMain>Main Heading</TgHeadingMain>
 <TgHeadingSub>Subheading</TgHeadingSub>
 <TgHeadingMinor>Minor heading</TgHeadingMinor>
-<p>
+<TgParagraph>
   This is a paragraph. Visit a <a class="link" href="example.com">Link</a>
-</p>
+</TgParagraph>
 
-<p>
+<TgParagraph>
   This is another paragraph. Team management the daily in basis, resulted
   influencing has the member goals. team which one product when backlog
   meaningful tickets be testing should burndown chart
-</p>
-<p>
+</TgParagraph>
+<TgParagraph>
   sprint agile software development sprint while the scope of potentially
   shippable. product technical debt branching epic product owner from product
   backlog is especially during the scrummaster must not estimates for the sprint
   retrospective meeting (i.e. yesterday)" "what went well and adapt process
   otherwise, the result build in the scrum meetings
-</p>
+</TgParagraph>
 <form>
   <fieldset class="flex flex-col">
     <legend class="font-bold mb-2">Input types</legend>

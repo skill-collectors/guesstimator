@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
@@ -46,7 +47,7 @@
 {#if notFound}
   <InvalidRoom />
 {:else if roomData === null}
-  <p>Loading room...</p>
+  <TgParagraph>Loading room...</TgParagraph>
 {:else}
   <header class="mt-8">
     Room URL: {url}
@@ -54,14 +55,14 @@
   </header>
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    <p>
+    <TgParagraph>
       Cards are
       {#if roomData.isRevealed}
         <strong>visible</strong>
       {:else}
         <strong>not visible</strong>
       {/if}
-    </p>
+    </TgParagraph>
   </section>
   <section class="mt-32">
     <TgHeadingSub>Your votes:</TgHeadingSub>
