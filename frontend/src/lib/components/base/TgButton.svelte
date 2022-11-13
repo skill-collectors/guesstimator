@@ -1,5 +1,5 @@
 <script type="ts">
-  let type: "primary" | "secondary" | "danger" | "success";
+  export let type: "primary" | "secondary" | "danger" | "success";
 </script>
 
 {#if type === "primary"}
