@@ -1,11 +1,15 @@
+<script>
+  import TgLink from "./base/TgLink.svelte";
+</script>
+
 <footer class="text-center p-3">
-  <a class="link" href="https://github.com/skill-collectors/guesstimator"
-    >source code</a
-  >
+  <TgLink href="https://github.com/skill-collectors/guesstimator">
+    source code
+  </TgLink>
   (AGPL) |
-  <a class="link" href="https://skill-collectors.github.io/guesstimator"
-    >dev docs</a
-  >
+  <TgLink href="https://skill-collectors.github.io/guesstimator">
+    dev docs
+  </TgLink>
   |
-  <a class="link" href="/style">style demo</a>
+  <TgLink href="/style">style demo</TgLink>
 </footer>

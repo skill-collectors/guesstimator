@@ -8,6 +8,5 @@ export default defineConfig({
     secondary: "bg-slate-800 text-slate-50",
     danger: "bg-orange-800 text-orange-50",
     success: "bg-lime-800 text-lime-50",
-    link: "text-blue-800 font-medium",
   },
 });
