@@ -1,8 +1,9 @@
 <script>
+  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
   import Card from "$lib/components/Card.svelte";
 </script>
 
-<h2 class="heading h-main">Main Heading</h2>
+<TgHeadingMain>Main Heading</TgHeadingMain>
 <h3 class="heading h-sub">Subheading</h3>
 <h4 class="heading">Minor heading</h4>
 <p>

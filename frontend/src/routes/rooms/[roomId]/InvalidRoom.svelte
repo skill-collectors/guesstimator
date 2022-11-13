@@ -1,4 +1,8 @@
-<h1 class="h-main">Couldn't find that room</h1>
+<script>
+  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
+</script>
+
+<TgHeadingMain>Couldn't find that room</TgHeadingMain>
 <p>
   The room you tried to go to doesn't exist. The URL may be incorrect, or the
   room may have been deleted if it hasn't been used in a while. You can always <a

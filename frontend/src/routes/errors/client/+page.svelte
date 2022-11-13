@@ -1,6 +1,10 @@
-<h1 class="h-main">
+<script>
+  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
+</script>
+
+<TgHeadingMain>
   The application was not able to complete the requested action
-</h1>
+</TgHeadingMain>
 <p>
   We could not complete the last operation due to a problem on our end. Please
   try again, or if the issue keeps happening you can

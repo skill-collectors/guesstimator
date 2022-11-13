@@ -1,4 +1,8 @@
-<h1 class="h-main">Couldn't find the requested data</h1>
+<script>
+  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
+</script>
+
+<TgHeadingMain>Couldn't find the requested data</TgHeadingMain>
 <p>
   The application requested some data that couldn't be found. Please try again,
   or if the issue keeps happening you can
