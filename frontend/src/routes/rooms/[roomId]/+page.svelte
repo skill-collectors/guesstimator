@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
@@ -52,7 +53,7 @@
     <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
   </header>
   <section class="mt-8">
-    <h3 class="heading h-sub">Current votes:</h3>
+    <TgHeadingSub>Current votes:</TgHeadingSub>
     <p>
       Cards are
       {#if roomData.isRevealed}
@@ -63,7 +64,7 @@
     </p>
   </section>
   <section class="mt-32">
-    <h3 class="heading h-sub">Your vote:</h3>
+    <TgHeadingSub>Your votes:</TgHeadingSub>
     {#each sizeValues as size}
       {#if size === selectedSize}
         <button class="btn primary m-2" on:click={() => setSelection()}
