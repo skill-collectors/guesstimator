@@ -9,7 +9,6 @@ export default defineConfig({
     danger: "bg-orange-800 text-orange-50",
     success: "bg-lime-800 text-lime-50",
     heading: "font-bold font-sans mb-2",
-    "h-title": "uppercase text-6xl",
     "h-sub": "text-2xl text-slate-700",
     link: "text-blue-800 font-medium",
   },
