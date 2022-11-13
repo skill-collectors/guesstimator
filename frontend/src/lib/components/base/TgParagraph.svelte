@@ -3,4 +3,4 @@
   export { additionalClasses as class };
 </script>
 
-<p class={`mb-1 ${additionalClasses}`}><slot /></p>
+<p class={`mb-4 ${additionalClasses}`}><slot /></p>

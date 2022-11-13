@@ -3,6 +3,6 @@
   export { additionalClasses as class };
 </script>
 
-<h1 class={`font-bold font-sans mb-2 uppercase text-6xl ${additionalClasses}`}>
+<h1 class={`font-bold font-sans mb-8 uppercase text-6xl ${additionalClasses}`}>
   <slot />
 </h1>
