@@ -1,6 +1,6 @@
 <script type="ts">
   export let type: "primary" | "secondary" | "danger" | "success";
-  export let href: string | undefined;
+  export let href: string | undefined = undefined;
   let additionalClasses = "";
   export { additionalClasses as class };
 </script>
