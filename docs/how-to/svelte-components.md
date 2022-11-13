@@ -60,6 +60,10 @@ You do this:
 
 Because of this you will generally not create a `<style>` section in your component.
 
-If you find yourself needing to repeat a set of classes over and over, you can create a shortcut in `windi.config.ts` (you can look at the existing shortcuts there for examples).
+### Base components
 
-**NOTE:** Windi applies a CSS "reset" (see [Preflight](https://tailwindcss.com/docs/preflight)) so by default elements like `<h1>` or `<a>` _do not_ have any styles applied. This gives us a blank canvas to start from and avoids any browser-specific default styles. When you create a component, you will need to define your own style or consider using the shortcuts that are already defined in `windi.config.ts`.
+Windi applies a CSS "reset" (see [Preflight](https://tailwindcss.com/docs/preflight)) so by default elements like `<h1>` or `<a>` _do not_ have any styles applied. This gives us a blank canvas to start from and avoids problems when different browsers have different default styles.
+
+We want the site to have a consistent look and feel, and we don't want to have to duplicate the same set of attributes on e.g. every single `<button>` tag. One solution is to use [WindiCSS shortcuts](https://windicss.org/features/shortcuts.html), but it's hard to remember exactly what they are ("btn primary" or "btn-primary"?) and there's no typeahead. Instead, we have a set of "base components" (in `frontend/src/lib/components/base/`) that simply wrap basic HTML elements with consistent styling.
+
+As a matter of course, the "base components" should be used, but if there is a specific reason for an element to look different in a specific context, it's okay to use e.g. a raw `<button>` in that case.
