@@ -1,39 +1,46 @@
 <script>
+  import TgButton from "$lib/components/base/TgButton.svelte";
+  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
+  import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
+  import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgInputText from "$lib/components/base/TgInputText.svelte";
+  import TgLink from "$lib/components/base/TgLink.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
 </script>
 
-<h2 class="heading h-main">Main Heading</h2>
-<h3 class="heading h-sub">Subheading</h3>
-<h4 class="heading">Minor heading</h4>
-<p>
-  This is a paragraph. Visit a <a class="link" href="example.com">Link</a>
-</p>
+<TgHeadingMain>Main Heading</TgHeadingMain>
+<TgHeadingSub>Subheading</TgHeadingSub>
+<TgHeadingMinor>Minor heading</TgHeadingMinor>
+<TgParagraph>
+  This is a paragraph. Visit a <TgLink href="example.com">Link</TgLink>
+</TgParagraph>
 
-<p>
+<TgParagraph>
   This is another paragraph. Team management the daily in basis, resulted
   influencing has the member goals. team which one product when backlog
   meaningful tickets be testing should burndown chart
-</p>
-<p>
+</TgParagraph>
+<TgParagraph>
   sprint agile software development sprint while the scope of potentially
   shippable. product technical debt branching epic product owner from product
   backlog is especially during the scrummaster must not estimates for the sprint
   retrospective meeting (i.e. yesterday)" "what went well and adapt process
   otherwise, the result build in the scrum meetings
-</p>
+</TgParagraph>
 <form>
   <fieldset class="flex flex-col">
     <legend class="font-bold mb-2">Input types</legend>
     <div class="mb-2">
       <label for="text">Text:</label>
-      <input name="text" type="text" class="text-input" value="text input" />
+      <TgInputText name="text" value="text input" />
     </div>
     <div class="mb-2">
       <label for="number">Numeric:</label>
       <input
         name="number"
         type="numeric"
-        class="text-input"
+        class="rounded border border-gray-400 pl-1"
         min="0"
         max="10"
         step="1"
@@ -71,10 +78,10 @@
   </div>
   <section class="mb-2">
     <h4 class="heading">Buttons:</h4>
-    <button class="btn primary">Primary</button>
-    <button class="btn secondary">Secondary</button>
-    <button class="btn success">Success</button>
-    <button class="btn danger">Danger</button>
+    <TgButton type="primary">Primary</TgButton>
+    <TgButton type="secondary">Secondary</TgButton>
+    <TgButton type="success">Success</TgButton>
+    <TgButton type="danger">Danger</TgButton>
   </section>
   <section>
     <h4 class="heading">Cards:</h4>

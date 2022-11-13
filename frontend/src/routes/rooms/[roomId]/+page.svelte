@@ -1,5 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import TgButton from "$lib/components/base/TgButton.svelte";
+  import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
@@ -45,33 +48,35 @@
 {#if notFound}
   <InvalidRoom />
 {:else if roomData === null}
-  <p>Loading room...</p>
+  <TgParagraph>Loading room...</TgParagraph>
 {:else}
   <header class="mt-8">
     Room URL: {url}
-    <button class="btn danger m-2" on:click={handleDeleteRoom}>X</button>
+    <TgButton type="danger" class="m-2" on:click={handleDeleteRoom}>X</TgButton>
   </header>
   <section class="mt-8">
-    <h3 class="heading h-sub">Current votes:</h3>
-    <p>
+    <TgHeadingSub>Current votes:</TgHeadingSub>
+    <TgParagraph>
       Cards are
       {#if roomData.isRevealed}
         <strong>visible</strong>
       {:else}
         <strong>not visible</strong>
       {/if}
-    </p>
+    </TgParagraph>
   </section>
   <section class="mt-32">
-    <h3 class="heading h-sub">Your vote:</h3>
+    <TgHeadingSub>Your votes:</TgHeadingSub>
     {#each sizeValues as size}
       {#if size === selectedSize}
-        <button class="btn primary m-2" on:click={() => setSelection()}
-          >{size}</button
+        <TgButton type="primary" class="m-2" on:click={() => setSelection()}
+          >{size}</TgButton
         >
       {:else}
-        <button class="btn secondary m-2" on:click={() => setSelection(size)}
-          >{size}</button
+        <TgButton
+          type="secondary"
+          class="m-2"
+          on:click={() => setSelection(size)}>{size}</TgButton
         >
       {/if}
     {/each}
