@@ -32,6 +32,7 @@ export default class DbService {
         TableName: this.tableName,
         Item: {
           PK: `ROOM:${roomId}`,
+          SK: "ROOM",
           hostKey,
           validSizes,
           isRevealed,
@@ -52,7 +53,7 @@ export default class DbService {
     const getItemResponse = await this.client
       .get({
         TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}` },
+        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
       })
       .promise();
     const roomData = getItemResponse.Item;
@@ -73,7 +74,7 @@ export default class DbService {
     await this.client
       .delete({
         TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}` },
+        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
       })
       .promise();
   }

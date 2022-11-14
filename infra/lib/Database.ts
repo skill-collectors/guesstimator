@@ -19,8 +19,13 @@ export default class Database extends pulumi.ComponentResource {
           name: "PK",
           type: "S",
         },
+        {
+          name: "SK",
+          type: "S",
+        },
       ],
       hashKey: "PK",
+      rangeKey: "SK",
       billingMode: "PAY_PER_REQUEST",
       tags,
     });
