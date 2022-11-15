@@ -20,6 +20,7 @@ function responseOf(
     json = JSON.stringify(body);
   }
   return {
+    isBase64Encoded: false,
     statusCode,
     body: json,
     headers,
