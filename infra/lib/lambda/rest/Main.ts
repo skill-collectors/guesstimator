@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import { APIGatewayProxyEvent } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { corsRules } from "./CorsPlugin";
 import { initRouter } from "./Router";
 import { serverError } from "./Response";
@@ -8,7 +8,9 @@ import { serverError } from "./Response";
  * Creates the main Lambda Function for this REST API.
  */
 export function createRouter(tableName: pulumi.Output<string>) {
-  return async function (event: APIGatewayProxyEvent) {
+  return async function (
+    event: APIGatewayProxyEvent
+  ): Promise<APIGatewayProxyResult> {
     try {
       const corsPlugin = corsRules({
         allowedOrigins: [
@@ -24,10 +26,20 @@ export function createRouter(tableName: pulumi.Output<string>) {
 
       const router = initRouter(tableName.get());
 
-      const main = corsPlugin.applyTo((event) => router.run(event));
+      const main = corsPlugin.applyTo(async (event) => {
+        try {
+          return await router.run(event);
+        } catch (err) {
+          // Catch here to apply CORS if we can
+          return await new Promise((resolve) =>
+            resolve(serverError(err, event))
+          );
+        }
+      });
       return await main(event);
     } catch (err) {
-      return serverError(err, event);
+      // No CORS applied in this case
+      return await new Promise((resolve) => resolve(serverError(err, event)));
     }
   };
 }

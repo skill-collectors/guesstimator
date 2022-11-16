@@ -8,11 +8,11 @@ permalink: /reference/database-schema
 
 We use DynamoDB, which is "schemaless" meaning the fields are not formally defined within the database itself. Nevertheless we obviously have a consistent format for our data, which is described below.
 
-| PK                            | fields                                                    |
-| ----------------------------- | --------------------------------------------------------- |
-| ROOM:[roomId]                 | hostKey, validSizes, isVoteRevealed, createdOn, updatedOn |
-| ROOM:[roomId]:USERS:[userKey] | userName                                                  |
-| ROOM:[roomId]:VOTES:[userKey] | userName, currentVote                                     |
+| PK            | SK              | fields                                                    |
+| ------------- | --------------- | --------------------------------------------------------- |
+| ROOM:[roomId] | ROOM            | hostKey, validSizes, isVoteRevealed, createdOn, updatedOn |
+| ROOM:[roomId] | USERS:[userKey] | userName                                                  |
+| ROOM:[roomId] | VOTES:[userKey] | userName, currentVote                                     |
 
 ## Fields
 

@@ -21,7 +21,7 @@
     try {
       if (roomData === null) {
         roomData = await rooms.getRoom(roomId);
-        localStorage.setRoom(roomData);
+        localStorage.storeRoom(roomData);
       }
       sizeValues = roomData.validSizes.split(" ");
     } catch (err) {
@@ -40,6 +40,7 @@
   async function handleDeleteRoom() {
     if (roomData !== null) {
       await rooms.deleteRoom(roomData.roomId);
+      localStorage.deleteRoom(roomData.roomId);
       window.location.href = "/";
     }
   }

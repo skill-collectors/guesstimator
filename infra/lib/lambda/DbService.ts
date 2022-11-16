@@ -1,6 +1,9 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
+import { AWSError } from "aws-sdk";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { Pager } from "./Pager";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -32,6 +35,7 @@ export default class DbService {
         TableName: this.tableName,
         Item: {
           PK: `ROOM:${roomId}`,
+          SK: "ROOM",
           hostKey,
           validSizes,
           isRevealed,
@@ -52,7 +56,7 @@ export default class DbService {
     const getItemResponse = await this.client
       .get({
         TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}` },
+        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
       })
       .promise();
     const roomData = getItemResponse.Item;
@@ -69,12 +73,32 @@ export default class DbService {
 
     return response;
   }
+
   async deleteRoom(roomId: string) {
-    await this.client
-      .delete({
-        TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}` },
-      })
-      .promise();
+    const queryParams = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk",
+      ExpressionAttributeValues: {
+        ":pk": `ROOM:${roomId}`,
+      },
+    };
+    const supplier = async (params: DocumentClient.QueryInput) =>
+      await this.client.query(params).promise();
+    const consumer = async (items: DocumentClient.ItemList) => {
+      const deleteRequests =
+        items.map((item) => ({
+          DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
+        })) || [];
+      await this.client
+        .batchWrite({
+          RequestItems: {
+            [this.tableName]: deleteRequests,
+          },
+        })
+        .promise();
+    };
+
+    const pager = new Pager(supplier, queryParams, consumer);
+    await pager.run();
   }
 }
