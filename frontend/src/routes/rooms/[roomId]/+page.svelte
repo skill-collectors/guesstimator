@@ -21,7 +21,7 @@
     try {
       if (roomData === null) {
         roomData = await rooms.getRoom(roomId);
-        localStorage.setRoom(roomData);
+        localStorage.storeRoom(roomData);
       }
       sizeValues = roomData.validSizes.split(" ");
     } catch (err) {

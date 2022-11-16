@@ -4,7 +4,7 @@ function roomKey(roomId: string) {
   return `ROOM:${roomId}`;
 }
 
-export function setRoom(roomData: Room) {
+export function storeRoom(roomData: Room) {
   window.localStorage.setItem(
     roomKey(roomData.roomId),
     JSON.stringify(roomData)
