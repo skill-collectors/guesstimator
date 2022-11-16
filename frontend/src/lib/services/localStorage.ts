@@ -18,3 +18,7 @@ export function getRoom(roomId: string): Room | null {
   }
   return JSON.parse(roomJson);
 }
+
+export function deleteRoom(roomId: string) {
+  window.localStorage.removeItem(roomKey(roomId));
+}

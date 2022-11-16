@@ -40,6 +40,7 @@
   async function handleDeleteRoom() {
     if (roomData !== null) {
       await rooms.deleteRoom(roomData.roomId);
+      localStorage.deleteRoom(roomData.roomId);
       window.location.href = "/";
     }
   }
