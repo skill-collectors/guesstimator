@@ -1,30 +1,12 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
+import { AWSError } from "aws-sdk";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { Pager } from "./Pager";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
-
-async function queryAndDelete(
-  client: DocumentClient,
-  tableName: string,
-  params: DocumentClient.QueryInput
-) {
-  const queryOutput = await client.query(params).promise();
-  const lastEvaluatedKey = queryOutput.LastEvaluatedKey;
-  const deleteRequests =
-    queryOutput.Items?.map((item) => ({
-      DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
-    })) || [];
-  await client
-    .batchWrite({
-      RequestItems: {
-        [tableName]: deleteRequests,
-      },
-    })
-    .promise();
-  return lastEvaluatedKey;
-}
 
 export default class DbService {
   client: DocumentClient;
@@ -93,23 +75,30 @@ export default class DbService {
   }
 
   async deleteRoom(roomId: string) {
-    const params = {
+    const queryParams = {
       TableName: this.tableName,
       KeyConditionExpression: "PK = :pk",
       ExpressionAttributeValues: {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    let lastEvaluatedKey = await queryAndDelete(
-      this.client,
-      this.tableName,
-      params
-    );
-    while (typeof lastEvaluatedKey !== "undefined") {
-      lastEvaluatedKey = await queryAndDelete(this.client, this.tableName, {
-        ...params,
-        ExclusiveStartKey: lastEvaluatedKey,
-      });
-    }
+    const supplier = async (params: DocumentClient.QueryInput) =>
+      await this.client.query(params).promise();
+    const consumer = async (items: DocumentClient.ItemList) => {
+      const deleteRequests =
+        items.map((item) => ({
+          DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
+        })) || [];
+      await this.client
+        .batchWrite({
+          RequestItems: {
+            [this.tableName]: deleteRequests,
+          },
+        })
+        .promise();
+    };
+
+    const pager = new Pager(supplier, queryParams, consumer);
+    await pager.run();
   }
 }

@@ -13,8 +13,16 @@ describe("DbService", () => {
           resolve({ roomId: "abc123", validSizes: "1 2 3", isRevealed: false })
         ),
     }));
-    client.prototype.delete = vi.fn(() => ({
-      promise: () => new Promise((resolve) => resolve(1)),
+    client.prototype.query = vi.fn(() => ({
+      promise: () =>
+        new Promise((resolve) =>
+          resolve({
+            Items: [{ PK: "ROOM:abc", SK: "ROOM" }],
+          })
+        ),
+    }));
+    client.prototype.batchWrite = vi.fn(() => ({
+      promise: () => new Promise((resolve) => resolve(true)),
     }));
     return {
       sdk: {
@@ -70,7 +78,8 @@ describe("DbService", () => {
       await service.deleteRoom("abc123");
 
       // Then
-      expect(service.client.delete).toHaveBeenCalled();
+      expect(service.client.query).toHaveBeenCalled();
+      expect(service.client.batchWrite).toHaveBeenCalled();
     });
   });
 });
