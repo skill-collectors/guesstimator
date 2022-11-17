@@ -63,8 +63,11 @@
   <header class="mt-8">
     Room URL: {url}
     {#if hostKey}
-      <TgButton type="danger" class="m-2" on:click={handleDeleteRoom}
-        >X</TgButton
+      <TgButton
+        id="deleteRoomButton"
+        type="danger"
+        class="m-2"
+        on:click={handleDeleteRoom}>X</TgButton
       >
     {/if}
   </header>
@@ -75,15 +78,19 @@
       {#if roomData.isRevealed}
         <strong>visible</strong>
         {#if hostKey}
-          <TgButton type="secondary" on:click={() => setIsRevealed(false)}
-            >Hide cards</TgButton
+          <TgButton
+            id="hideCardsButton"
+            type="secondary"
+            on:click={() => setIsRevealed(false)}>Hide cards</TgButton
           >
         {/if}
       {:else}
         <strong>not visible</strong>
         {#if hostKey}
-          <TgButton type="secondary" on:click={() => setIsRevealed(true)}
-            >Reveal cards</TgButton
+          <TgButton
+            id="showCardsButton"
+            type="secondary"
+            on:click={() => setIsRevealed(true)}>Reveal cards</TgButton
           >
         {/if}
       {/if}
