@@ -11,5 +11,7 @@
   <TgParagraph>
     This is an app for "pointing" agile stories. To get started
   </TgParagraph>
-  <TgButton type="primary" href="/rooms" class="mt-4">Create a room</TgButton>
+  <TgButton id="createRoomButton" type="primary" href="/rooms" class="mt-4"
+    >Create a room</TgButton
+  >
 </div>

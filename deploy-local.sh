@@ -22,6 +22,8 @@ localUrl=${apiUrl/execute-api.*.amazonaws.com/execute-api.localhost.localstack.c
 localUrl=${localUrl%/}
 echo "VITE_PUBLIC_API_URL=${localUrl}" > .env.development
 echo "VITE_PUBLIC_API_KEY=${apiKey}" >> .env.development
+# .env.production is used by playwright when it runs the app in preview mode
+cp .env.development .env.production
 
 echo "You can now use 'npm run dev --workspace=frontend' and it will use localstack"
 

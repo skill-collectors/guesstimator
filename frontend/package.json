@@ -10,6 +10,7 @@
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
     "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "preview": "vite preview",
+    "test": "npm run test:unit && npm run test:e2e",
     "test:e2e": "playwright test tests/e2e",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",

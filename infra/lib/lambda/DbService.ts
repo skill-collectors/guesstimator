@@ -1,8 +1,6 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
-import { AWSError } from "aws-sdk";
-import { PromiseResult } from "aws-sdk/lib/request";
 import { Pager } from "./Pager";
 
 const ROOM_ID_LENGTH = 6;
@@ -72,6 +70,22 @@ export default class DbService {
     };
 
     return response;
+  }
+  async setCardsRevealed(roomId: string, isRevealed: boolean) {
+    const roomData = await this.getRoom(roomId);
+    if (roomData === null) {
+      return;
+    }
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
+        UpdateExpression: "set isRevealed = :isRevealed",
+        ExpressionAttributeValues: {
+          ":isRevealed": isRevealed,
+        },
+      })
+      .promise();
   }
 
   async deleteRoom(roomId: string) {

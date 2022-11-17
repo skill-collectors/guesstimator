@@ -18,3 +18,7 @@ export async function getRoom(roomId: string): Promise<Room> {
 export async function deleteRoom(roomId: string) {
   await rest.del(`/rooms/${roomId}`);
 }
+
+export async function setIsRevealed(roomId: string, isRevealed: boolean) {
+  await rest.put(`/rooms/${roomId}/isRevealed`, { value: isRevealed });
+}

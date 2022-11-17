@@ -5,7 +5,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import DbService from "../DbService";
 import { PathParser } from "./PathParser";
-import { notFound, ok } from "./Response";
+import { notFound, ok, clientError } from "./Response";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "PATCH";
 type RouteHandler = (
@@ -140,6 +140,24 @@ class Router {
 }
 
 /**
+ * Assumes the body of the request is JSON, and returns the parsed result.
+ *
+ * If the event is base64 encoded, then it will be decoded before parsing.
+ *
+ * @param event {APIGatewayProxyEvent} The event to parse
+ * @returns The parsed body, or 'null' if the body is null.
+ */
+function parseBodyAsJson(event: APIGatewayProxyEvent) {
+  if (event.body === null) {
+    return null;
+  } else if (event.isBase64Encoded) {
+    return JSON.parse(Buffer.from(event.body, "base64").toString("utf-8"));
+  } else {
+    return JSON.parse(event.body);
+  }
+}
+
+/**
  * Create the router for this API.
  */
 export function initRouter(tableName: string) {
@@ -170,6 +188,20 @@ export function initRouter(tableName: string) {
     const roomId = params.id;
     await db.deleteRoom(roomId.toUpperCase());
     return ok({ message: `Room ${roomId} was deleted.` });
+  });
+
+  router.put("/rooms/:id/isRevealed", async (params, event) => {
+    const roomId = params.id;
+    if (event.body === null) {
+      return clientError("Missing request body");
+    }
+    const requestBody = parseBodyAsJson(event);
+    await db.setCardsRevealed(roomId, requestBody.value);
+    return ok({
+      message: `Room ${roomId} cards ${
+        requestBody.value ? "are" : "are not"
+      } revealed.`,
+    });
   });
 
   return router;
