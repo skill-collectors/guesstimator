@@ -24,6 +24,9 @@ describe("DbService", () => {
     client.prototype.batchWrite = vi.fn(() => ({
       promise: () => new Promise((resolve) => resolve(true)),
     }));
+    client.prototype.update = vi.fn(() => ({
+      promise: () => new Promise((resolve) => resolve(true)),
+    }));
     return {
       sdk: {
         DynamoDB: {
@@ -67,6 +70,20 @@ describe("DbService", () => {
 
       // Then
       expect(service.client.get).toHaveBeenCalled();
+    });
+  });
+  describe("setCardsRevealed", () => {
+    it("Updates the database", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setCardsRevealed("abc123", true);
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.UpdateExpression).toContain("isRevealed");
+      expect(params.UpdateExpression).toContain("updatedOn");
     });
   });
   describe("deleteRoom", () => {

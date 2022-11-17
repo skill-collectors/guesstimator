@@ -76,13 +76,16 @@ export default class DbService {
     if (roomData === null) {
       return;
     }
+    const updatedOn = new Date();
     await this.client
       .update({
         TableName: this.tableName,
         Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
-        UpdateExpression: "set isRevealed = :isRevealed",
+        UpdateExpression:
+          "set isRevealed = :isRevealed, updatedOn = :updatedOn",
         ExpressionAttributeValues: {
           ":isRevealed": isRevealed,
+          ":updatedOn": updatedOn.toISOString(),
         },
       })
       .promise();
