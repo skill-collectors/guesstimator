@@ -14,8 +14,10 @@ export function createRouter(tableName: pulumi.Output<string>) {
     try {
       const corsPlugin = corsRules({
         allowedOrigins: [
-          "http://localhost:5173",
+          "http://localhost:5173", // 5173 = localdev port
           "http://127.0.0.1:5173",
+          "http://localhost:3001", // 3001 = preview port
+          "http://127.0.0.1:3001",
           "https://guesstimator-dev.superfun.link",
           "https://guesstimator-qa.superfun.link",
           "https://guesstimator.superfun.link",
