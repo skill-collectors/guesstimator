@@ -48,6 +48,26 @@ export async function post(
 }
 
 /**
+ * Performs a PUT request for the given path.
+ * @param path The path, not including the API baseUrl, e.g. "/rooms".
+ * @param options Any additional options to pass to fetch().
+ * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
+ * @returns The result of the fetch().
+ * @throws {ApiOverloadedError} If the server returns 429
+ * @throws {ApiEndpointNotFoundError} If the server returns 404
+ * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
+ * @throws {ApiUnknownError} If the server returns something unexpected.
+ */
+export async function put(
+  path: string,
+  body: object = {},
+  options: RequestInit = {},
+  headers = new Headers()
+) {
+  return doFetch("PUT", path, body, options, headers);
+}
+
+/**
  * Performs a DELETE request for the given path.
  * @param path The path, not including the API baseUrl, e.g. "/rooms".
  * @param options Any additional options to pass to fetch().

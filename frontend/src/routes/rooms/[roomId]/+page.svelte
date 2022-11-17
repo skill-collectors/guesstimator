@@ -45,6 +45,14 @@
       window.location.href = "/";
     }
   }
+
+  async function setIsRevealed(isRevealed: boolean) {
+    if (roomData === null) {
+      return;
+    }
+    await rooms.setIsRevealed(roomData.roomId, isRevealed);
+    roomData.isRevealed = isRevealed;
+  }
 </script>
 
 {#if notFound}
@@ -66,8 +74,18 @@
       Cards are
       {#if roomData.isRevealed}
         <strong>visible</strong>
+        {#if hostKey}
+          <TgButton type="secondary" on:click={() => setIsRevealed(false)}
+            >Hide cards</TgButton
+          >
+        {/if}
       {:else}
         <strong>not visible</strong>
+        {#if hostKey}
+          <TgButton type="secondary" on:click={() => setIsRevealed(true)}
+            >Reveal cards</TgButton
+          >
+        {/if}
       {/if}
     </TgParagraph>
   </section>

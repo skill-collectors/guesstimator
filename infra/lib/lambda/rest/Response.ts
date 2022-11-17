@@ -48,6 +48,16 @@ export function notFound(body: string | object = "Not found") {
 }
 
 /**
+ * Creates a 400 (Bad request) response.
+ *
+ * @param body The response body to return to the caller. If this is a string, it will be converted to JSON formatted as {message: [body]}. Default is "Bad request".
+ * @returns {APIGatewayProxyResult} The response with the given body and statusCode = 400
+ */
+export function clientError(body: string | object = "Bad request") {
+  return responseOf(400, body);
+}
+
+/**
  * Creates a response for unexpected server errors. In order to avoid exposing
  * information to the client, this function creates a 4 character errorId which
  * is both returned to the caller and logged alongside the full error details.
