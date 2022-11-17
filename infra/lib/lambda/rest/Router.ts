@@ -140,6 +140,24 @@ class Router {
 }
 
 /**
+ * Assumes the body of the request is JSON, and returns the parsed result.
+ *
+ * If the event is base64 encoded, then it will be decoded before parsing.
+ *
+ * @param event {APIGatewayProxyEvent} The event to parse
+ * @returns The parsed body, or 'null' if the body is null.
+ */
+function parseBodyAsJson(event: APIGatewayProxyEvent) {
+  if (event.body === null) {
+    return null;
+  } else if (event.isBase64Encoded) {
+    return JSON.parse(Buffer.from(event.body, "base64").toString("utf-8"));
+  } else {
+    return JSON.parse(event.body);
+  }
+}
+
+/**
  * Create the router for this API.
  */
 export function initRouter(tableName: string) {
@@ -177,7 +195,7 @@ export function initRouter(tableName: string) {
     if (event.body === null) {
       return clientError("Missing request body");
     }
-    const requestBody = JSON.parse(event.body);
+    const requestBody = parseBodyAsJson(event);
     await db.setCardsRevealed(roomId, requestBody.value);
     return ok({
       message: `Room ${roomId} cards ${
