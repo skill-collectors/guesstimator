@@ -115,4 +115,28 @@ export default class DbService {
     const pager = new Pager(supplier, queryParams, consumer);
     await pager.run();
   }
+
+  async deleteStaleRooms() {
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - 1);
+    // e.g. '2023-01-01'
+    const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
+
+    const queryParams = {
+      TableName: this.tableName,
+      // ISO dates can be sorted/compared alphanumerically
+      FilterExpression: "SK < :cutoffDate",
+      ExpressionAttributeValues: {
+        ":cutoffDate": { S: cutoffDateString },
+      },
+    };
+    const supplier = async (params: DocumentClient.QueryInput) =>
+      await this.client.scan(params).promise();
+    const consumer = async (items: DocumentClient.ItemList) => {
+      items.forEach((item) => this.deleteRoom(item.PK));
+    };
+
+    const pager = new Pager(supplier, queryParams, consumer);
+    await pager.run();
+  }
 }
