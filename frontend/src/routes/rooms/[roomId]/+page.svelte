@@ -3,6 +3,7 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+  import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
@@ -13,20 +14,20 @@
   let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
+  let hostKey: string | null = null;
   let roomData: Room | null = null;
   let sizeValues: string[] = [];
 
   onMount(async () => {
-    roomData = localStorage.getRoom(roomId);
+    hostKey = localStorage.getHostKey(roomId);
     try {
-      if (roomData === null) {
-        roomData = await rooms.getRoom(roomId);
-        localStorage.storeRoom(roomData);
-      }
+      roomData = await rooms.getRoom(roomId);
       sizeValues = roomData.validSizes.split(" ");
     } catch (err) {
       if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;
+      } else {
+        redirectToErrorPage(err);
       }
     }
   });
@@ -40,7 +41,7 @@
   async function handleDeleteRoom() {
     if (roomData !== null) {
       await rooms.deleteRoom(roomData.roomId);
-      localStorage.deleteRoom(roomData.roomId);
+      localStorage.deleteHostKey(roomData.roomId);
       window.location.href = "/";
     }
   }
@@ -53,7 +54,11 @@
 {:else}
   <header class="mt-8">
     Room URL: {url}
-    <TgButton type="danger" class="m-2" on:click={handleDeleteRoom}>X</TgButton>
+    {#if hostKey}
+      <TgButton type="danger" class="m-2" on:click={handleDeleteRoom}
+        >X</TgButton
+      >
+    {/if}
   </header>
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
