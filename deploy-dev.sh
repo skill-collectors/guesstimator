@@ -18,6 +18,9 @@ cd ../frontend
 echo "Setting env vars"
 echo "VITE_PUBLIC_API_URL=${apiUrl}" > .env.development
 echo "VITE_PUBLIC_API_KEY=${apiKey}" >> .env.development
+# .env.production is used by playwright when it runs the app in preview mode
+cp .env.development .env.production
+
 echo "Building frontend"
 npm run build -- --mode development
 echo "Deploying frontend"
