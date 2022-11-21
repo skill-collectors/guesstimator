@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { describe, expect, it, vi } from "vitest";
-import { createRouter } from "../../../../lib/lambda/rest/Main";
+import { createMainRestFunction } from "../../../../lib/lambda/rest/Main";
 import { stubEvent } from "../Stubs";
 
 describe("Main", () => {
@@ -10,7 +10,7 @@ describe("Main", () => {
     vi.spyOn(tableName, "get").mockImplementation(() => "TableName");
 
     const event = stubEvent("GET", "/status");
-    const main = createRouter(tableName);
+    const main = createMainRestFunction(tableName);
 
     // When
     const result = await main(event);
@@ -26,7 +26,7 @@ describe("Main", () => {
     });
 
     const event = stubEvent("GET", "/status");
-    const main = createRouter(tableName);
+    const main = createMainRestFunction(tableName);
 
     // When
     const result = await main(event);

@@ -7,7 +7,7 @@ import { serverError } from "./Response";
 /**
  * Creates the main Lambda Function for this REST API.
  */
-export function createRouter(tableName: pulumi.Output<string>) {
+export function createMainRestFunction(tableName: pulumi.Output<string>) {
   return async function (
     event: APIGatewayProxyEvent
   ): Promise<APIGatewayProxyResult> {

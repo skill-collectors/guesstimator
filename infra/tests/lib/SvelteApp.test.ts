@@ -27,7 +27,6 @@ describe("infrastructure", () => {
     theApp = new SvelteApp("GuesstimatorApp", {
       subDomain: "www",
       apexDomain: "example.com",
-      tags: {},
     });
   });
 

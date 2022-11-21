@@ -46,8 +46,8 @@ These docs are useful if you want to understand why the project is the way it is
 - [REST architecture overview](/context/infra/lambda-rest.md)
 - [Why did we pick this tech stack?](/context/why-tech-stack.md)
 - [API Rate Limits](/context/infra/rate-limits.md)
+- [Inactive room cleanup policy](/context/infra/room-cleanup.md)
 
 ### Frontend
 
 - [Deploy configuration](/context/frontend/deploy.md) - Why we (currently) deploy as a static SPA
-
