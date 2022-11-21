@@ -58,7 +58,6 @@ export class Pager<
   async push(page: PageType) {
     for (const item of page.Items || []) {
       this.items.push(item);
-      console.log(`Pushed ${item}. Length is now ${this.items.length}`);
       if (this.items.length >= this.batchSize) {
         await this.flush();
       }

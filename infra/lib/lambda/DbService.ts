@@ -99,13 +99,15 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    const supplier = async (params: DocumentClient.QueryInput) =>
-      await this.client.query(params).promise();
+    const supplier = async (params: DocumentClient.QueryInput) => {
+      return await this.client.query(params).promise();
+    };
     const consumer = async (items: DocumentClient.ItemList) => {
       const deleteRequests =
         items.map((item) => ({
           DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
         })) || [];
+      console.log(`Batch deleting ${items.length} items from room ${roomId}`);
       await this.client
         .batchWrite({
           RequestItems: {
@@ -122,24 +124,35 @@ export default class DbService {
   async deleteStaleRooms() {
     const cutoffDate = new Date();
     cutoffDate.setMonth(cutoffDate.getMonth() - 1);
-    // e.g. '2023-01-01'
     const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
+    console.log(`Scanning for items before ${cutoffDateString}`);
 
     const queryParams = {
       TableName: this.tableName,
       // ISO dates can be sorted/compared alphanumerically
-      FilterExpression: "SK < :cutoffDate",
+      FilterExpression: "updatedOn < :cutoffDate",
+      ProjectionExpression: "PK",
       ExpressionAttributeValues: {
-        ":cutoffDate": { S: cutoffDateString },
+        ":cutoffDate": cutoffDateString,
       },
     };
-    const supplier = async (params: DocumentClient.QueryInput) =>
-      await this.client.scan(params).promise();
+
+    const staleRooms: string[] = [];
+    const supplier = async (params: DocumentClient.QueryInput) => {
+      return await this.client.scan(params).promise();
+    };
     const consumer = async (items: DocumentClient.ItemList) => {
-      items.forEach((item) => this.deleteRoom(item.PK));
+      items
+        .map((item) => item.PK.substring("ROOM:".length)) // trim 'ROOM:' prefix
+        .forEach((roomId) => staleRooms.push(roomId));
     };
 
     const pager = new Pager(supplier, queryParams, consumer);
     await pager.run();
+    console.log(`Got ${staleRooms.length} stale rooms to delete`);
+    for (const roomId of staleRooms) {
+      await this.deleteRoom(roomId);
+    }
+    return staleRooms.length;
   }
 }

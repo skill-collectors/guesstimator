@@ -10,7 +10,9 @@ describe("DbService", () => {
     client.prototype.get = vi.fn(() => ({
       promise: () =>
         new Promise((resolve) =>
-          resolve({ roomId: "abc123", validSizes: "1 2 3", isRevealed: false })
+          resolve({
+            Item: { roomId: "abc123", validSizes: "1 2 3", isRevealed: false },
+          })
         ),
     }));
     client.prototype.query = vi.fn(() => ({

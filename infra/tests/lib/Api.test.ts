@@ -38,7 +38,7 @@ describe("infrastructure", () => {
           };
         };
       };
-      return { createRouter: mockHandler };
+      return { createMainRestFunction: mockHandler };
     });
   });
 

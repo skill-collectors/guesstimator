@@ -23,7 +23,7 @@ describe("infrastructure", () => {
   let theDb: Database;
 
   beforeAll(async function () {
-    theDb = new Database("GuesstimatorDatabase", { tags: {} });
+    theDb = new Database("GuesstimatorDatabase");
   });
 
   it("Creates a DynamoDB table", async () => {

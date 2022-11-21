@@ -1,10 +1,13 @@
 import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
+import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 import { registerAutoTags } from "./lib/AutoTag";
 import { subDomain, apiSubDomain, apexDomain } from "./lib/DomainName";
 import { capitalize } from "./lib/utils/StringUtils";
+import { buildCallbackFunction } from "./lib/Lambda";
+import { createStaleRoomCleanupFunction } from "./lib/lambda/CleanupMain";
 
 const project = pulumi.getProject();
 const stack = pulumi.getStack();
@@ -30,6 +33,16 @@ const api = new Api(`${resourceNamePrefix}-Api`, {
   apexDomain: isLocalDev ? null : apexDomain,
   database,
 });
+
+aws.cloudwatch.onSchedule(
+  `${resourceNamePrefix}-CleanupEvent`,
+  "rate(1 day)",
+  buildCallbackFunction(
+    `${resourceNamePrefix}-CleanupFunction`,
+    database.table.arn,
+    createStaleRoomCleanupFunction(database.table.name)
+  )
+);
 
 // These are needed by deploy-dev.sh or GitHub actions
 // (so they don't have to parse json and require something like 'jq')

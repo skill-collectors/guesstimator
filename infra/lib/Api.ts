@@ -1,9 +1,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as apigateway from "@pulumi/aws-apigateway";
-import { createRouter } from "./lambda/rest/Main";
+import { createMainRestFunction } from "./lambda/rest/Main";
 import Database from "./Database";
-import dynamoTableAccessPolicy from "./policies/LambdaPolicy";
+import { buildCallbackFunction } from "./Lambda";
 
 export interface ApiArgs {
   subDomain: string;
@@ -23,7 +23,11 @@ export default class Api extends pulumi.ComponentResource {
     super("pkg:index:Api", name, args, opts);
 
     // Create lambda role with basic execution policy
-    const callbackFunction = buildCallbackFunction();
+    const callbackFunction = buildCallbackFunction(
+      `${name}-RestFunction`,
+      args.database.table.arn,
+      createMainRestFunction(args.database.table.name)
+    );
 
     const api = new apigateway.RestAPI(`${name}-Api`, {
       routes: [
@@ -76,51 +80,6 @@ export default class Api extends pulumi.ComponentResource {
       this.url = api.url;
     } else {
       this.url = addDomainName(args.subDomain, args.apexDomain);
-    }
-
-    function buildCallbackFunction() {
-      const lambdaRole = new aws.iam.Role(`${name}-ProxyRole`, {
-        assumeRolePolicy: JSON.stringify({
-          Version: "2012-10-17",
-          Statement: [
-            {
-              Action: "sts:AssumeRole",
-              Principal: {
-                Service: "lambda.amazonaws.com",
-              },
-              Effect: "Allow",
-              Sid: "",
-            },
-          ],
-        }),
-      });
-
-      new aws.iam.RolePolicyAttachment(
-        `${name}-ProxyBasicExecutionRolePolicyAttachment`,
-        {
-          role: lambdaRole,
-          policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
-        }
-      );
-
-      // Attach policy to allow DB access
-      const tableAccessPolicy = args.database.table.arn.apply((arn) =>
-        dynamoTableAccessPolicy(`${name}-AccessPolicy`, arn)
-      );
-
-      new aws.iam.RolePolicyAttachment(`${name}-ProxyRolePolicyAttachment`, {
-        role: lambdaRole,
-        policyArn: tableAccessPolicy.arn,
-      });
-
-      const callbackFunction = new aws.lambda.CallbackFunction(
-        `${name}-ProxyFunction`,
-        {
-          role: lambdaRole,
-          callback: createRouter(args.database.table.name),
-        }
-      );
-      return callbackFunction;
     }
 
     function addApiUsagePlan() {
