@@ -1,3 +1,4 @@
+import { AWSError, Request } from "aws-sdk";
 import { describe, it, expect, vi } from "vitest";
 import DbService from "../../../lib/lambda/DbService";
 
@@ -73,17 +74,21 @@ describe("DbService", () => {
       // Then
       expect(service.client.get).toHaveBeenCalled();
     });
-  });
-  describe("addUser", () => {
-    it("Puts a USER item in the table", async () => {
+    it("Returns null if the room doesn't exist", async () => {
       // Given
       const service = new DbService(tableName);
 
+      vi.mocked(service.client.get).mockReturnValueOnce({
+        promise: vi.fn().mockResolvedValue({
+          Item: undefined,
+        }),
+      } as unknown as Request<GetItemOutput, AWSError>);
+
       // When
-      await service.addUser("abc123", "Alice");
+      const result = await service.getRoom("abc123");
 
       // Then
-      expect(service.client.put).toHaveBeenCalled();
+      expect(result).toBeNull();
     });
 
     it("Generates a User ID", async () => {

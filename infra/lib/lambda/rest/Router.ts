@@ -184,6 +184,17 @@ export function initRouter(tableName: string) {
     return ok(room);
   });
 
+  router.post("/rooms/:id/users", async (params, event) => {
+    const roomId = params.id;
+    const body = parseBodyAsJson(event);
+    const result = await db.addUser(roomId, body.name);
+    if (result === null) {
+      return notFound(`No room with id ${roomId}`);
+    } else {
+      return ok(result);
+    }
+  });
+
   router.del("/rooms/:id", async (params) => {
     const roomId = params.id;
     await db.deleteRoom(roomId.toUpperCase());

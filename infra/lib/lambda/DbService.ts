@@ -73,6 +73,11 @@ export default class DbService {
     return response;
   }
   async addUser(roomId: string, name: string) {
+    const room = this.getRoom(roomId);
+    if (room === null) {
+      return null;
+    }
+
     const userKey = generateId(USER_KEY_LENGTH);
     await this.client
       .put({
