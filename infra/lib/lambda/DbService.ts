@@ -5,6 +5,7 @@ import { Pager } from "./Pager";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
+const USER_KEY_LENGTH = 4;
 
 export default class DbService {
   client: DocumentClient;
@@ -70,6 +71,24 @@ export default class DbService {
     };
 
     return response;
+  }
+  async addUser(roomId: string, name: string) {
+    const userKey = generateId(USER_KEY_LENGTH);
+    await this.client
+      .put({
+        TableName: this.tableName,
+        Item: {
+          PK: `ROOM:${roomId}`,
+          SK: `USERS:${userKey}`,
+          name,
+        },
+      })
+      .promise();
+    console.log(`Added user ${name} with key ${userKey} to room ${roomId}`);
+    return {
+      roomId,
+      userKey,
+    };
   }
   async setCardsRevealed(roomId: string, isRevealed: boolean) {
     const roomData = await this.getRoom(roomId);

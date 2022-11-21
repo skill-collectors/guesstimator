@@ -74,6 +74,29 @@ describe("DbService", () => {
       expect(service.client.get).toHaveBeenCalled();
     });
   });
+  describe("addUser", () => {
+    it("Puts a USER item in the table", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.addUser("abc123", "Alice");
+
+      // Then
+      expect(service.client.put).toHaveBeenCalled();
+    });
+
+    it("Generates a User ID", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      const result = await service.addUser("abc123", "Alice");
+
+      // Then
+      expect(result).toHaveProperty("userKey");
+    });
+  });
   describe("setCardsRevealed", () => {
     it("Updates the database", async () => {
       // Given
