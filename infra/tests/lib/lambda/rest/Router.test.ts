@@ -10,6 +10,7 @@ describe("Router", () => {
     DbService.prototype.getRoom = vi.fn();
     DbService.prototype.addUser = vi.fn();
     DbService.prototype.deleteRoom = vi.fn();
+    DbService.prototype.setCardsRevealed = vi.fn();
     return { default: DbService };
   });
 
@@ -146,7 +147,7 @@ describe("Router", () => {
     });
   });
 
-  describe("DELETE /room/:id", () => {
+  describe("DELETE /rooms/:id", () => {
     const event = stubEvent("DELETE", "/rooms/123");
 
     it("deletes the room", async () => {
@@ -155,6 +156,47 @@ describe("Router", () => {
 
       // Then
       expect(mockDbService.deleteRoom).toHaveBeenCalled();
+    });
+  });
+
+  describe("PUT /rooms/:id/isRevealed", () => {
+    it("updates the room", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ value: true })
+      );
+
+      // When
+      await router.run(event);
+
+      // Then
+      expect(mockDbService.setCardsRevealed).toHaveBeenCalled();
+    });
+    it("rejects missing value", async () => {
+      // Given
+      const event = stubEvent("PUT", "/rooms/123/isRevealed");
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("rejects non-boolean value", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ value: "not a boolean" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
     });
   });
 });

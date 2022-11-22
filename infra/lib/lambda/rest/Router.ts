@@ -3,8 +3,10 @@
  * parameter parsing is handled by PathParser.
  */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { i } from "vitest/dist/index-2f5b6168";
 import DbService from "../DbService";
 import { PathParser } from "./PathParser";
+import { RequestWrapper } from "./RequestWrapper";
 import { notFound, ok, clientError } from "./Response";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "PATCH";
@@ -186,13 +188,12 @@ export function initRouter(tableName: string) {
 
   router.post("/rooms/:id/users", async (params, event) => {
     const roomId = params.id;
-    const { name } = parseBodyAsJson(event);
-    if (!name) {
-      return clientError("Missing 'name' field on request body JSON");
+    const req = new RequestWrapper(event);
+    req.validate().hasLength("name", { max: 30 });
+    if (req.hasErrors) {
+      return clientError(req.clientError);
     }
-    if (name.length > 30) {
-      return clientError("Name must be 30 characters or less");
-    }
+    const { name } = req.parsedBody;
     const result = await db.addUser(roomId, name);
     if (result === null) {
       return notFound(`No room with id ${roomId}`);
@@ -209,10 +210,12 @@ export function initRouter(tableName: string) {
 
   router.put("/rooms/:id/isRevealed", async (params, event) => {
     const roomId = params.id;
-    if (event.body === null) {
-      return clientError("Missing request body");
+    const req = new RequestWrapper(event);
+    req.validate().isBoolean("value");
+    if (req.hasErrors) {
+      return clientError(req.clientError);
     }
-    const requestBody = parseBodyAsJson(event);
+    const requestBody = req.parsedBody;
     await db.setCardsRevealed(roomId, requestBody.value);
     return ok({
       message: `Room ${roomId} cards ${
