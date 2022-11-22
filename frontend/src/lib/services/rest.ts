@@ -30,6 +30,7 @@ export async function get(
 /**
  * Performs a POST request for the given path.
  * @param path The path, not including the API baseUrl, e.g. "/rooms".
+ * @param body The body of the request as an object (will be serialized as JSON)
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
@@ -50,6 +51,7 @@ export async function post(
 /**
  * Performs a PUT request for the given path.
  * @param path The path, not including the API baseUrl, e.g. "/rooms".
+ * @param body The body of the request as an object (will be serialized as JSON)
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
@@ -70,6 +72,7 @@ export async function put(
 /**
  * Performs a DELETE request for the given path.
  * @param path The path, not including the API baseUrl, e.g. "/rooms".
+ * @param body The body of the request as an object (will be serialized as JSON)
  * @param options Any additional options to pass to fetch().
  * @param headers Any headers to include in the request. 'x-api-key' is always included and need not be passed to this method.
  * @returns The result of the fetch().
@@ -80,10 +83,11 @@ export async function put(
  */
 export async function del(
   path: string,
+  body: object = {},
   options: RequestInit = {},
   headers = new Headers()
 ) {
-  return doFetch("DELETE", path, null, options, headers);
+  return doFetch("DELETE", path, body, options, headers);
 }
 
 /**
@@ -91,6 +95,7 @@ export async function del(
  *
  * @param method The request method, e.g. "GET" or "POST".
  * @param path The path of the request, not including the baseUrl prefix.
+ * @param body The body of the request as an object (will be serialized as JSON)
  * @param options Additional options to pass to fetch()
  * @param headers Any headers to add to the request. This method automatically includes the correct 'x-api-key'.
  * @returns The result of the fetch call.

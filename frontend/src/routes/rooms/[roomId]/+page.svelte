@@ -23,7 +23,7 @@
 
   onMount(async () => {
     hostKey = localStorage.getHostKey(roomId);
-    const userData = localStorage.getUserKey(roomId);
+    const userData = localStorage.getUserData(roomId);
     if (userData !== null) {
       userKey = userData.userKey;
       username = userData.username;
@@ -47,18 +47,22 @@
   }
 
   async function handleDeleteRoom() {
-    if (roomData !== null) {
-      await rooms.deleteRoom(roomData.roomId);
-      localStorage.deleteHostKey(roomData.roomId);
-      window.location.href = "/";
+    if (roomData === null) {
+      return;
     }
+    if (hostKey === null) {
+      return;
+    }
+    await rooms.deleteRoom(roomData.roomId, hostKey);
+    localStorage.deleteHostKey(roomData.roomId);
+    window.location.href = "/";
   }
 
   async function handleJoinRoomClick() {
     if (roomData !== null) {
       const result = await rooms.joinRoom(roomData.roomId, username);
       userKey = result.userKey;
-      localStorage.storeUserKey(result.roomId, result.userKey, username);
+      localStorage.storeUserData(result.roomId, result.userKey, username);
     }
   }
 
@@ -66,7 +70,10 @@
     if (roomData === null) {
       return;
     }
-    await rooms.setIsRevealed(roomData.roomId, isRevealed);
+    if (hostKey === null) {
+      return;
+    }
+    await rooms.setIsRevealed(roomData.roomId, isRevealed, hostKey);
     roomData.isRevealed = isRevealed;
   }
 </script>
