@@ -3,15 +3,39 @@ function roomKey(roomId: string) {
 }
 
 export function storeHostKey(roomId: string, hostKey: string) {
-  window.localStorage.setItem(`${roomKey(roomId)}:hostKey`, hostKey);
+  window.localStorage.setItem(
+    `${roomKey(roomId)}:hostKey`,
+    JSON.stringify({ hostKey })
+  );
 }
 
 export function getHostKey(roomId: string) {
-  const hostKey = window.localStorage.getItem(`${roomKey(roomId)}:hostKey`);
-  if (hostKey === null) {
+  const result = window.localStorage.getItem(`${roomKey(roomId)}:hostKey`);
+  if (result === null) {
     return null;
+  } else {
+    return JSON.parse(result);
   }
-  return hostKey;
+}
+
+export function storeUserKey(
+  roomId: string,
+  userKey: string,
+  username: string
+) {
+  window.localStorage.setItem(
+    `${roomKey(roomId)}:userKey`,
+    JSON.stringify({ userKey, username })
+  );
+}
+
+export function getUserKey(roomId: string) {
+  const result = window.localStorage.getItem(`${roomKey(roomId)}:userKey`);
+  if (result === null) {
+    return null;
+  } else {
+    return JSON.parse(result);
+  }
 }
 
 export function deleteHostKey(roomId: string) {

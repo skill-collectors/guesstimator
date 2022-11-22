@@ -8,6 +8,6 @@
 <input
   type="text"
   {name}
-  {value}
+  bind:value
   class={`rounded border border-gray-400 pl-1 ${additionalClasses}`}
 />
