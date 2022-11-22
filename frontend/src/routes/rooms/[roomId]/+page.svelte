@@ -133,7 +133,7 @@
       <TgParagraph
         >If you'd like to vote, enter a name and join the room:</TgParagraph
       >
-      <TgInputText name="newUser" bind:value={username} />
+      <TgInputText name="newUser" maxlength={30} bind:value={username} />
       <TgButton type="primary" on:click={handleJoinRoomClick}
         >Join room</TgButton
       >

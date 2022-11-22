@@ -186,8 +186,14 @@ export function initRouter(tableName: string) {
 
   router.post("/rooms/:id/users", async (params, event) => {
     const roomId = params.id;
-    const body = parseBodyAsJson(event);
-    const result = await db.addUser(roomId, body.name);
+    const { name } = parseBodyAsJson(event);
+    if (!name) {
+      return clientError("Missing 'name' field on request body JSON");
+    }
+    if (name.length > 30) {
+      return clientError("Name must be 30 characters or less");
+    }
+    const result = await db.addUser(roomId, name);
     if (result === null) {
       return notFound(`No room with id ${roomId}`);
     } else {

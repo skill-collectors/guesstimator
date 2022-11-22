@@ -104,6 +104,36 @@ describe("Router", () => {
       // Then
       expect(body.userKey).toBeTruthy();
     });
+    it("Rejects missing name", async () => {
+      // Given
+      const badEvent = stubEvent(
+        "POST",
+        "/rooms/123/users",
+        JSON.stringify({})
+      );
+
+      // When
+      const result = await router.run(badEvent);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("Rejects name over 50 characters", async () => {
+      // Given
+      const badEvent = stubEvent(
+        "POST",
+        "/rooms/123/users",
+        JSON.stringify({
+          name: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        })
+      );
+
+      // When
+      const result = await router.run(badEvent);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
     it("Returns a 404 if the room doesn't exist", async () => {
       // Given
       vi.mocked(mockDbService.addUser).mockResolvedValueOnce(null);
