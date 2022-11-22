@@ -1,7 +1,7 @@
 <script type="ts">
-  export let name: string;
-  export let value: string;
-  export let maxlength: number;
+  export let name: string | null | undefined = undefined;
+  export let value = "";
+  export let maxlength: number | null | undefined = undefined;
   let additionalClasses = "";
   export { additionalClasses as class };
 </script>
