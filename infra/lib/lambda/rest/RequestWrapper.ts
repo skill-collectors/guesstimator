@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
+import { expect } from "vitest";
 
 /**
  * Assumes the body of the request is JSON, and returns the parsed result.
@@ -103,6 +104,22 @@ class BodyValidator {
   isBoolean(prop: string) {
     if (typeof this.body[prop] !== "boolean") {
       this._addError(prop, "Value must be a boolean (true or false)");
+    }
+    return this;
+  }
+
+  /**
+   * Adds an error if the evnet body doesn't contain a field with the given name and value.
+   *
+   * This is meant to be used for hostKey and userKey fields. The response will not reveal the expected value.
+   *
+   * @param prop The prop to validate
+   * @param expectedValue The value that the prop must be fully equal to
+   * @returns this (for chaining)
+   */
+  hasSecretValue(prop: string, expectedValue: unknown) {
+    if (this.body[prop] !== expectedValue) {
+      this._addError(prop, "Invalid value");
     }
     return this;
   }

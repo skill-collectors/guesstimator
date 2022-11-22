@@ -177,7 +177,12 @@ export function initRouter(tableName: string) {
     if (room === null) {
       return notFound(`No room with id ${roomId}`);
     } else {
-      return ok(room);
+      return ok({
+        roomId: room.roomId,
+        validSizes: room.validSizes,
+        isRevealed: room.isRevealed,
+        // Intentionally exclude hostKey
+      });
     }
   });
 
@@ -202,16 +207,31 @@ export function initRouter(tableName: string) {
     }
   });
 
-  router.del("/rooms/:id", async (params) => {
+  router.del("/rooms/:id", async (params, event) => {
     const roomId = params.id;
+    const room = await db.getRoom(roomId.toUpperCase());
+    if (!room) {
+      return notFound(`No room with ID ${roomId}`);
+    }
+
+    const req = new RequestWrapper(event);
+    req.validate().hasSecretValue("hostKey", room?.hostKey);
+    if (req.hasErrors) {
+      return clientError(req.clientError);
+    }
     await db.deleteRoom(roomId.toUpperCase());
     return ok({ message: `Room ${roomId} was deleted.` });
   });
 
   router.put("/rooms/:id/isRevealed", async (params, event) => {
     const roomId = params.id;
+    const room = await db.getRoom(roomId.toUpperCase());
+    if (!room) {
+      return notFound(`No room with ID ${roomId}`);
+    }
+
     const req = new RequestWrapper(event);
-    req.validate().isBoolean("value");
+    req.validate().isBoolean("value").hasSecretValue("hostKey", room?.hostKey);
     if (req.hasErrors) {
       return clientError(req.clientError);
     }

@@ -68,6 +68,7 @@ export default class DbService {
       roomId,
       validSizes: roomData.validSizes,
       isRevealed: roomData.isRevealed,
+      hostKey: roomData.hostKey,
     };
 
     return response;
