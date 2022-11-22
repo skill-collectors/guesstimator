@@ -3,8 +3,10 @@
  * parameter parsing is handled by PathParser.
  */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { i } from "vitest/dist/index-2f5b6168";
 import DbService from "../DbService";
 import { PathParser } from "./PathParser";
+import { RequestWrapper } from "./RequestWrapper";
 import { notFound, ok, clientError } from "./Response";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "PATCH";
@@ -175,7 +177,12 @@ export function initRouter(tableName: string) {
     if (room === null) {
       return notFound(`No room with id ${roomId}`);
     } else {
-      return ok(room);
+      return ok({
+        roomId: room.roomId,
+        validSizes: room.validSizes,
+        isRevealed: room.isRevealed,
+        // Intentionally exclude hostKey
+      });
     }
   });
 
@@ -184,18 +191,51 @@ export function initRouter(tableName: string) {
     return ok(room);
   });
 
-  router.del("/rooms/:id", async (params) => {
+  router.post("/rooms/:id/users", async (params, event) => {
     const roomId = params.id;
+    const req = new RequestWrapper(event);
+    req.validate().hasLength("name", { max: 30 });
+    if (req.hasErrors) {
+      return clientError(req.clientError);
+    }
+    const { name } = req.parsedBody;
+    const result = await db.addUser(roomId, name);
+    if (result === null) {
+      return notFound(`No room with id ${roomId}`);
+    } else {
+      return ok(result);
+    }
+  });
+
+  router.del("/rooms/:id", async (params, event) => {
+    const roomId = params.id;
+    const room = await db.getRoom(roomId.toUpperCase());
+    if (!room) {
+      return notFound(`No room with ID ${roomId}`);
+    }
+
+    const req = new RequestWrapper(event);
+    req.validate().hasSecretValue("hostKey", room?.hostKey);
+    if (req.hasErrors) {
+      return clientError(req.clientError);
+    }
     await db.deleteRoom(roomId.toUpperCase());
     return ok({ message: `Room ${roomId} was deleted.` });
   });
 
   router.put("/rooms/:id/isRevealed", async (params, event) => {
     const roomId = params.id;
-    if (event.body === null) {
-      return clientError("Missing request body");
+    const room = await db.getRoom(roomId.toUpperCase());
+    if (!room) {
+      return notFound(`No room with ID ${roomId}`);
     }
-    const requestBody = parseBodyAsJson(event);
+
+    const req = new RequestWrapper(event);
+    req.validate().isBoolean("value").hasSecretValue("hostKey", room?.hostKey);
+    if (req.hasErrors) {
+      return clientError(req.clientError);
+    }
+    const requestBody = req.parsedBody;
     await db.setCardsRevealed(roomId, requestBody.value);
     return ok({
       message: `Room ${roomId} cards ${

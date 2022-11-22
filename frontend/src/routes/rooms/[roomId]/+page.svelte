@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
@@ -15,11 +16,18 @@
   const roomId = $page.params.roomId;
   const url = $page.url;
   let hostKey: string | null = null;
+  let userKey: string | null = null;
+  let username = "";
   let roomData: Room | null = null;
   let sizeValues: string[] = [];
 
   onMount(async () => {
     hostKey = localStorage.getHostKey(roomId);
+    const userData = localStorage.getUserData(roomId);
+    if (userData !== null) {
+      userKey = userData.userKey;
+      username = userData.username;
+    }
     try {
       roomData = await rooms.getRoom(roomId);
       sizeValues = roomData.validSizes.split(" ");
@@ -39,10 +47,22 @@
   }
 
   async function handleDeleteRoom() {
+    if (roomData === null) {
+      return;
+    }
+    if (hostKey === null) {
+      return;
+    }
+    await rooms.deleteRoom(roomData.roomId, hostKey);
+    localStorage.deleteHostKey(roomData.roomId);
+    window.location.href = "/";
+  }
+
+  async function handleJoinRoomClick() {
     if (roomData !== null) {
-      await rooms.deleteRoom(roomData.roomId);
-      localStorage.deleteHostKey(roomData.roomId);
-      window.location.href = "/";
+      const result = await rooms.joinRoom(roomData.roomId, username);
+      userKey = result.userKey;
+      localStorage.storeUserData(result.roomId, result.userKey, username);
     }
   }
 
@@ -50,7 +70,10 @@
     if (roomData === null) {
       return;
     }
-    await rooms.setIsRevealed(roomData.roomId, isRevealed);
+    if (hostKey === null) {
+      return;
+    }
+    await rooms.setIsRevealed(roomData.roomId, isRevealed, hostKey);
     roomData.isRevealed = isRevealed;
   }
 </script>
@@ -97,19 +120,30 @@
     </TgParagraph>
   </section>
   <section class="mt-32">
-    <TgHeadingSub>Your votes:</TgHeadingSub>
-    {#each sizeValues as size}
-      {#if size === selectedSize}
-        <TgButton type="primary" class="m-2" on:click={() => setSelection()}
-          >{size}</TgButton
-        >
-      {:else}
-        <TgButton
-          type="secondary"
-          class="m-2"
-          on:click={() => setSelection(size)}>{size}</TgButton
-        >
-      {/if}
-    {/each}
+    {#if userKey}
+      <TgHeadingSub>Your votes:</TgHeadingSub>
+      {#each sizeValues as size}
+        {#if size === selectedSize}
+          <TgButton type="primary" class="m-2" on:click={() => setSelection()}
+            >{size}</TgButton
+          >
+        {:else}
+          <TgButton
+            type="secondary"
+            class="m-2"
+            on:click={() => setSelection(size)}>{size}</TgButton
+          >
+        {/if}
+      {/each}
+      <TgParagraph>You are joined as {username}</TgParagraph>
+    {:else}
+      <TgParagraph
+        >If you'd like to vote, enter a name and join the room:</TgParagraph
+      >
+      <TgInputText name="newUser" maxlength={30} bind:value={username} />
+      <TgButton type="primary" on:click={handleJoinRoomClick}
+        >Join room</TgButton
+      >
+    {/if}
   </section>
 {/if}

@@ -4,11 +4,20 @@ import { initRouter } from "../../../../lib/lambda/rest/Router";
 import { stubEvent } from "../Stubs";
 
 describe("Router", () => {
+  const stubRoom = {
+    roomId: "123",
+    validSizes: "1 2 3",
+    isRevealed: false,
+    hostKey: "AB12",
+  };
+
   vi.mock("../../../../lib/lambda/DbService", () => {
     const DbService = vi.fn();
     DbService.prototype.createRoom = vi.fn();
     DbService.prototype.getRoom = vi.fn();
+    DbService.prototype.addUser = vi.fn();
     DbService.prototype.deleteRoom = vi.fn();
+    DbService.prototype.setCardsRevealed = vi.fn();
     return { default: DbService };
   });
 
@@ -16,6 +25,7 @@ describe("Router", () => {
 
   beforeEach(() => {
     mockDbService = new DbService("TableName");
+    vi.mocked(mockDbService.getRoom).mockResolvedValue(stubRoom);
   });
 
   afterEach(() => {
@@ -48,19 +58,12 @@ describe("Router", () => {
     const event = stubEvent("GET", "/rooms/123");
 
     it("returns a room", async () => {
-      // Given
-      const room = {
-        roomId: "123",
-        validSizes: "1 2 3",
-        isRevealed: false,
-      };
-      vi.mocked(mockDbService.getRoom).mockResolvedValueOnce(room);
-
       // When
       const result = await router.run(event);
+      const body = JSON.parse(result.body);
 
       // Then
-      expect(result.body).toEqual(JSON.stringify(room));
+      expect(body.roomId).toEqual(stubRoom.roomId);
     });
 
     it("returns a 404 if no room found", async () => {
@@ -75,15 +78,163 @@ describe("Router", () => {
     });
   });
 
-  describe("DELETE /room/:id", () => {
-    const event = stubEvent("DELETE", "/rooms/123");
+  describe("POST /rooms/:id/users", () => {
+    const event = stubEvent(
+      "POST",
+      "/rooms/123/users",
+      JSON.stringify({ name: "alice" })
+    );
 
+    it("Adds the user", async () => {
+      // When
+      await router.run(event);
+
+      // Then
+      expect(mockDbService.addUser).toHaveBeenCalled();
+    });
+    it("Returns a user key", async () => {
+      // Given
+      vi.mocked(mockDbService.addUser).mockResolvedValueOnce({
+        roomId: "123",
+        userKey: "abc",
+      });
+
+      // When
+      const result = await router.run(event);
+      const body = JSON.parse(result.body);
+
+      // Then
+      expect(body.userKey).toBeTruthy();
+    });
+    it("Rejects missing name", async () => {
+      // Given
+      const badEvent = stubEvent(
+        "POST",
+        "/rooms/123/users",
+        JSON.stringify({})
+      );
+
+      // When
+      const result = await router.run(badEvent);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("Rejects name over 50 characters", async () => {
+      // Given
+      const badEvent = stubEvent(
+        "POST",
+        "/rooms/123/users",
+        JSON.stringify({
+          name: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        })
+      );
+
+      // When
+      const result = await router.run(badEvent);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("Returns a 404 if the room doesn't exist", async () => {
+      // Given
+      vi.mocked(mockDbService.addUser).mockResolvedValueOnce(null);
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(404);
+    });
+  });
+
+  describe("DELETE /rooms/:id", () => {
     it("deletes the room", async () => {
+      // Given
+      const event = stubEvent(
+        "DELETE",
+        "/rooms/123",
+        JSON.stringify({ hostKey: stubRoom.hostKey })
+      );
+
       // When
       await router.run(event);
 
       // Then
       expect(mockDbService.deleteRoom).toHaveBeenCalled();
+    });
+    it("rejects invalid hostKey", async () => {
+      // Given
+      const event = stubEvent(
+        "DELETE",
+        "/rooms/123",
+        JSON.stringify({ hostKey: "WRONG" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+  });
+
+  describe("PUT /rooms/:id/isRevealed", () => {
+    it("updates the room", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ value: true, hostKey: stubRoom.hostKey })
+      );
+
+      // When
+      await router.run(event);
+
+      // Then
+      expect(mockDbService.setCardsRevealed).toHaveBeenCalled();
+    });
+    it("rejects missing value", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ hostKey: stubRoom.hostKey })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("rejects invalid hostKey", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ value: true, hostKey: "WRONG" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("rejects non-boolean value", async () => {
+      // Given
+      const event = stubEvent(
+        "PUT",
+        "/rooms/123/isRevealed",
+        JSON.stringify({ value: "not a boolean" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
     });
   });
 });
