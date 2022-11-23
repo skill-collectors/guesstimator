@@ -60,9 +60,16 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    let roomData: object | undefined = undefined;
-    const users: { username: string; userKey: string }[] = [];
-    const votes: { username: string; currentVote: string }[] = [];
+    // TODO return {roomData: object, users: {username: string, vote: string | undefined}[]}
+    let roomData:
+      | {
+          roomId: string;
+          validSizes: string;
+          isRevealed: boolean;
+          hostKey: string;
+        }
+      | undefined = undefined;
+    const users: Map<string, { username?: string; vote?: string }> = new Map();
     for await (const item of query(this.client, queryParams)) {
       if (item.SK === "ROOM") {
         roomData = {
@@ -73,15 +80,20 @@ export default class DbService {
         };
       } else if (item.SK.startsWith("USERS:")) {
         const userKey = item.SK.substring("USERS:".length);
-        users.push({
-          username: item.username,
-          userKey,
-        });
+        const userData = users.get(userKey);
+        if (userData === undefined) {
+          users.set(userKey, { username: item.username });
+        } else {
+          userData.username = item.username;
+        }
       } else if (item.SK.startsWith("VOTES:")) {
-        votes.push({
-          username: item.username,
-          currentVote: item.currentVote,
-        });
+        const userKey = item.SK.substring("VOTES:".length);
+        const userData = users.get(userKey);
+        if (userData === undefined) {
+          users.set(userKey, { vote: item.currentVote });
+        } else {
+          userData.vote = item.currentVote;
+        }
       } else {
         console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
       }
@@ -93,8 +105,7 @@ export default class DbService {
 
     return {
       ...roomData,
-      users,
-      votes,
+      users: Array.from(users.values()),
     };
   }
   async addUser(roomId: string, username: string) {

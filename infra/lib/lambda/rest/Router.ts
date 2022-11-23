@@ -215,7 +215,7 @@ export function initRouter(tableName: string) {
     }
 
     const req = new RequestWrapper(event);
-    req.validate().hasSecretValue("hostKey", room?.hostKey);
+    req.validate().hasSecretValue("hostKey", room.hostKey);
     if (req.hasErrors) {
       return clientError(req.clientError);
     }
@@ -231,7 +231,7 @@ export function initRouter(tableName: string) {
     }
 
     const req = new RequestWrapper(event);
-    req.validate().isBoolean("value").hasSecretValue("hostKey", room?.hostKey);
+    req.validate().isBoolean("value").hasSecretValue("hostKey", room.hostKey);
     if (req.hasErrors) {
       return clientError(req.clientError);
     }
