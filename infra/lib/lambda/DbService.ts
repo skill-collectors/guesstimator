@@ -1,8 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
-import { Pager } from "./Pager";
-import { query } from "./DynamoUtils";
+import { deleteBatchOperation, query, scan } from "./DynamoUtils";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -149,26 +148,11 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    const supplier = async (params: DocumentClient.QueryInput) => {
-      return await this.client.query(params).promise();
-    };
-    const consumer = async (items: DocumentClient.ItemList) => {
-      const deleteRequests =
-        items.map((item) => ({
-          DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
-        })) || [];
-      console.log(`Batch deleting ${items.length} items from room ${roomId}`);
-      await this.client
-        .batchWrite({
-          RequestItems: {
-            [this.tableName]: deleteRequests,
-          },
-        })
-        .promise();
-    };
-
-    const pager = new Pager(supplier, queryParams, consumer);
-    await pager.run();
+    const deleteOperation = deleteBatchOperation(this.client, this.tableName);
+    for await (const item of query(this.client, queryParams)) {
+      await deleteOperation.push(item);
+    }
+    await deleteOperation.flush();
   }
 
   async deleteStaleRooms() {
@@ -187,22 +171,13 @@ export default class DbService {
       },
     };
 
-    const staleRooms: string[] = [];
-    const supplier = async (params: DocumentClient.QueryInput) => {
-      return await this.client.scan(params).promise();
-    };
-    const consumer = async (items: DocumentClient.ItemList) => {
-      items
-        .map((item) => item.PK.substring("ROOM:".length)) // trim 'ROOM:' prefix
-        .forEach((roomId) => staleRooms.push(roomId));
-    };
-
-    const pager = new Pager(supplier, queryParams, consumer);
-    await pager.run();
-    console.log(`Got ${staleRooms.length} stale rooms to delete`);
-    for (const roomId of staleRooms) {
+    let count = 0;
+    for await (const item of scan(this.client, queryParams)) {
+      const roomId = item.PK.substring("ROOM:".length);
       await this.deleteRoom(roomId);
+      count++;
     }
-    return staleRooms.length;
+
+    return count;
   }
 }
