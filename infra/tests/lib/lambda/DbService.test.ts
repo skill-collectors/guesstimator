@@ -1,3 +1,4 @@
+import { QueryOutput } from "@aws-sdk/client-dynamodb";
 import { AWSError, Request } from "aws-sdk";
 import { describe, it, expect, vi } from "vitest";
 import DbService from "../../../lib/lambda/DbService";
@@ -72,17 +73,17 @@ describe("DbService", () => {
       await service.getRoom("abc123");
 
       // Then
-      expect(service.client.get).toHaveBeenCalled();
+      expect(service.client.query).toHaveBeenCalled();
     });
     it("Returns null if the room doesn't exist", async () => {
       // Given
       const service = new DbService(tableName);
 
-      vi.mocked(service.client.get).mockReturnValueOnce({
+      vi.mocked(service.client.query).mockReturnValueOnce({
         promise: vi.fn().mockResolvedValue({
-          Item: undefined,
+          Items: undefined,
         }),
-      } as unknown as Request<GetItemOutput, AWSError>);
+      } as unknown as Request<QueryOutput, AWSError>);
 
       // When
       const result = await service.getRoom("abc123");
@@ -90,7 +91,8 @@ describe("DbService", () => {
       // Then
       expect(result).toBeNull();
     });
-
+  });
+  describe("addUser", () => {
     it("Generates a User ID", async () => {
       // Given
       const service = new DbService(tableName);

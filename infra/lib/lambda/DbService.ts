@@ -2,6 +2,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
 import { Pager } from "./Pager";
+import { query } from "./DynamoUtils";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -51,29 +52,53 @@ export default class DbService {
       isRevealed,
     };
   }
+
   async getRoom(roomId: string) {
-    const getItemResponse = await this.client
-      .get({
-        TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
-      })
-      .promise();
-    const roomData = getItemResponse.Item;
+    const queryParams = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk",
+      ExpressionAttributeValues: {
+        ":pk": `ROOM:${roomId}`,
+      },
+    };
+    let roomData: object | undefined = undefined;
+    const users: { username: string; userKey: string }[] = [];
+    const votes: { username: string; currentVote: string }[] = [];
+    for await (const item of query(this.client, queryParams)) {
+      if (item.SK === "ROOM") {
+        roomData = {
+          roomId,
+          validSizes: item.validSizes,
+          isRevealed: item.isRevealed,
+          hostKey: item.hostKey,
+        };
+      } else if (item.SK.startsWith("USERS:")) {
+        const userKey = item.SK.substring("USERS:".length);
+        users.push({
+          username: item.username,
+          userKey,
+        });
+      } else if (item.SK.startsWith("VOTES:")) {
+        votes.push({
+          username: item.username,
+          currentVote: item.currentVote,
+        });
+      } else {
+        console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
+      }
+    }
+
     if (roomData === undefined) {
       return null;
     }
 
-    console.log(`Got room ${JSON.stringify(roomData)}`);
-    const response = {
-      roomId,
-      validSizes: roomData.validSizes,
-      isRevealed: roomData.isRevealed,
-      hostKey: roomData.hostKey,
+    return {
+      ...roomData,
+      users,
+      votes,
     };
-
-    return response;
   }
-  async addUser(roomId: string, name: string) {
+  async addUser(roomId: string, username: string) {
     const room = this.getRoom(roomId);
     if (room === null) {
       return null;
@@ -86,11 +111,11 @@ export default class DbService {
         Item: {
           PK: `ROOM:${roomId}`,
           SK: `USERS:${userKey}`,
-          name,
+          username,
         },
       })
       .promise();
-    console.log(`Added user ${name} with key ${userKey} to room ${roomId}`);
+    console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return {
       roomId,
       userKey,
