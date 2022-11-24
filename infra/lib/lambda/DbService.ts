@@ -47,8 +47,6 @@ export default class DbService {
     return {
       roomId,
       hostKey,
-      validSizes,
-      isRevealed,
     };
   }
 
@@ -63,7 +61,7 @@ export default class DbService {
     const roomData:
       | {
           roomId: string | undefined;
-          validSizes: string | undefined;
+          validSizes: string[] | undefined;
           isRevealed: boolean | undefined;
           hostKey: string | undefined;
         }
@@ -77,7 +75,7 @@ export default class DbService {
     await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
         roomData.roomId = item.PK.substring("ROOM:".length);
-        roomData.validSizes = item.validSizes;
+        roomData.validSizes = item.validSizes.split(" ");
         roomData.isRevealed = item.isRevealed;
         roomData.hostKey = item.hostKey;
       } else if (item.SK.startsWith("USER:")) {

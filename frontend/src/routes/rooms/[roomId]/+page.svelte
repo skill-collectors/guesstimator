@@ -20,7 +20,6 @@
   let userKey: string | null = null;
   let username = "";
   let roomData: Room | null = null;
-  let sizeValues: string[] = [];
 
   onMount(async () => {
     hostKey = localStorage.getHostKey(roomId);
@@ -31,7 +30,6 @@
     }
     try {
       roomData = await rooms.getRoom(roomId);
-      sizeValues = roomData.validSizes.split(" ");
     } catch (err) {
       if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;
@@ -126,7 +124,7 @@
   <section class="mt-32">
     {#if userKey}
       <TgHeadingSub>Your votes:</TgHeadingSub>
-      {#each sizeValues as size}
+      {#each roomData.validSizes as size}
         {#if size === selectedSize}
           <TgButton type="primary" class="m-2" on:click={() => setSelection()}
             >{size}</TgButton

@@ -21,7 +21,15 @@ describe("DbService", () => {
       promise: () =>
         new Promise((resolve) =>
           resolve({
-            Items: [{ PK: "ROOM:abc", SK: "ROOM" }],
+            Items: [
+              {
+                PK: "ROOM:abc",
+                SK: "ROOM",
+                hostKey: "def",
+                isRevealed: false,
+                validSizes: "1 2 3",
+              },
+            ],
           })
         ),
     }));
@@ -70,7 +78,7 @@ describe("DbService", () => {
       const service = new DbService(tableName);
 
       // When
-      await service.getRoom("abc123");
+      await service.getRoom("abc");
 
       // Then
       expect(service.client.query).toHaveBeenCalled();
