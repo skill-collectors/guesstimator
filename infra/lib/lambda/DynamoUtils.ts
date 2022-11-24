@@ -24,6 +24,35 @@ export async function* query(
   }
 }
 
+/**
+ * Normally, you could use for..of for generator output:
+ *
+ *   for await (const item of query(...)) {
+ *     // do something with item
+ *   }
+ *
+ * However, there is a known issue that prevents Pulumi from serializing that:
+ *
+ * https://github.com/pulumi/pulumi/issues/4479
+ *
+ * Pulumi *is* able to serialize manual iteration using next(), so this function
+ * is a workaround until the above issue is resolved.
+ *
+ * @param it An async generator function
+ * @param consumer a function to handle each item yielded by the generator
+ */
+export async function forEach(
+  it: AsyncGenerator<DocumentClient.AttributeMap, void, unknown>,
+  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
+) {
+  let result = await it.next();
+  while (!result.done) {
+    const item = result.value;
+    await consumer(item);
+    result = await it.next();
+  }
+}
+
 export async function* scan(
   client: DocumentClient,
   params: DocumentClient.ScanInput

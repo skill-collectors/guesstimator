@@ -1,7 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
-import { deleteBatchOperation, query, scan } from "./DynamoUtils";
+import { deleteBatchOperation, forEach, query, scan } from "./DynamoUtils";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -70,7 +70,7 @@ export default class DbService {
         }
       | undefined = undefined;
     const users: Map<string, { username?: string; vote?: string }> = new Map();
-    for await (const item of query(this.client, queryParams)) {
+    await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
         roomData = {
           roomId,
@@ -97,7 +97,7 @@ export default class DbService {
       } else {
         console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
       }
-    }
+    });
 
     if (roomData === undefined) {
       return null;
@@ -160,9 +160,9 @@ export default class DbService {
       },
     };
     const deleteOperation = deleteBatchOperation(this.client, this.tableName);
-    for await (const item of query(this.client, queryParams)) {
+    await forEach(query(this.client, queryParams), async (item) => {
       await deleteOperation.push(item);
-    }
+    });
     await deleteOperation.flush();
   }
 
@@ -183,11 +183,11 @@ export default class DbService {
     };
 
     let count = 0;
-    for await (const item of scan(this.client, queryParams)) {
+    await forEach(scan(this.client, queryParams), async (item) => {
       const roomId = item.PK.substring("ROOM:".length);
       await this.deleteRoom(roomId);
       count++;
-    }
+    });
 
     return count;
   }
