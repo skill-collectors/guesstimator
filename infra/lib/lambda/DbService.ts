@@ -60,34 +60,36 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    // TODO return {roomData: object, users: {username: string, vote: string | undefined}[]}
-    let roomData:
+    const roomData:
       | {
-          roomId: string;
-          validSizes: string;
-          isRevealed: boolean;
-          hostKey: string;
+          roomId: string | undefined;
+          validSizes: string | undefined;
+          isRevealed: boolean | undefined;
+          hostKey: string | undefined;
         }
-      | undefined = undefined;
+      | undefined = {
+      roomId: undefined,
+      validSizes: undefined,
+      isRevealed: undefined,
+      hostKey: undefined,
+    };
     const users: Map<string, { username?: string; vote?: string }> = new Map();
     await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
-        roomData = {
-          roomId,
-          validSizes: item.validSizes,
-          isRevealed: item.isRevealed,
-          hostKey: item.hostKey,
-        };
-      } else if (item.SK.startsWith("USERS:")) {
-        const userKey = item.SK.substring("USERS:".length);
+        roomData.roomId = item.PK.substring("ROOM:".length);
+        roomData.validSizes = item.validSizes;
+        roomData.isRevealed = item.isRevealed;
+        roomData.hostKey = item.hostKey;
+      } else if (item.SK.startsWith("USER:")) {
+        const userKey = item.SK.substring("USER:".length);
         const userData = users.get(userKey);
         if (userData === undefined) {
           users.set(userKey, { username: item.username });
         } else {
           userData.username = item.username;
         }
-      } else if (item.SK.startsWith("VOTES:")) {
-        const userKey = item.SK.substring("VOTES:".length);
+      } else if (item.SK.startsWith("VOTE:")) {
+        const userKey = item.SK.substring("VOTE:".length);
         const userData = users.get(userKey);
         if (userData === undefined) {
           users.set(userKey, { vote: item.currentVote });
@@ -99,7 +101,7 @@ export default class DbService {
       }
     });
 
-    if (roomData === undefined) {
+    if (roomData.roomId === undefined) {
       return null;
     }
 
@@ -120,7 +122,7 @@ export default class DbService {
         TableName: this.tableName,
         Item: {
           PK: `ROOM:${roomId}`,
-          SK: `USERS:${userKey}`,
+          SK: `USER:${userKey}`,
           username,
         },
       })

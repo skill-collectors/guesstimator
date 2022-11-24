@@ -163,6 +163,7 @@ export function initRouter(tableName: string) {
         roomId: room.roomId,
         validSizes: room.validSizes,
         isRevealed: room.isRevealed,
+        users: room.users,
         // Intentionally exclude hostKey
       });
     }
