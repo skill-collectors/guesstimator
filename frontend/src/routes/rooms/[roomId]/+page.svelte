@@ -4,6 +4,7 @@
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+  import Card from "$lib/components/Card.svelte";
   import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
@@ -118,6 +119,9 @@
         {/if}
       {/if}
     </TgParagraph>
+    {#each roomData?.users as user}
+      <Card username={user.username} isRevealed={roomData.isRevealed} />
+    {/each}
   </section>
   <section class="mt-32">
     {#if userKey}
