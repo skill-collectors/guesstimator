@@ -29,7 +29,7 @@
       username = userData.username;
     }
     try {
-      roomData = await rooms.getRoom(roomId);
+      roomData = await rooms.getRoom(roomId, userKey);
     } catch (err) {
       if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;

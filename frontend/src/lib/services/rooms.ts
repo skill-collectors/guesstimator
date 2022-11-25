@@ -12,8 +12,15 @@ export async function createRoom(): Promise<Room> {
   return await rest.post("/rooms");
 }
 
-export async function getRoom(roomId: string): Promise<Room> {
-  return await rest.get(`/rooms/${roomId}`);
+export async function getRoom(
+  roomId: string,
+  userKey: string | null = null
+): Promise<Room> {
+  if (userKey === null) {
+    return await rest.get(`/rooms/${roomId}}`);
+  } else {
+    return await rest.get(`/rooms/${roomId}?userKey=${userKey}`);
+  }
 }
 
 export async function joinRoom(roomId: string, name: string) {

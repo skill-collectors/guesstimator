@@ -153,17 +153,34 @@ export function initRouter(tableName: string) {
     return ok({ status: "UP" });
   });
 
-  router.get("/rooms/:id", async (params) => {
+  router.get("/rooms/:id", async (params, event) => {
     const roomId = params.id;
     const room = await db.getRoom(roomId.toUpperCase());
     if (room === null) {
       return notFound(`No room with id ${roomId}`);
     } else {
+      const userKey = event.queryStringParameters?.userKey;
+      const users = room.users.map((user) => {
+        if (user.userKey === userKey) {
+          return {
+            ...user,
+            matchesUserKey: true,
+            hasVote: user.vote !== "",
+          };
+        } else {
+          return {
+            username: user.username,
+            matchesUserKey: false,
+            hasVote: user.vote !== "",
+            vote: room.isRevealed ? user.vote : "",
+          };
+        }
+      });
       return ok({
         roomId: room.roomId,
         validSizes: room.validSizes,
         isRevealed: room.isRevealed,
-        users: room.users,
+        users,
         // Intentionally exclude hostKey
       });
     }
