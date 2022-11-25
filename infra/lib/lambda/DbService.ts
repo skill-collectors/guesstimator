@@ -100,15 +100,16 @@ export default class DbService {
     };
   }
   async getRoomMetadata(roomId: string) {
-    return await this.client
+    const output = await this.client
       .get({
         TableName: this.tableName,
         Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
       })
       .promise();
+    return output.Item;
   }
   async addUser(roomId: string, username: string) {
-    const room = this.getRoomMetadata(roomId);
+    const room = await this.getRoomMetadata(roomId);
     if (room === null) {
       return null;
     }

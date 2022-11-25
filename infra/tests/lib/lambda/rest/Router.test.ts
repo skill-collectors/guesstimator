@@ -6,18 +6,21 @@ import { stubEvent } from "../Stubs";
 describe("Router", () => {
   const stubRoom = {
     roomId: "123",
-    validSizes: "1 2 3",
+    validSizes: ["1", "2", "3"],
     isRevealed: false,
     hostKey: "AB12",
+    users: [{ userKey: "ghi", vote: "" }],
   };
 
   vi.mock("../../../../lib/lambda/DbService", () => {
     const DbService = vi.fn();
     DbService.prototype.createRoom = vi.fn();
     DbService.prototype.getRoom = vi.fn();
+    DbService.prototype.getRoomMetadata = vi.fn();
     DbService.prototype.addUser = vi.fn();
     DbService.prototype.deleteRoom = vi.fn();
     DbService.prototype.setCardsRevealed = vi.fn();
+    DbService.prototype.setVote = vi.fn();
     return { default: DbService };
   });
 
@@ -26,6 +29,12 @@ describe("Router", () => {
   beforeEach(() => {
     mockDbService = new DbService("TableName");
     vi.mocked(mockDbService.getRoom).mockResolvedValue(stubRoom);
+    vi.mocked(mockDbService.getRoomMetadata).mockResolvedValue({
+      roomId: stubRoom.roomId,
+      hostKey: stubRoom.hostKey,
+      isRevealed: stubRoom.isRevealed,
+      validSizes: stubRoom.validSizes.join(" "),
+    });
   });
 
   afterEach(() => {
@@ -96,6 +105,7 @@ describe("Router", () => {
       // Given
       vi.mocked(mockDbService.addUser).mockResolvedValueOnce({
         roomId: "123",
+        username: "alice",
         userKey: "abc",
       });
 
@@ -169,6 +179,65 @@ describe("Router", () => {
         "DELETE",
         "/rooms/123",
         JSON.stringify({ hostKey: "WRONG" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+  });
+
+  describe("POST /rooms/:id/vote", () => {
+    it("updates the user row", async () => {
+      // Given
+      const event = stubEvent(
+        "POST",
+        "/rooms/123/votes",
+        JSON.stringify({ userKey: "ghi", vote: "1" })
+      );
+
+      // When
+      await router.run(event);
+
+      // Then
+      expect(mockDbService.setVote).toHaveBeenCalled();
+    });
+    it("rejects missing userKey", async () => {
+      // Given
+      const event = stubEvent(
+        "POST",
+        "/rooms/123/votes",
+        JSON.stringify({ vote: "1" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("rejects missing vote", async () => {
+      // Given
+      const event = stubEvent(
+        "POST",
+        "/rooms/123/votes",
+        JSON.stringify({ userKey: "ghi" })
+      );
+
+      // When
+      const result = await router.run(event);
+
+      // Then
+      expect(result.statusCode).toBe(400);
+    });
+    it("rejects invalid vote", async () => {
+      // Given
+      const event = stubEvent(
+        "POST",
+        "/rooms/123/votes",
+        JSON.stringify({ userKey: "ghi", vote: "foo" })
       );
 
       // When

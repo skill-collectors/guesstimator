@@ -1,6 +1,6 @@
 import { QueryOutput } from "@aws-sdk/client-dynamodb";
 import { AWSError, Request } from "aws-sdk";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import DbService from "../../../lib/lambda/DbService";
 
 describe("DbService", () => {
@@ -54,6 +54,10 @@ describe("DbService", () => {
     };
   });
   const tableName = "TableName";
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe("createRoom", () => {
     it("Puts a ROOM item in the table", async () => {

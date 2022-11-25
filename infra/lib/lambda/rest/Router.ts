@@ -192,7 +192,7 @@ export function initRouter(tableName: string) {
 
   router.del("/rooms/:id", async (params, event) => {
     const roomId = params.id;
-    const room = await db.getRoom(roomId.toUpperCase());
+    const room = await db.getRoomMetadata(roomId.toUpperCase());
     if (!room) {
       return notFound(`No room with ID ${roomId}`);
     }
@@ -203,12 +203,34 @@ export function initRouter(tableName: string) {
       return clientError(req.clientError);
     }
     await db.deleteRoom(roomId.toUpperCase());
-    return ok({ message: `Room ${roomId} was deleted.` });
+    return ok(`Room ${roomId} was deleted.`);
+  });
+
+  router.post("/rooms/:id/votes", async (params, event) => {
+    const roomId = params.id;
+    const req = new RequestWrapper(event);
+    req.validate().hasField("userKey").hasField("vote");
+    if (req.hasErrors) {
+      return clientError(req.clientError);
+    }
+    const { userKey, vote } = req.parsedBody;
+
+    const room = await db.getRoomMetadata(roomId);
+    if (room === null) {
+      return notFound(`No room with ID ${roomId}`);
+    }
+    const validSizes = room?.validSizes.split(" ") || [];
+    if (!validSizes.includes(vote)) {
+      return clientError(`Invalid vote: ${vote}`);
+    }
+
+    await db.setVote(roomId, userKey, vote);
+    return ok("Vote updated");
   });
 
   router.put("/rooms/:id/isRevealed", async (params, event) => {
     const roomId = params.id;
-    const room = await db.getRoom(roomId.toUpperCase());
+    const room = await db.getRoomMetadata(roomId.toUpperCase());
     if (!room) {
       return notFound(`No room with ID ${roomId}`);
     }
@@ -220,11 +242,9 @@ export function initRouter(tableName: string) {
     }
     const requestBody = req.parsedBody;
     await db.setCardsRevealed(roomId, requestBody.value);
-    return ok({
-      message: `Room ${roomId} cards ${
-        requestBody.value ? "are" : "are not"
-      } revealed.`,
-    });
+    return ok(
+      `Room ${roomId} cards ${requestBody.value ? "are" : "are not"} revealed.`
+    );
   });
 
   return router;
