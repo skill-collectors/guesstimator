@@ -71,7 +71,7 @@ export default class DbService {
       isRevealed: undefined,
       hostKey: undefined,
     };
-    const users: Map<string, { username?: string; vote?: string }> = new Map();
+    const users: { userKey: string; username?: string; vote?: string }[] = [];
     await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
         roomData.roomId = item.PK.substring("ROOM:".length);
@@ -80,20 +80,11 @@ export default class DbService {
         roomData.hostKey = item.hostKey;
       } else if (item.SK.startsWith("USER:")) {
         const userKey = item.SK.substring("USER:".length);
-        const userData = users.get(userKey);
-        if (userData === undefined) {
-          users.set(userKey, { username: item.username });
-        } else {
-          userData.username = item.username;
-        }
-      } else if (item.SK.startsWith("VOTE:")) {
-        const userKey = item.SK.substring("VOTE:".length);
-        const userData = users.get(userKey);
-        if (userData === undefined) {
-          users.set(userKey, { vote: item.currentVote });
-        } else {
-          userData.vote = item.currentVote;
-        }
+        users.push({
+          userKey,
+          username: item.username,
+          vote: item.currentVote,
+        });
       } else {
         console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
       }
@@ -122,6 +113,7 @@ export default class DbService {
           PK: `ROOM:${roomId}`,
           SK: `USER:${userKey}`,
           username,
+          vote: "",
         },
       })
       .promise();
