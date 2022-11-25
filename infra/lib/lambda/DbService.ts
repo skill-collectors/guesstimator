@@ -106,6 +106,7 @@ export default class DbService {
     }
 
     const userKey = generateId(USER_KEY_LENGTH);
+    const createdOn = new Date().toISOString();
     await this.client
       .put({
         TableName: this.tableName,
@@ -114,6 +115,8 @@ export default class DbService {
           SK: `USER:${userKey}`,
           username,
           vote: "",
+          createdOn,
+          updatedOn: createdOn,
         },
       })
       .promise();
