@@ -123,6 +123,7 @@ export default class DbService {
     console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return {
       roomId,
+      username,
       userKey,
     };
   }
