@@ -13,7 +13,13 @@ describe("DbService", () => {
       promise: () =>
         new Promise((resolve) =>
           resolve({
-            Item: { roomId: "abc123", validSizes: "1 2 3", isRevealed: false },
+            Item: {
+              PK: "ROOM:abc",
+              SK: "ROOM",
+              hostKey: "def",
+              validSizes: "1 2 3",
+              isRevealed: false,
+            },
           })
         ),
     }));
@@ -98,6 +104,18 @@ describe("DbService", () => {
 
       // Then
       expect(result).toBeNull();
+    });
+  });
+  describe("getRoomMetadata", () => {
+    it("Just gets the one room metadata item", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.getRoomMetadata("abc");
+
+      // Then
+      expect(service.client.get).toHaveBeenCalled();
     });
   });
   describe("addUser", () => {

@@ -99,8 +99,16 @@ export default class DbService {
       users: Array.from(users.values()),
     };
   }
+  async getRoomMetadata(roomId: string) {
+    return await this.client
+      .get({
+        TableName: this.tableName,
+        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
+      })
+      .promise();
+  }
   async addUser(roomId: string, username: string) {
-    const room = this.getRoom(roomId);
+    const room = this.getRoomMetadata(roomId);
     if (room === null) {
       return null;
     }
@@ -128,18 +136,19 @@ export default class DbService {
     };
   }
   async setCardsRevealed(roomId: string, isRevealed: boolean) {
-    const roomData = await this.getRoom(roomId);
-    if (roomData === null) {
-      return;
-    }
+    const pk = `ROOM:${roomId}`;
+    const sk = "ROOM";
     const updatedOn = new Date();
     await this.client
       .update({
         TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
         UpdateExpression:
           "set isRevealed = :isRevealed, updatedOn = :updatedOn",
         ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
           ":isRevealed": isRevealed,
           ":updatedOn": updatedOn.toISOString(),
         },
