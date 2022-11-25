@@ -130,6 +130,19 @@ describe("DbService", () => {
       expect(result).toHaveProperty("userKey");
     });
   });
+  describe("setVote", () => {
+    it("Updates the database", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setVote("abc", "userKey", "vote");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.UpdateExpression).toContain("vote");
+    });
+  });
   describe("setCardsRevealed", () => {
     it("Updates the database", async () => {
       // Given

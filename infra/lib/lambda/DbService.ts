@@ -135,6 +135,24 @@ export default class DbService {
       userKey,
     };
   }
+  async setVote(roomId: string, userKey: string, vote: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression: "set vote = :vote, updatedOn = :updatedOn",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":vote": vote,
+          ":updatedOn": new Date().toISOString(),
+        },
+      })
+      .promise();
+  }
   async setCardsRevealed(roomId: string, isRevealed: boolean) {
     const pk = `ROOM:${roomId}`;
     const sk = "ROOM";
