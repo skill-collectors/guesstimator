@@ -22,21 +22,14 @@
   let roomData: Room | null = null;
 
   onMount(async () => {
-    hostKey = localStorage.getHostKey(roomId);
+    const hostData = localStorage.getHostData(roomId);
+    hostKey = hostData.hostKey;
+
     const userData = localStorage.getUserData(roomId);
-    if (userData !== null) {
-      userKey = userData.userKey;
-      username = userData.username;
-    }
-    try {
-      roomData = await rooms.getRoom(roomId, userKey);
-    } catch (err) {
-      if (err instanceof ApiEndpointNotFoundError) {
-        notFound = true;
-      } else {
-        redirectToErrorPage(err);
-      }
-    }
+    userKey = userData.userKey;
+    username = userData.username;
+
+    loadRoomData();
   });
 
   let selectedSize = "";
@@ -45,6 +38,23 @@
     if (userKey !== null) {
       await rooms.vote(roomId, userKey, size);
       selectedSize = size;
+    }
+  }
+
+  async function loadRoomData() {
+    try {
+      roomData = await rooms.getRoom(roomId, userKey);
+      const currentUser = roomData.users.find(
+        (user) => user.userKey === userKey
+      );
+      username = currentUser?.username || "";
+      selectedSize = currentUser?.vote || "";
+    } catch (err) {
+      if (err instanceof ApiEndpointNotFoundError) {
+        notFound = true;
+      } else {
+        redirectToErrorPage(err);
+      }
     }
   }
 
