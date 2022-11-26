@@ -1,5 +1,4 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { expect } from "vitest";
 
 /**
  * Assumes the body of the request is JSON, and returns the parsed result.
@@ -89,7 +88,7 @@ class BodyValidator {
    */
   hasField(prop: string) {
     const value = this.body[prop];
-    if (typeof value === "undefined" || value === "") {
+    if (typeof value === "undefined" || value === null) {
       this._addError(prop, "Field is missing on the request body");
     }
     return this;

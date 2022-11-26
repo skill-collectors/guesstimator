@@ -164,13 +164,11 @@ export function initRouter(tableName: string) {
         if (user.userKey === userKey) {
           return {
             ...user,
-            matchesUserKey: true,
             hasVote: user.vote !== "",
           };
         } else {
           return {
             username: user.username,
-            matchesUserKey: false,
             hasVote: user.vote !== "",
             vote: room.isRevealed ? user.vote : "",
           };
@@ -237,7 +235,7 @@ export function initRouter(tableName: string) {
       return notFound(`No room with ID ${roomId}`);
     }
     const validSizes = room?.validSizes.split(" ") || [];
-    if (!validSizes.includes(vote)) {
+    if (!validSizes.includes(vote) && vote !== "") {
       return clientError(`Invalid vote: ${vote}`);
     }
 

@@ -121,7 +121,12 @@
       {/if}
     </TgParagraph>
     {#each roomData?.users as user}
-      <Card username={user.username} isRevealed={roomData.isRevealed} />
+      <Card
+        username={user.username}
+        isRevealed={roomData.isRevealed}
+        hasValue={user.hasVote}
+        value={user.vote}
+      />
     {/each}
   </section>
   <section class="mt-32">
@@ -140,6 +145,9 @@
           >
         {/if}
       {/each}
+      <TgButton type="secondary" class="m-2" on:click={() => setSelection("")}
+        >Clear</TgButton
+      >
       <TgParagraph>You are joined as {username}</TgParagraph>
     {:else}
       <TgParagraph

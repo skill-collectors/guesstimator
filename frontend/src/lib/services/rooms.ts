@@ -5,7 +5,12 @@ export interface Room {
   hostKey: string | undefined;
   validSizes: string;
   isRevealed: boolean;
-  users: { username: string; vote: string }[];
+  users: {
+    userKey?: string;
+    username: string;
+    hasVote: boolean;
+    vote: string;
+  }[];
 }
 
 export async function createRoom(): Promise<Room> {
