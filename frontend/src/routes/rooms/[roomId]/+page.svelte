@@ -142,7 +142,7 @@
         {/if}
       {/if}
     </TgParagraph>
-    {#each roomData?.users as user}
+    {#each roomData?.users as user (user.username)}
       <Card
         username={user.username}
         isRevealed={roomData.isRevealed}
