@@ -5,14 +5,27 @@ export interface Room {
   hostKey: string | undefined;
   validSizes: string;
   isRevealed: boolean;
+  users: {
+    userKey?: string;
+    username: string;
+    hasVote: boolean;
+    vote: string;
+  }[];
 }
 
 export async function createRoom(): Promise<Room> {
   return await rest.post("/rooms");
 }
 
-export async function getRoom(roomId: string): Promise<Room> {
-  return await rest.get(`/rooms/${roomId}`);
+export async function getRoom(
+  roomId: string,
+  userKey: string | null = null
+): Promise<Room> {
+  if (userKey === null) {
+    return await rest.get(`/rooms/${roomId}`);
+  } else {
+    return await rest.get(`/rooms/${roomId}?userKey=${userKey}`);
+  }
 }
 
 export async function joinRoom(roomId: string, name: string) {
@@ -29,4 +42,8 @@ export async function setIsRevealed(
   hostKey: string
 ) {
   await rest.put(`/rooms/${roomId}/isRevealed`, { value, hostKey });
+}
+
+export async function vote(roomId: string, userKey: string, vote: string) {
+  await rest.post(`/rooms/${roomId}/votes`, { userKey, vote });
 }

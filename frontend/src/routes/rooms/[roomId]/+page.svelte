@@ -4,6 +4,7 @@
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+  import Card from "$lib/components/Card.svelte";
   import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
@@ -19,18 +20,35 @@
   let userKey: string | null = null;
   let username = "";
   let roomData: Room | null = null;
-  let sizeValues: string[] = [];
 
   onMount(async () => {
-    hostKey = localStorage.getHostKey(roomId);
+    const hostData = localStorage.getHostData(roomId);
+    hostKey = hostData.hostKey;
+
     const userData = localStorage.getUserData(roomId);
-    if (userData !== null) {
-      userKey = userData.userKey;
-      username = userData.username;
+    userKey = userData.userKey;
+    username = userData.username;
+
+    loadRoomData();
+  });
+
+  let selectedSize = "";
+
+  async function setSelection(size = "") {
+    if (userKey !== null) {
+      await rooms.vote(roomId, userKey, size);
+      selectedSize = size;
     }
+  }
+
+  async function loadRoomData() {
     try {
-      roomData = await rooms.getRoom(roomId);
-      sizeValues = roomData.validSizes.split(" ");
+      roomData = await rooms.getRoom(roomId, userKey);
+      const currentUser = roomData.users.find(
+        (user) => user.userKey === userKey
+      );
+      username = currentUser?.username || "";
+      selectedSize = currentUser?.vote || "";
     } catch (err) {
       if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;
@@ -38,12 +56,6 @@
         redirectToErrorPage(err);
       }
     }
-  });
-
-  let selectedSize = "";
-
-  function setSelection(size = "") {
-    selectedSize = size;
   }
 
   async function handleDeleteRoom() {
@@ -118,32 +130,45 @@
         {/if}
       {/if}
     </TgParagraph>
+    {#each roomData?.users as user}
+      <Card
+        username={user.username}
+        isRevealed={roomData.isRevealed}
+        hasValue={user.hasVote}
+        value={user.vote}
+      />
+    {/each}
   </section>
-  <section class="mt-32">
-    {#if userKey}
-      <TgHeadingSub>Your votes:</TgHeadingSub>
-      {#each sizeValues as size}
-        {#if size === selectedSize}
-          <TgButton type="primary" class="m-2" on:click={() => setSelection()}
-            >{size}</TgButton
-          >
-        {:else}
-          <TgButton
-            type="secondary"
-            class="m-2"
-            on:click={() => setSelection(size)}>{size}</TgButton
-          >
-        {/if}
-      {/each}
-      <TgParagraph>You are joined as {username}</TgParagraph>
-    {:else}
-      <TgParagraph
-        >If you'd like to vote, enter a name and join the room:</TgParagraph
-      >
-      <TgInputText name="newUser" maxlength={30} bind:value={username} />
-      <TgButton type="primary" on:click={handleJoinRoomClick}
-        >Join room</TgButton
-      >
-    {/if}
-  </section>
+  {#if !roomData?.isRevealed}
+    <section class="mt-32">
+      {#if userKey}
+        <TgHeadingSub>Your votes:</TgHeadingSub>
+        {#each roomData.validSizes as size}
+          {#if size === selectedSize}
+            <TgButton type="primary" class="m-2" on:click={() => setSelection()}
+              >{size}</TgButton
+            >
+          {:else}
+            <TgButton
+              type="secondary"
+              class="m-2"
+              on:click={() => setSelection(size)}>{size}</TgButton
+            >
+          {/if}
+        {/each}
+        <TgButton type="secondary" class="m-2" on:click={() => setSelection("")}
+          >Clear</TgButton
+        >
+        <TgParagraph>You are joined as {username}</TgParagraph>
+      {:else}
+        <TgParagraph
+          >If you'd like to vote, enter a name and join the room:</TgParagraph
+        >
+        <TgInputText name="newUser" maxlength={30} bind:value={username} />
+        <TgButton type="primary" on:click={handleJoinRoomClick}
+          >Join room</TgButton
+        >
+      {/if}
+    </section>
+  {/if}
 {/if}

@@ -1,7 +1,14 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
-import { Pager } from "./Pager";
+import {
+  deleteBatchOperation,
+  updateBatchOperation,
+  forEach,
+  query,
+  scan,
+} from "./DynamoUtils";
+import { clear } from "console";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -47,73 +54,136 @@ export default class DbService {
     return {
       roomId,
       hostKey,
-      validSizes,
-      isRevealed,
     };
   }
+
   async getRoom(roomId: string) {
-    const getItemResponse = await this.client
+    const queryParams = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk",
+      ExpressionAttributeValues: {
+        ":pk": `ROOM:${roomId}`,
+      },
+    };
+    const roomData:
+      | {
+          roomId: string | undefined;
+          validSizes: string[] | undefined;
+          isRevealed: boolean | undefined;
+          hostKey: string | undefined;
+        }
+      | undefined = {
+      roomId: undefined,
+      validSizes: undefined,
+      isRevealed: undefined,
+      hostKey: undefined,
+    };
+    const users: { userKey: string; username?: string; vote?: string }[] = [];
+    await forEach(query(this.client, queryParams), async (item) => {
+      if (item.SK === "ROOM") {
+        roomData.roomId = item.PK.substring("ROOM:".length);
+        roomData.validSizes = item.validSizes.split(" ");
+        roomData.isRevealed = item.isRevealed;
+        roomData.hostKey = item.hostKey;
+      } else if (item.SK.startsWith("USER:")) {
+        const userKey = item.SK.substring("USER:".length);
+        users.push({
+          userKey,
+          username: item.username,
+          vote: item.vote,
+        });
+      } else {
+        console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
+      }
+    });
+
+    if (roomData.roomId === undefined) {
+      return null;
+    }
+
+    return {
+      ...roomData,
+      users: Array.from(users.values()),
+    };
+  }
+  async getRoomMetadata(roomId: string) {
+    const output = await this.client
       .get({
         TableName: this.tableName,
         Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
       })
       .promise();
-    const roomData = getItemResponse.Item;
-    if (roomData === undefined) {
-      return null;
-    }
-
-    console.log(`Got room ${JSON.stringify(roomData)}`);
-    const response = {
-      roomId,
-      validSizes: roomData.validSizes,
-      isRevealed: roomData.isRevealed,
-      hostKey: roomData.hostKey,
-    };
-
-    return response;
+    return output.Item;
   }
-  async addUser(roomId: string, name: string) {
-    const room = this.getRoom(roomId);
+  async addUser(roomId: string, username: string) {
+    const room = await this.getRoomMetadata(roomId);
     if (room === null) {
       return null;
     }
 
     const userKey = generateId(USER_KEY_LENGTH);
+    const createdOn = new Date().toISOString();
     await this.client
       .put({
         TableName: this.tableName,
         Item: {
           PK: `ROOM:${roomId}`,
-          SK: `USERS:${userKey}`,
-          name,
+          SK: `USER:${userKey}`,
+          username,
+          vote: "",
+          createdOn,
+          updatedOn: createdOn,
         },
       })
       .promise();
-    console.log(`Added user ${name} with key ${userKey} to room ${roomId}`);
+    console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return {
       roomId,
+      username,
       userKey,
     };
   }
-  async setCardsRevealed(roomId: string, isRevealed: boolean) {
-    const roomData = await this.getRoom(roomId);
-    if (roomData === null) {
-      return;
-    }
-    const updatedOn = new Date();
+  async setVote(roomId: string, userKey: string, vote: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
     await this.client
       .update({
         TableName: this.tableName,
-        Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
-        UpdateExpression:
-          "set isRevealed = :isRevealed, updatedOn = :updatedOn",
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression: "set vote = :vote, updatedOn = :updatedOn",
         ExpressionAttributeValues: {
-          ":isRevealed": isRevealed,
-          ":updatedOn": updatedOn.toISOString(),
+          ":pk": pk,
+          ":sk": sk,
+          ":vote": vote,
+          ":updatedOn": new Date().toISOString(),
         },
       })
       .promise();
+  }
+  async setCardsRevealed(roomId: string, isRevealed: boolean) {
+    const updatedOn = new Date();
+
+    const queryParams = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk",
+      ExpressionAttributeValues: {
+        ":pk": `ROOM:${roomId}`,
+      },
+    };
+    const updateOperation = updateBatchOperation(this.client, this.tableName);
+    await forEach(query(this.client, queryParams), async (item) => {
+      if (item.SK === "ROOM") {
+        item.isRevealed = isRevealed;
+        item.updatedOn = updatedOn.toISOString();
+      } else if (item.SK.startsWith("USER:") && isRevealed == false) {
+        // clear votes when hiding cards
+        item.vote = "";
+        item.updatedOn = updatedOn.toISOString();
+      }
+      updateOperation.push(item);
+    });
+    updateOperation.flush();
   }
 
   async deleteRoom(roomId: string) {
@@ -124,26 +194,11 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    const supplier = async (params: DocumentClient.QueryInput) => {
-      return await this.client.query(params).promise();
-    };
-    const consumer = async (items: DocumentClient.ItemList) => {
-      const deleteRequests =
-        items.map((item) => ({
-          DeleteRequest: { Key: { PK: item.PK, SK: item.SK } },
-        })) || [];
-      console.log(`Batch deleting ${items.length} items from room ${roomId}`);
-      await this.client
-        .batchWrite({
-          RequestItems: {
-            [this.tableName]: deleteRequests,
-          },
-        })
-        .promise();
-    };
-
-    const pager = new Pager(supplier, queryParams, consumer);
-    await pager.run();
+    const deleteOperation = deleteBatchOperation(this.client, this.tableName);
+    await forEach(query(this.client, queryParams), async (item) => {
+      await deleteOperation.push(item);
+    });
+    await deleteOperation.flush();
   }
 
   async deleteStaleRooms() {
@@ -162,22 +217,13 @@ export default class DbService {
       },
     };
 
-    const staleRooms: string[] = [];
-    const supplier = async (params: DocumentClient.QueryInput) => {
-      return await this.client.scan(params).promise();
-    };
-    const consumer = async (items: DocumentClient.ItemList) => {
-      items
-        .map((item) => item.PK.substring("ROOM:".length)) // trim 'ROOM:' prefix
-        .forEach((roomId) => staleRooms.push(roomId));
-    };
-
-    const pager = new Pager(supplier, queryParams, consumer);
-    await pager.run();
-    console.log(`Got ${staleRooms.length} stale rooms to delete`);
-    for (const roomId of staleRooms) {
+    let count = 0;
+    await forEach(scan(this.client, queryParams), async (item) => {
+      const roomId = item.PK.substring("ROOM:".length);
       await this.deleteRoom(roomId);
-    }
-    return staleRooms.length;
+      count++;
+    });
+
+    return count;
   }
 }

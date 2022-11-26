@@ -1,5 +1,6 @@
+import { QueryOutput } from "@aws-sdk/client-dynamodb";
 import { AWSError, Request } from "aws-sdk";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import DbService from "../../../lib/lambda/DbService";
 
 describe("DbService", () => {
@@ -12,7 +13,13 @@ describe("DbService", () => {
       promise: () =>
         new Promise((resolve) =>
           resolve({
-            Item: { roomId: "abc123", validSizes: "1 2 3", isRevealed: false },
+            Item: {
+              PK: "ROOM:abc",
+              SK: "ROOM",
+              hostKey: "def",
+              validSizes: "1 2 3",
+              isRevealed: false,
+            },
           })
         ),
     }));
@@ -20,7 +27,15 @@ describe("DbService", () => {
       promise: () =>
         new Promise((resolve) =>
           resolve({
-            Items: [{ PK: "ROOM:abc", SK: "ROOM" }],
+            Items: [
+              {
+                PK: "ROOM:abc",
+                SK: "ROOM",
+                hostKey: "def",
+                isRevealed: false,
+                validSizes: "1 2 3",
+              },
+            ],
           })
         ),
     }));
@@ -39,6 +54,10 @@ describe("DbService", () => {
     };
   });
   const tableName = "TableName";
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe("createRoom", () => {
     it("Puts a ROOM item in the table", async () => {
@@ -69,20 +88,20 @@ describe("DbService", () => {
       const service = new DbService(tableName);
 
       // When
-      await service.getRoom("abc123");
+      await service.getRoom("abc");
 
       // Then
-      expect(service.client.get).toHaveBeenCalled();
+      expect(service.client.query).toHaveBeenCalled();
     });
     it("Returns null if the room doesn't exist", async () => {
       // Given
       const service = new DbService(tableName);
 
-      vi.mocked(service.client.get).mockReturnValueOnce({
+      vi.mocked(service.client.query).mockReturnValueOnce({
         promise: vi.fn().mockResolvedValue({
-          Item: undefined,
+          Items: undefined,
         }),
-      } as unknown as Request<GetItemOutput, AWSError>);
+      } as unknown as Request<QueryOutput, AWSError>);
 
       // When
       const result = await service.getRoom("abc123");
@@ -90,7 +109,20 @@ describe("DbService", () => {
       // Then
       expect(result).toBeNull();
     });
+  });
+  describe("getRoomMetadata", () => {
+    it("Just gets the one room metadata item", async () => {
+      // Given
+      const service = new DbService(tableName);
 
+      // When
+      await service.getRoomMetadata("abc");
+
+      // Then
+      expect(service.client.get).toHaveBeenCalled();
+    });
+  });
+  describe("addUser", () => {
     it("Generates a User ID", async () => {
       // Given
       const service = new DbService(tableName);
@@ -102,6 +134,19 @@ describe("DbService", () => {
       expect(result).toHaveProperty("userKey");
     });
   });
+  describe("setVote", () => {
+    it("Updates the database", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setVote("abc", "userKey", "vote");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.UpdateExpression).toContain("vote");
+    });
+  });
   describe("setCardsRevealed", () => {
     it("Updates the database", async () => {
       // Given
@@ -111,9 +156,7 @@ describe("DbService", () => {
       await service.setCardsRevealed("abc123", true);
 
       // Then
-      const params = vi.mocked(service.client.update).mock.calls[0][0];
-      expect(params.UpdateExpression).toContain("isRevealed");
-      expect(params.UpdateExpression).toContain("updatedOn");
+      expect(service.client.batchWrite).toHaveBeenCalled();
     });
   });
   describe("deleteRoom", () => {
