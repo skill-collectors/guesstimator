@@ -176,12 +176,13 @@ export default class DbService {
       if (item.SK === "ROOM") {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
+        updateOperation.push(item);
       } else if (item.SK.startsWith("USER:") && isRevealed == false) {
         // clear votes when hiding cards
         item.vote = "";
         item.updatedOn = updatedOn.toISOString();
+        updateOperation.push(item);
       }
-      updateOperation.push(item);
     });
     updateOperation.flush();
   }
