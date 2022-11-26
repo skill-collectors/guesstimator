@@ -96,7 +96,7 @@
   <TgParagraph>Loading room...</TgParagraph>
 {:else}
   <header class="mt-8">
-    Room URL: {url}
+    Room URL: <span class="whitespace-nowrap">{url}</span>
     {#if hostKey}
       <TgButton
         id="deleteRoomButton"
