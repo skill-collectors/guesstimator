@@ -1,7 +1,14 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import * as aws from "@pulumi/aws";
-import { deleteBatchOperation, forEach, query, scan } from "./DynamoUtils";
+import {
+  deleteBatchOperation,
+  updateBatchOperation,
+  forEach,
+  query,
+  scan,
+} from "./DynamoUtils";
+import { clear } from "console";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -155,24 +162,28 @@ export default class DbService {
       .promise();
   }
   async setCardsRevealed(roomId: string, isRevealed: boolean) {
-    const pk = `ROOM:${roomId}`;
-    const sk = "ROOM";
     const updatedOn = new Date();
-    await this.client
-      .update({
-        TableName: this.tableName,
-        Key: { PK: pk, SK: sk },
-        ConditionExpression: "PK = :pk AND SK = :sk",
-        UpdateExpression:
-          "set isRevealed = :isRevealed, updatedOn = :updatedOn",
-        ExpressionAttributeValues: {
-          ":pk": pk,
-          ":sk": sk,
-          ":isRevealed": isRevealed,
-          ":updatedOn": updatedOn.toISOString(),
-        },
-      })
-      .promise();
+
+    const queryParams = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk",
+      ExpressionAttributeValues: {
+        ":pk": `ROOM:${roomId}`,
+      },
+    };
+    const updateOperation = updateBatchOperation(this.client, this.tableName);
+    await forEach(query(this.client, queryParams), async (item) => {
+      if (item.SK === "ROOM") {
+        item.isRevealed = isRevealed;
+        item.updatedOn = updatedOn.toISOString();
+      } else if (item.SK.startsWith("USER:") && isRevealed == false) {
+        // clear votes when hiding cards
+        item.vote = "";
+        item.updatedOn = updatedOn.toISOString();
+      }
+      updateOperation.push(item);
+    });
+    updateOperation.flush();
   }
 
   async deleteRoom(roomId: string) {

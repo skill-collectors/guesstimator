@@ -118,6 +118,25 @@ class BatchOperation {
   }
 }
 
+export function updateBatchOperation(
+  client: DocumentClient,
+  tableName: string
+) {
+  return new BatchOperation(client, async (items: DocumentClient.ItemList) => {
+    const putRequests =
+      items.map((item) => ({
+        PutRequest: { Item: item },
+      })) || [];
+    await client
+      .batchWrite({
+        RequestItems: {
+          [tableName]: putRequests,
+        },
+      })
+      .promise();
+  });
+}
+
 export function deleteBatchOperation(
   client: DocumentClient,
   tableName: string

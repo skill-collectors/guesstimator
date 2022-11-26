@@ -156,9 +156,7 @@ describe("DbService", () => {
       await service.setCardsRevealed("abc123", true);
 
       // Then
-      const params = vi.mocked(service.client.update).mock.calls[0][0];
-      expect(params.UpdateExpression).toContain("isRevealed");
-      expect(params.UpdateExpression).toContain("updatedOn");
+      expect(service.client.batchWrite).toHaveBeenCalled();
     });
   });
   describe("deleteRoom", () => {
