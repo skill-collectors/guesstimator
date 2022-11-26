@@ -74,6 +74,7 @@
     if (hostKey === null) {
       return;
     }
+    clearInterval(reloadIntervalId);
     await rooms.deleteRoom(roomData.roomId, hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
