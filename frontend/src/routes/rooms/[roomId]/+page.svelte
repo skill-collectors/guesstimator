@@ -10,7 +10,7 @@
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
   import type { Room } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import InvalidRoom from "./InvalidRoom.svelte";
 
   let notFound = false;
@@ -20,6 +20,7 @@
   let userKey: string | null = null;
   let username = "";
   let roomData: Room | null = null;
+  let reloadIntervalId: number | undefined;
 
   onMount(async () => {
     const hostData = localStorage.getHostData(roomId);
@@ -30,6 +31,14 @@
     username = userData.username;
 
     loadRoomData();
+    reloadIntervalId = window.setInterval(
+      async () => await loadRoomData(),
+      2_000
+    );
+  });
+
+  onDestroy(() => {
+    clearInterval(reloadIntervalId);
   });
 
   let selectedSize = "";
