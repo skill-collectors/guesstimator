@@ -129,34 +129,36 @@
       />
     {/each}
   </section>
-  <section class="mt-32">
-    {#if userKey}
-      <TgHeadingSub>Your votes:</TgHeadingSub>
-      {#each roomData.validSizes as size}
-        {#if size === selectedSize}
-          <TgButton type="primary" class="m-2" on:click={() => setSelection()}
-            >{size}</TgButton
-          >
-        {:else}
-          <TgButton
-            type="secondary"
-            class="m-2"
-            on:click={() => setSelection(size)}>{size}</TgButton
-          >
-        {/if}
-      {/each}
-      <TgButton type="secondary" class="m-2" on:click={() => setSelection("")}
-        >Clear</TgButton
-      >
-      <TgParagraph>You are joined as {username}</TgParagraph>
-    {:else}
-      <TgParagraph
-        >If you'd like to vote, enter a name and join the room:</TgParagraph
-      >
-      <TgInputText name="newUser" maxlength={30} bind:value={username} />
-      <TgButton type="primary" on:click={handleJoinRoomClick}
-        >Join room</TgButton
-      >
-    {/if}
-  </section>
+  {#if !roomData?.isRevealed}
+    <section class="mt-32">
+      {#if userKey}
+        <TgHeadingSub>Your votes:</TgHeadingSub>
+        {#each roomData.validSizes as size}
+          {#if size === selectedSize}
+            <TgButton type="primary" class="m-2" on:click={() => setSelection()}
+              >{size}</TgButton
+            >
+          {:else}
+            <TgButton
+              type="secondary"
+              class="m-2"
+              on:click={() => setSelection(size)}>{size}</TgButton
+            >
+          {/if}
+        {/each}
+        <TgButton type="secondary" class="m-2" on:click={() => setSelection("")}
+          >Clear</TgButton
+        >
+        <TgParagraph>You are joined as {username}</TgParagraph>
+      {:else}
+        <TgParagraph
+          >If you'd like to vote, enter a name and join the room:</TgParagraph
+        >
+        <TgInputText name="newUser" maxlength={30} bind:value={username} />
+        <TgButton type="primary" on:click={handleJoinRoomClick}
+          >Join room</TgButton
+        >
+      {/if}
+    </section>
+  {/if}
 {/if}
