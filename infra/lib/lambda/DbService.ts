@@ -83,7 +83,7 @@ export default class DbService {
         users.push({
           userKey,
           username: item.username,
-          vote: item.currentVote,
+          vote: item.vote,
         });
       } else {
         console.log("Unexpected key pattern: ${item.PK}/${item.SK}");

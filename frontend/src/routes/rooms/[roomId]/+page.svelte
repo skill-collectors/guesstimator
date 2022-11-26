@@ -41,8 +41,11 @@
 
   let selectedSize = "";
 
-  function setSelection(size = "") {
-    selectedSize = size;
+  async function setSelection(size = "") {
+    if (userKey !== null) {
+      await rooms.vote(roomId, userKey, size);
+      selectedSize = size;
+    }
   }
 
   async function handleDeleteRoom() {

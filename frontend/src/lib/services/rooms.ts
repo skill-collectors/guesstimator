@@ -38,3 +38,7 @@ export async function setIsRevealed(
 ) {
   await rest.put(`/rooms/${roomId}/isRevealed`, { value, hostKey });
 }
+
+export async function vote(roomId: string, userKey: string, vote: string) {
+  await rest.post(`/rooms/${roomId}/votes`, { userKey, vote });
+}
