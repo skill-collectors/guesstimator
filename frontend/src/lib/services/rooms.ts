@@ -22,7 +22,7 @@ export async function getRoom(
   userKey: string | null = null
 ): Promise<Room> {
   if (userKey === null) {
-    return await rest.get(`/rooms/${roomId}}`);
+    return await rest.get(`/rooms/${roomId}`);
   } else {
     return await rest.get(`/rooms/${roomId}?userKey=${userKey}`);
   }
