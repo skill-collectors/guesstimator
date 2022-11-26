@@ -56,8 +56,10 @@
       const currentUser = roomData.users.find(
         (user) => user.userKey === userKey
       );
-      username = currentUser?.username || "";
-      selectedSize = currentUser?.vote || "";
+      if (currentUser !== undefined) {
+        username = currentUser.username;
+        selectedSize = currentUser.vote;
+      }
     } catch (err) {
       if (err instanceof ApiEndpointNotFoundError) {
         notFound = true;
