@@ -4,7 +4,7 @@
   export let hasValue = false;
   export let value = "";
 
-  let displayValue = value == "" ? "?" : value;
+  let displayValue = value === "" ? "?" : value;
 </script>
 
 {#if isRevealed}
