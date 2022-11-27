@@ -190,10 +190,13 @@
             >
           {/if}
         {/each}
-        <TgButton type="secondary" class="m-2" on:click={() => setSelection("")}
+        <TgButton type="danger" class="m-2" on:click={() => setSelection("")}
           >Clear</TgButton
         >
-        <TgParagraph>You are joined as {currentUser.username}</TgParagraph>
+        <TgParagraph
+          >You are joined as <strong>{currentUser.username}</strong
+          ></TgParagraph
+        >
       {:else}
         <TgParagraph
           >If you'd like to vote, enter a name and join the room:</TgParagraph
