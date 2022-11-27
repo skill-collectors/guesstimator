@@ -3,7 +3,6 @@
  * parameter parsing is handled by PathParser.
  */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { i } from "vitest/dist/index-2f5b6168";
 import DbService from "../DbService";
 import { PathParser } from "./PathParser";
 import { RequestWrapper } from "./RequestWrapper";
