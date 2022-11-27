@@ -78,7 +78,12 @@ export default class DbService {
       isRevealed: undefined,
       hostKey: undefined,
     };
-    const users: { userKey: string; username?: string; vote?: string }[] = [];
+    const users: {
+      userKey: string;
+      userId: string;
+      username?: string;
+      vote?: string;
+    }[] = [];
     await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
         roomData.roomId = item.PK.substring("ROOM:".length);
@@ -89,6 +94,7 @@ export default class DbService {
         const userKey = item.SK.substring("USER:".length);
         users.push({
           userKey,
+          userId: item.userId,
           username: item.username,
           vote: item.vote,
         });
@@ -122,6 +128,7 @@ export default class DbService {
     }
 
     const userKey = generateId(USER_KEY_LENGTH);
+    const userId = generateId(USER_KEY_LENGTH);
     const createdOn = new Date().toISOString();
     await this.client
       .put({
@@ -129,6 +136,7 @@ export default class DbService {
         Item: {
           PK: `ROOM:${roomId}`,
           SK: `USER:${userKey}`,
+          userId,
           username,
           vote: "",
           createdOn,
@@ -176,12 +184,13 @@ export default class DbService {
       if (item.SK === "ROOM") {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
+        updateOperation.push(item);
       } else if (item.SK.startsWith("USER:") && isRevealed == false) {
         // clear votes when hiding cards
         item.vote = "";
         item.updatedOn = updatedOn.toISOString();
+        updateOperation.push(item);
       }
-      updateOperation.push(item);
     });
     updateOperation.flush();
   }

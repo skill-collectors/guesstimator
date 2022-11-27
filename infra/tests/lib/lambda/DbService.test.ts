@@ -35,6 +35,13 @@ describe("DbService", () => {
                 isRevealed: false,
                 validSizes: "1 2 3",
               },
+              {
+                PK: "ROOM:abc",
+                SK: "USER:ghi",
+                userId: "jkl",
+                username: "alice",
+                vote: "1",
+              },
             ],
           })
         ),
@@ -157,6 +164,34 @@ describe("DbService", () => {
 
       // Then
       expect(service.client.batchWrite).toHaveBeenCalled();
+    });
+    it("Clears votes if isRevealed = false", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setCardsRevealed("abc123", false);
+
+      // Then
+      const batchWriteArgs = vi.mocked(service.client.batchWrite).mock.calls[0];
+      const userUpdateRequest = batchWriteArgs[0].RequestItems[tableName]
+        .map((item) => item.PutRequest?.Item)
+        .find((item) => item?.SK.startsWith("USER:"));
+      expect(userUpdateRequest?.vote).toBe("");
+    });
+    it("Does NOT clear votes if isRevealed = true", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setCardsRevealed("abc123", true);
+
+      // Then
+      const batchWriteArgs = vi.mocked(service.client.batchWrite).mock.calls[0];
+      const userUpdateRequest = batchWriteArgs[0].RequestItems[tableName]
+        .map((item) => item.PutRequest?.Item)
+        .find((item) => item?.SK.startsWith("USER:"));
+      expect(userUpdateRequest?.vote).not.toBe("");
     });
   });
   describe("deleteRoom", () => {

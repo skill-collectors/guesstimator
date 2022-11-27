@@ -168,6 +168,7 @@ export function initRouter(tableName: string) {
           };
         } else {
           return {
+            userId: user.userId,
             username: user.username,
             hasVote: user.vote !== "",
             vote: room.isRevealed ? user.vote : "",

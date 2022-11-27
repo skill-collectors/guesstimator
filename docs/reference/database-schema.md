@@ -11,21 +11,22 @@ We use DynamoDB, which is "schemaless" meaning the fields are not formally defin
 | PK            | SK             | fields                                                |
 | ------------- | -------------- | ----------------------------------------------------- |
 | ROOM:[roomId] | ROOM           | hostKey, validSizes, isRevealed, createdOn, updatedOn |
-| ROOM:[roomId] | USER:[userKey] | username, vote, createdOn, updatedOn                  |
+| ROOM:[roomId] | USER:[userKey] | userId, username, vote, createdOn, updatedOn          |
 
 ## Fields
 
-| Name       | Description                                              |
-| ---------- | -------------------------------------------------------- |
-| roomId     | Randomly generated ID (public)                           |
-| hostKey    | Randomly generated key (private, known only to the host) |
-| validSizes | Space-delimited list of valid sizes e.g. `1 2 3`         |
-| isRevealed | `true` if users are allowed to see all votes             |
-| createdOn  | The timestamp the item was created                       |
-| updatedOn  | The timestamp the item was last updated                  |
-| userKey    | Randomly generated key (known only to the given user)    |
-| username   | A display name to use.                                   |
-| vote       | The current vote for the user. One of `validSizes`       |
+| Name       | Description                                                                    |
+| ---------- | ------------------------------------------------------------------------------ |
+| roomId     | Randomly generated ID (public)                                                 |
+| hostKey    | Randomly generated key (private, known only to the host)                       |
+| validSizes | Space-delimited list of valid sizes e.g. `1 2 3`                               |
+| isRevealed | `true` if users are allowed to see all votes                                   |
+| createdOn  | The timestamp the item was created                                             |
+| updatedOn  | The timestamp the item was last updated                                        |
+| userKey    | Randomly generated key (known only to the given user)                          |
+| userId     | An identifier for the user -- to disambiguate two users with the same username |
+| username   | A display name to use.                                                         |
+| vote       | The current vote for the user. One of `validSizes`                             |
 
 ## Operations
 
