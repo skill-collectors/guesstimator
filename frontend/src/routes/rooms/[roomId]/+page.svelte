@@ -54,7 +54,7 @@
     try {
       roomData = await rooms.getRoom(roomId, userKey);
       const currentUser = roomData.users.find(
-        (user) => user.userKey === userKey
+        (user) => user.userKey !== undefined && user.userKey === userKey
       );
       if (currentUser !== undefined) {
         username = currentUser.username;
