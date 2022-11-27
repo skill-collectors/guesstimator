@@ -9,7 +9,7 @@ describe("Router", () => {
     validSizes: ["1", "2", "3"],
     isRevealed: false,
     hostKey: "AB12",
-    users: [{ userKey: "ghi", vote: "" }],
+    users: [{ userKey: "ghi", username: "alice", userId: "jkl", vote: "" }],
   };
 
   vi.mock("../../../../lib/lambda/DbService", () => {

@@ -38,6 +38,7 @@ describe("DbService", () => {
               {
                 PK: "ROOM:abc",
                 SK: "USER:ghi",
+                userId: "jkl",
                 username: "alice",
                 vote: "1",
               },

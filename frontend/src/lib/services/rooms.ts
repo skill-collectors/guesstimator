@@ -7,6 +7,7 @@ export interface Room {
   isRevealed: boolean;
   users: {
     userKey?: string;
+    userId: string;
     username: string;
     hasVote: boolean;
     vote: string;
