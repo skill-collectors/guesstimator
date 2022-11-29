@@ -19,6 +19,7 @@ However, you might want to do this if you want to deploy your own copy of the ap
   - `AWSLambda_FullAccess `
   - `AmazonAPIGatewayAdministrator`
   - `AmazonDynamoDBFullAccess`
+  - `AmazonEventBridgeFullAccess`
   - `AmazonRoute53FullAccess`
   - `AmazonS3FullAccess`
   - `CloudFrontFullAccess`
