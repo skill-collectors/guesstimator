@@ -6,8 +6,8 @@ import Database from "./Database";
 import { buildCallbackFunction } from "./Lambda";
 
 export interface ApiArgs {
-  subDomain: string;
-  apexDomain: string | null;
+  subDomain?: string;
+  apexDomain?: string;
   database: Database;
 }
 
@@ -76,7 +76,7 @@ export default class Api extends pulumi.ComponentResource {
     const apiKey = addApiUsagePlan();
     this.apiKey = apiKey.value;
 
-    if (args.apexDomain === null) {
+    if (args.apexDomain === undefined || args.subDomain === undefined) {
       this.url = api.url;
     } else {
       this.url = addDomainName(args.subDomain, args.apexDomain);

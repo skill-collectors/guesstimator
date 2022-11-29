@@ -12,13 +12,14 @@ However, you might want to do this if you want to deploy your own copy of the ap
 
 ## Prerequisites
 
-- Update the `apexDomain` in `infra/index.ts` to specify a domain that you already own and have set up in Route53.
+- Update the `apexDomain` in `infra/lib/DomainName.ts` to specify a domain that you already own and have set up in Route53.
   - Ideally the domain should be more externalized. This is a good opportunity to improve the codebase. Consider [creating a task](https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=&template=new-task.md&title=Externalize%20domain) on the project board and giving it a try.
 - Ensure that your AWS CLI account has the correct deploy permissions. The following policies are sufficient, but could be a lot narrower if you wanted to figure that out:
   - `AWSCertificateManagerFullAccess`
   - `AWSLambda_FullAccess `
   - `AmazonAPIGatewayAdministrator`
   - `AmazonDynamoDBFullAccess`
+  - `AmazonEventBridgeFullAccess`
   - `AmazonRoute53FullAccess`
   - `AmazonS3FullAccess`
   - `CloudFrontFullAccess`

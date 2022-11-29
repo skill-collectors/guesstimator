@@ -42,10 +42,7 @@ describe("infrastructure", () => {
     });
   });
 
-  function buildApi(
-    apexDomain: string | null = "example.com",
-    subDomain = "www"
-  ) {
+  function buildApi() {
     return new Api("GuesstimatorApi", {
       database: {
         table: {
@@ -53,20 +50,11 @@ describe("infrastructure", () => {
           name: pulumi.Output.create("tableName"),
         },
       } as unknown as Database,
-      apexDomain,
-      subDomain,
     });
   }
 
-  it("Creates an API url", async () => {
+  it("Exports an API url", async () => {
     const api = buildApi();
-    const apiUrl = await new Promise((resolve) => {
-      api.url.apply((url) => resolve(url));
-    });
-    expect(apiUrl).toBe("https://www.example.com");
-  });
-  it("Skips base path mapping if apexDomain is null", async () => {
-    const api = buildApi(null);
     const apiUrl = await new Promise((resolve) => {
       api.url.apply((url) => resolve(url));
     });
