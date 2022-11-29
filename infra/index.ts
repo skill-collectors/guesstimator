@@ -4,7 +4,7 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import Api from "./lib/Api";
 import { registerAutoTags } from "./lib/AutoTag";
-import { subDomain, apiSubDomain, apexDomain } from "./lib/DomainName";
+import { subDomain, apexDomain } from "./lib/DomainName";
 import { capitalize } from "./lib/utils/StringUtils";
 import { buildCallbackFunction } from "./lib/Lambda";
 import { createStaleRoomCleanupFunction } from "./lib/lambda/CleanupMain";
@@ -29,8 +29,6 @@ const svelteApp = isLocalDev
 const database = new Database(`${resourceNamePrefix}-Database`);
 
 const api = new Api(`${resourceNamePrefix}-Api`, {
-  subDomain: apiSubDomain,
-  apexDomain: isLocalDev ? null : apexDomain,
   database,
 });
 
