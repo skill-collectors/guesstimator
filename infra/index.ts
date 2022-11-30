@@ -8,6 +8,7 @@ import { subDomain, apexDomain } from "./lib/DomainName";
 import { capitalize } from "./lib/utils/StringUtils";
 import { buildCallbackFunction } from "./lib/Lambda";
 import { createStaleRoomCleanupFunction } from "./lib/lambda/CleanupMain";
+import WebSocketApi from "./lib/WebSocketApi";
 
 const project = pulumi.getProject();
 const stack = pulumi.getStack();
@@ -32,6 +33,10 @@ const api = new Api(`${resourceNamePrefix}-Api`, {
   database,
 });
 
+const webSocketApi = new WebSocketApi(`${resourceNamePrefix}-WebSocketApi`, {
+  database,
+});
+
 aws.cloudwatch.onSchedule(
   `${resourceNamePrefix}-CleanupEvent`,
   "rate(1 day)",
@@ -48,6 +53,7 @@ export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
 export const apiUrl = api.url;
 export const apiKey = api.apiKey;
+export const webSocketUrl = webSocketApi.invokeUrl;
 
 // These are just informational:
 export const appOutput = {
