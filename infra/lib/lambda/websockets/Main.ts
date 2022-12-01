@@ -13,7 +13,20 @@ export function createMainWebSocketFunction(tableName: pulumi.Output<string>) {
     event: APIGatewayProxyWebsocketEventV2
   ): Promise<APIGatewayProxyResultV2> {
     console.log(`Handling WebSocket event with table ${tableName.get()}`);
-    console.log(event);
-    return ok("connect!");
+    switch (event.requestContext.routeKey) {
+      case "$connect": {
+        console.log(`Connect ${event.requestContext.connectionId}`);
+        return ok("connected!");
+      }
+      case "$disconnect": {
+        console.log(`Disconnect ${event.requestContext.connectionId}`);
+        return ok("disconnected!");
+      }
+      case "$default":
+      default: {
+        console.log("Recieved data with unknown action: ${}");
+        return ok("default!");
+      }
+    }
   };
 }
