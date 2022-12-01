@@ -2,7 +2,7 @@ import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import Api from "./lib/Api";
+import Api from "./lib/RestApi";
 import { registerAutoTags } from "./lib/AutoTag";
 import { subDomain, apexDomain } from "./lib/DomainName";
 import { capitalize } from "./lib/utils/StringUtils";
@@ -29,7 +29,7 @@ const svelteApp = isLocalDev
 
 const database = new Database(`${resourceNamePrefix}-Database`);
 
-const api = new Api(`${resourceNamePrefix}-Api`, {
+const restApi = new Api(`${resourceNamePrefix}-RestApi`, {
   database,
 });
 
@@ -51,8 +51,8 @@ aws.cloudwatch.onSchedule(
 // (so they don't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
-export const apiUrl = api.url;
-export const apiKey = api.apiKey;
+export const apiUrl = restApi.url;
+export const apiKey = restApi.apiKey;
 export const webSocketUrl = webSocketApi.invokeUrl;
 
 // These are just informational:

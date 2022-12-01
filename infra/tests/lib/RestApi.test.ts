@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { describe, it, expect, beforeAll, vi } from "vitest";
-import Api from "../../lib/Api";
+import Api from "../../lib/RestApi";
 import Database from "../../lib/Database";
 
 pulumi.runtime.setMocks({
