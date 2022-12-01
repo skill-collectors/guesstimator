@@ -8,6 +8,7 @@
   import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
   import { ApiEndpointNotFoundError } from "$lib/services/rest";
+  import * as websockets from "$lib/services/websockets";
   import type { Room, User } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
   import { onMount, onDestroy } from "svelte";
@@ -21,7 +22,7 @@
   let userKey: string | null = null;
   let usernameFieldValue = "";
   let roomData: Room | null = null;
-  let reloadIntervalId: number | undefined;
+  let webSocket: WebSocket | null = null;
 
   onMount(async () => {
     const hostData = localStorage.getHostData(roomId);
@@ -30,31 +31,17 @@
     const userData = localStorage.getUserData(roomId);
     userKey = userData.userKey;
 
-    await resetReloadInterval();
+    webSocket = websockets.connect();
+    webSocket.onmessage = onWebSocketMessage;
+    await loadRoomData();
   });
 
   onDestroy(() => {
-    clearInterval(reloadIntervalId);
+    websockets.disconnect(webSocket);
   });
 
-  /**
-   * Reloads the room immediately and resets the reload interval.
-   * @param action An optional action to perform while reloading is suspended.
-   */
-  async function resetReloadInterval(action?: () => Promise<void>) {
-    window.clearInterval(reloadIntervalId);
-    reloadIntervalId = undefined;
-    if (action !== undefined) {
-      await action();
-    }
-    await loadRoomData();
-    // Don't create a second interval if one is already defined
-    if (reloadIntervalId === undefined) {
-      reloadIntervalId = window.setInterval(
-        async () => await loadRoomData(),
-        2_000
-      );
-    }
+  function onWebSocketMessage(event: MessageEvent) {
+    console.log(event);
   }
 
   async function loadRoomData() {
@@ -77,37 +64,28 @@
   }
 
   async function handleJoinRoomClick() {
-    await resetReloadInterval(async () => {
-      if (roomData !== null) {
-        const result = await rooms.joinRoom(
-          roomData.roomId,
-          usernameFieldValue
-        );
-        userKey = result.userKey;
-        localStorage.storeUserData(
-          result.roomId,
-          result.userKey,
-          usernameFieldValue
-        );
-      }
-    });
+    if (roomData !== null) {
+      const result = await rooms.joinRoom(roomData.roomId, usernameFieldValue);
+      userKey = result.userKey;
+      localStorage.storeUserData(
+        result.roomId,
+        result.userKey,
+        usernameFieldValue
+      );
+    }
   }
 
   async function setSelection(size = "") {
-    await resetReloadInterval(async () => {
-      if (currentUser !== undefined && userKey !== null) {
-        currentUser.vote = size;
-        await rooms.vote(roomId, userKey, size);
-      }
-    });
+    if (currentUser !== undefined && userKey !== null) {
+      currentUser.vote = size;
+      await rooms.vote(roomId, userKey, size);
+    }
   }
 
   async function setIsRevealed(isRevealed: boolean) {
-    await resetReloadInterval(async () => {
-      if (roomData !== null && hostKey !== null) {
-        await rooms.setIsRevealed(roomData.roomId, isRevealed, hostKey);
-      }
-    });
+    if (roomData !== null && hostKey !== null) {
+      await rooms.setIsRevealed(roomData.roomId, isRevealed, hostKey);
+    }
   }
 
   async function handleDeleteRoom() {
@@ -117,7 +95,6 @@
     if (hostKey === null) {
       return;
     }
-    clearInterval(reloadIntervalId);
     await rooms.deleteRoom(roomData.roomId, hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
