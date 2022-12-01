@@ -8,7 +8,6 @@ import {
   query,
   scan,
 } from "./DynamoUtils";
-import { clear } from "console";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -234,5 +233,32 @@ export default class DbService {
     });
 
     return count;
+  }
+
+  async connectWebSocket(connectionId: string) {
+    const createdOn = new Date().toISOString();
+    await this.client
+      .put({
+        TableName: this.tableName,
+        Item: {
+          PK: `CONNECTION:${connectionId}`,
+          SK: `CONNECTION`,
+          createdOn,
+        },
+      })
+      .promise();
+    console.log(`Connected ${connectionId}`);
+  }
+  async disconnectWebSocket(connectionId: string) {
+    await this.client
+      .delete({
+        TableName: this.tableName,
+        Key: {
+          PK: `CONNECTION:${connectionId}`,
+          SK: `CONNECTION`,
+        },
+      })
+      .promise();
+    console.log(`Disconnected ${connectionId}`);
   }
 }

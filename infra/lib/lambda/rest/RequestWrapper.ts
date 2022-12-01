@@ -5,12 +5,15 @@ import { APIGatewayProxyEvent } from "aws-lambda";
  *
  * If the event is base64 encoded, then it will be decoded before parsing.
  *
- * @param event {APIGatewayProxyEvent} The event to parse
+ * @param event The event to parse. Any event with 'body' and 'isBase64Encoded' fields.
  * @returns The parsed body, or 'null' if the body is null.
  */
-function parseBodyAsJson(event: APIGatewayProxyEvent) {
-  if (event.body === null) {
-    return null;
+export function parseBodyAsJson(event: {
+  body?: string | null;
+  isBase64Encoded: boolean;
+}) {
+  if (event.body === null || event.body === undefined) {
+    return event.body;
   } else if (event.body.length === 0) {
     return {};
   } else if (event.isBase64Encoded) {

@@ -3,28 +3,39 @@ import {
   APIGatewayProxyResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from "aws-lambda";
+import DbService from "../DbService";
+import { parseBodyAsJson } from "../rest/RequestWrapper";
 import { ok } from "../rest/Response";
 
 /**
  * Creates the main Lambda Function for this WebSocket API.
  */
-export function createMainWebSocketFunction(tableName: pulumi.Output<string>) {
+export function createMainWebSocketFunction(
+  tableNameOutput: pulumi.Output<string>
+) {
   return async function (
     event: APIGatewayProxyWebsocketEventV2
   ): Promise<APIGatewayProxyResultV2> {
-    console.log(`Handling WebSocket event with table ${tableName.get()}`);
+    const tableName = tableNameOutput.get();
+    console.log(`Handling WebSocket event with table ${tableName}`);
+    const db = new DbService(tableName);
     switch (event.requestContext.routeKey) {
       case "$connect": {
-        console.log(`Connect ${event.requestContext.connectionId}`);
+        db.connectWebSocket(event.requestContext.connectionId);
         return ok("connected!");
       }
       case "$disconnect": {
-        console.log(`Disconnect ${event.requestContext.connectionId}`);
+        db.disconnectWebSocket(event.requestContext.connectionId);
         return ok("disconnected!");
       }
       case "$default":
       default: {
-        console.log("Recieved data with unknown action: ${}");
+        const body = parseBodyAsJson(event);
+        if (body) {
+          console.log(`Recieved data with unknown action: ${body.action}`);
+        } else {
+          console.log("Missing body on event");
+        }
         return ok("default!");
       }
     }
