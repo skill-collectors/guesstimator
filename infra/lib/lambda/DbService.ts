@@ -126,29 +126,57 @@ export class DbService {
       .promise();
     return output.Item;
   }
-  async subscribe(roomId: string, connectionId: string) {
-    const userKey = generateId(USER_KEY_LENGTH);
-    const userId = generateId(USER_KEY_LENGTH);
-    const createdOn = new Date().toISOString();
-    await this.client
-      .put({
-        TableName: this.tableName,
-        Item: {
-          PK: `ROOM:${roomId}`,
-          SK: `USER:${userKey}`,
-          userId,
-          connectionId,
-          username: "",
-          vote: "",
-          createdOn,
-          updatedOn: createdOn,
-        },
-      })
-      .promise();
-    console.log(
-      `Subscribed connection ${connectionId} as user ${userId} with key ${userKey} to room ${roomId}`
-    );
-    return { userId, userKey };
+  async subscribe(
+    roomId: string,
+    connectionId: string,
+    userKey: string | undefined = undefined
+  ) {
+    if (userKey === undefined) {
+      const userKey = generateId(USER_KEY_LENGTH);
+      const userId = generateId(USER_KEY_LENGTH);
+      const createdOn = new Date().toISOString();
+      await this.client
+        .put({
+          TableName: this.tableName,
+          Item: {
+            PK: `ROOM:${roomId}`,
+            SK: `USER:${userKey}`,
+            userId,
+            connectionId,
+            username: "",
+            vote: "",
+            createdOn,
+            updatedOn: createdOn,
+          },
+        })
+        .promise();
+      console.log(
+        `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`
+      );
+    } else {
+      const pk = `ROOM:${roomId}`;
+      const sk = `USER:${userKey}`;
+      const updatedOn = new Date().toISOString();
+      await this.client
+        .update({
+          TableName: this.tableName,
+          Key: { PK: pk, SK: sk },
+          ConditionExpression: "PK = :pk AND SK = :sk",
+          UpdateExpression:
+            "set connectionId = :connectionId, updatedOn = :updatedOn",
+          ExpressionAttributeValues: {
+            ":pk": pk,
+            ":sk": sk,
+            ":connectionId": connectionId,
+            ":updatedOn": updatedOn,
+          },
+        })
+        .promise();
+      console.log(
+        `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`
+      );
+    }
+    return { userKey };
   }
   async join(roomId: string, userKey: string, username: string) {
     const pk = `ROOM:${roomId}`;
@@ -213,7 +241,7 @@ export class DbService {
         updateOperation.push(item);
       }
     });
-    updateOperation.flush();
+    await updateOperation.flush();
   }
 
   async deleteRoom(roomId: string) {
