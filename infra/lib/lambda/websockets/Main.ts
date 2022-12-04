@@ -46,7 +46,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Subscribing  to ${roomId}`
           );
           await db.subscribe(roomId, event.requestContext.connectionId);
-          publisher.publishRoomData(await db.getRoom(roomId));
+          await publisher.publishRoomData(await db.getRoom(roomId));
           return ok("subscribe");
         }
         case "join": {
@@ -63,7 +63,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Joining ${roomId} as ${username}`
           );
           await db.join(roomId, userKey, username);
-          publisher.publishRoomData(await db.getRoom(roomId));
+          await publisher.publishRoomData(await db.getRoom(roomId));
           return ok("join");
         }
         case "vote": {
@@ -76,7 +76,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`
           );
           await db.vote(roomId, userKey, vote);
-          publisher.publishRoomData(await db.getRoom(roomId));
+          await publisher.publishRoomData(await db.getRoom(roomId));
           return ok("vote");
         }
         case "reveal": {
@@ -96,7 +96,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Revealing cards in ${roomId}`
           );
           await db.setCardsRevealed(roomId, true);
-          publisher.publishRoomData(await db.getRoom(roomId));
+          await publisher.publishRoomData(await db.getRoom(roomId));
           return ok("reveal");
         }
         case "reset": {
@@ -116,7 +116,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Resetting cards in ${roomId}`
           );
           await db.setCardsRevealed(roomId, false);
-          publisher.publishRoomData(await db.getRoom(roomId));
+          await publisher.publishRoomData(await db.getRoom(roomId));
           return ok("reset");
         }
         case "$default":

@@ -6,7 +6,7 @@ export function webSocketPublisher(event: APIGatewayProxyWebsocketEventV2) {
   const { domainName, stage } = event.requestContext;
   const endpoint = `https://${domainName}/${stage}/`;
   return {
-    publishRoomData(roomData: RoomData | null) {
+    async publishRoomData(roomData: RoomData | null) {
       if (roomData == null) {
         return;
       }
@@ -28,14 +28,18 @@ export function webSocketPublisher(event: APIGatewayProxyWebsocketEventV2) {
               }
             }
           }
-          sendMessage(endpoint, recipient.connectionId, recipientData);
+          await sendMessage(endpoint, recipient.connectionId, recipientData);
         }
       }
     },
   };
 }
 
-function sendMessage(endpoint: string, connectionId: string, message: object) {
+async function sendMessage(
+  endpoint: string,
+  connectionId: string,
+  message: object
+) {
   const api = new ApiGatewayManagementApi({
     endpoint,
   });
@@ -46,10 +50,16 @@ function sendMessage(endpoint: string, connectionId: string, message: object) {
       message,
     })
   );
-  api.postToConnection({
-    ConnectionId: connectionId,
-    Data: convertToData(message),
-  });
+  try {
+    await api
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: convertToData(message),
+      })
+      .promise();
+  } catch (err) {
+    console.log(JSON.stringify(err));
+  }
 }
 
 function convertToData(message: object) {
