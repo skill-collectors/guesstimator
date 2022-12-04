@@ -9,7 +9,7 @@ describe("Main", () => {
     const tableName = pulumi.Output.create("TableName");
     vi.spyOn(tableName, "get").mockImplementation(() => "TableName");
 
-    const event = stubEvent("GET", "/status");
+    const event = stubEvent({ httpMethod: "GET", path: "/status" });
     const main = createMainRestFunction(tableName);
 
     // When
@@ -25,7 +25,7 @@ describe("Main", () => {
       throw new Error("Boom!");
     });
 
-    const event = stubEvent("GET", "/status");
+    const event = stubEvent({ httpMethod: "GET", path: "/status" });
     const main = createMainRestFunction(tableName);
 
     // When

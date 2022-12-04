@@ -47,7 +47,7 @@ describe("Router", () => {
   const router = initRouter("TableName");
 
   describe("POST /rooms", () => {
-    const event = stubEvent("POST", "/rooms");
+    const event = stubEvent({ httpMethod: "POST", path: "/rooms" });
 
     it("creates a room", async () => {
       // When
@@ -69,11 +69,11 @@ describe("Router", () => {
   describe("DELETE /rooms/:id", () => {
     it("deletes the room", async () => {
       // Given
-      const event = stubEvent(
-        "DELETE",
-        "/rooms/123",
-        JSON.stringify({ hostKey: stubRoom.hostKey })
-      );
+      const event = stubEvent({
+        httpMethod: "DELETE",
+        path: "/rooms/123",
+        body: JSON.stringify({ hostKey: stubRoom.hostKey }),
+      });
 
       // When
       await router.run(event);
@@ -83,11 +83,11 @@ describe("Router", () => {
     });
     it("rejects invalid hostKey", async () => {
       // Given
-      const event = stubEvent(
-        "DELETE",
-        "/rooms/123",
-        JSON.stringify({ hostKey: "WRONG" })
-      );
+      const event = stubEvent({
+        httpMethod: "DELETE",
+        path: "/rooms/123",
+        body: JSON.stringify({ hostKey: "WRONG" }),
+      });
 
       // When
       const result = await router.run(event);
