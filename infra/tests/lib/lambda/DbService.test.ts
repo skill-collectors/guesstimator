@@ -1,7 +1,7 @@
 import { QueryOutput } from "@aws-sdk/client-dynamodb";
 import { AWSError, Request } from "aws-sdk";
 import { describe, it, expect, vi, afterEach } from "vitest";
-import DbService from "../../../lib/lambda/DbService";
+import { DbService } from "../../../lib/lambda/DbService";
 
 describe("DbService", () => {
   vi.mock("@pulumi/aws", () => {
@@ -129,13 +129,13 @@ describe("DbService", () => {
       expect(service.client.get).toHaveBeenCalled();
     });
   });
-  describe("addUser", () => {
+  describe("subscribe", () => {
     it("Generates a User ID", async () => {
       // Given
       const service = new DbService(tableName);
 
       // When
-      const result = await service.addUser("abc123", "Alice");
+      const result = await service.subscribe("abc123", "connectionId");
 
       // Then
       expect(result).toHaveProperty("userKey");
@@ -147,7 +147,7 @@ describe("DbService", () => {
       const service = new DbService(tableName);
 
       // When
-      await service.setVote("abc", "userKey", "vote");
+      await service.vote("abc", "userKey", "vote");
 
       // Then
       const params = vi.mocked(service.client.update).mock.calls[0][0];

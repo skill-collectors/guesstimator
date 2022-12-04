@@ -9,6 +9,7 @@ import { capitalize } from "./lib/utils/StringUtils";
 import { buildCallbackFunction } from "./lib/Lambda";
 import { createStaleRoomCleanupFunction } from "./lib/lambda/CleanupMain";
 import WebSocketApi from "./lib/WebSocketApi";
+import lambdaPolicy from "./lib/policies/LambdaPolicy";
 
 const project = pulumi.getProject();
 const stack = pulumi.getStack();
@@ -37,13 +38,16 @@ const webSocketApi = new WebSocketApi(`${resourceNamePrefix}-WebSocketApi`, {
   database,
 });
 
+const cleanUpLambdaPolicy = database.table.arn.apply((tableArn) =>
+  lambdaPolicy(`${resourceNamePrefix}-CleanupLambdaPolicy`, tableArn)
+);
 aws.cloudwatch.onSchedule(
   `${resourceNamePrefix}-CleanupEvent`,
   "rate(1 day)",
   buildCallbackFunction(
     `${resourceNamePrefix}-CleanupFunction`,
-    database.table.arn,
-    createStaleRoomCleanupFunction(database.table.name)
+    createStaleRoomCleanupFunction(database.table.name),
+    cleanUpLambdaPolicy
   )
 );
 

@@ -45,6 +45,7 @@ export async function forEach(
   it: AsyncGenerator<DocumentClient.AttributeMap, void, unknown>,
   consumer: (item: DocumentClient.AttributeMap) => Promise<void>
 ) {
+  console.log("DEBUG: Iterating over results");
   let result = await it.next();
   while (!result.done) {
     const item = result.value;

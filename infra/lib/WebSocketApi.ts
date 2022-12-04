@@ -3,6 +3,7 @@ import * as aws from "@pulumi/aws";
 import { createMainWebSocketFunction } from "./lambda/websockets/Main";
 import Database from "./Database";
 import { buildCallbackFunction } from "./Lambda";
+import lambdaPolicy from "./policies/LambdaPolicy";
 
 export interface ApiArgs {
   database: Database;
@@ -23,10 +24,19 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       routeSelectionExpression: "$request.body.action",
     });
 
+    const policy = pulumi
+      .all([args.database.table.arn, webSocketApi.arn])
+      .apply(([tableArn, webSocketGatewayArn]) => {
+        return lambdaPolicy(
+          `${name}-WebSocketLambda-Policy`,
+          tableArn,
+          webSocketGatewayArn
+        );
+      });
     const webSocketCallback = buildCallbackFunction(
       `${name}-Lambda`,
-      args.database.table.arn,
-      createMainWebSocketFunction(args.database.table.name)
+      createMainWebSocketFunction(args.database.table.name),
+      policy
     );
 
     const lambdaIntegration = new aws.apigatewayv2.Integration(
@@ -42,7 +52,16 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       }
     );
 
-    const routes = ["$default", "$connect", "$disconnect"].map((routeKey) => {
+    const routes = [
+      "$default",
+      "$connect",
+      "$disconnect",
+      "subscribe",
+      "join",
+      "vote",
+      "reveal",
+      "reset",
+    ].map((routeKey) => {
       const route = new aws.apigatewayv2.Route(
         `${name}-Route-${routeKey.substring(1)}`, // remove $ prefix
         {

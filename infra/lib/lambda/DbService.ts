@@ -13,7 +13,27 @@ const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
 const USER_KEY_LENGTH = 4;
 
-export default class DbService {
+export interface Room {
+  roomId: string;
+  validSizes: string[];
+  isRevealed: boolean;
+  hostKey?: string;
+}
+
+export interface User {
+  userKey?: string;
+  userId: string;
+  username?: string;
+  hasVote: boolean;
+  vote?: string;
+  connectionId?: string;
+}
+
+export interface RoomData extends Room {
+  users: User[];
+}
+
+export class DbService {
   client: DocumentClient;
   tableName: string;
 
@@ -56,7 +76,7 @@ export default class DbService {
     };
   }
 
-  async getRoom(roomId: string) {
+  async getRoom(roomId: string): Promise<RoomData | null> {
     const queryParams = {
       TableName: this.tableName,
       KeyConditionExpression: "PK = :pk",
@@ -64,51 +84,39 @@ export default class DbService {
         ":pk": `ROOM:${roomId}`,
       },
     };
-    const roomData:
-      | {
-          roomId: string | undefined;
-          validSizes: string[] | undefined;
-          isRevealed: boolean | undefined;
-          hostKey: string | undefined;
-        }
-      | undefined = {
-      roomId: undefined,
-      validSizes: undefined,
-      isRevealed: undefined,
-      hostKey: undefined,
-    };
-    const users: {
-      userKey: string;
-      userId: string;
-      username?: string;
-      vote?: string;
-    }[] = [];
+    let roomData: Room | undefined;
+    const users: User[] = [];
+    console.log("DEBUG: Querying room data");
     await forEach(query(this.client, queryParams), async (item) => {
       if (item.SK === "ROOM") {
-        roomData.roomId = item.PK.substring("ROOM:".length);
-        roomData.validSizes = item.validSizes.split(" ");
-        roomData.isRevealed = item.isRevealed;
-        roomData.hostKey = item.hostKey;
+        roomData = {
+          roomId: item.PK.substring("ROOM:".length),
+          validSizes: item.validSizes.split(" "),
+          isRevealed: item.isRevealed,
+          hostKey: item.hostKey,
+        };
       } else if (item.SK.startsWith("USER:")) {
         const userKey = item.SK.substring("USER:".length);
         users.push({
-          userKey,
+          userKey: userKey,
           userId: item.userId,
           username: item.username,
+          hasVote: item.vote !== "",
           vote: item.vote,
+          connectionId: item.connectionId,
         });
       } else {
         console.log("Unexpected key pattern: ${item.PK}/${item.SK}");
       }
     });
 
-    if (roomData.roomId === undefined) {
+    if (roomData === undefined) {
       return null;
     }
 
     return {
       ...roomData,
-      users: Array.from(users.values()),
+      users,
     };
   }
   async getRoomMetadata(roomId: string) {
@@ -120,12 +128,7 @@ export default class DbService {
       .promise();
     return output.Item;
   }
-  async addUser(roomId: string, username: string) {
-    const room = await this.getRoomMetadata(roomId);
-    if (room === null) {
-      return null;
-    }
-
+  async subscribe(roomId: string, connectionId: string) {
     const userKey = generateId(USER_KEY_LENGTH);
     const userId = generateId(USER_KEY_LENGTH);
     const createdOn = new Date().toISOString();
@@ -136,23 +139,44 @@ export default class DbService {
           PK: `ROOM:${roomId}`,
           SK: `USER:${userKey}`,
           userId,
-          username,
+          connectionId,
+          username: "",
           vote: "",
           createdOn,
           updatedOn: createdOn,
         },
       })
       .promise();
-    console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
-    return {
-      roomId,
-      username,
-      userKey,
-    };
+    console.log(
+      `Subscribed connection ${connectionId} as user ${userId} with key ${userKey} to room ${roomId}`
+    );
+    return { userId, userKey };
   }
-  async setVote(roomId: string, userKey: string, vote: string) {
+  async join(roomId: string, userKey: string, username: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression: "set username = :username, updatedOn = :updatedOn",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":username": username,
+          ":updatedOn": updatedOn,
+        },
+      })
+      .promise();
+    console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
+    return { username };
+  }
+  async vote(roomId: string, userKey: string, vote: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
     await this.client
       .update({
         TableName: this.tableName,
@@ -163,7 +187,7 @@ export default class DbService {
           ":pk": pk,
           ":sk": sk,
           ":vote": vote,
-          ":updatedOn": new Date().toISOString(),
+          ":updatedOn": updatedOn,
         },
       })
       .promise();
@@ -233,32 +257,5 @@ export default class DbService {
     });
 
     return count;
-  }
-
-  async connectWebSocket(connectionId: string) {
-    const createdOn = new Date().toISOString();
-    await this.client
-      .put({
-        TableName: this.tableName,
-        Item: {
-          PK: `CONNECTION:${connectionId}`,
-          SK: `CONNECTION`,
-          createdOn,
-        },
-      })
-      .promise();
-    console.log(`Connected ${connectionId}`);
-  }
-  async disconnectWebSocket(connectionId: string) {
-    await this.client
-      .delete({
-        TableName: this.tableName,
-        Key: {
-          PK: `CONNECTION:${connectionId}`,
-          SK: `CONNECTION`,
-        },
-      })
-      .promise();
-    console.log(`Disconnected ${connectionId}`);
   }
 }

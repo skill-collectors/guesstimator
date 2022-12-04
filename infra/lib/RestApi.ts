@@ -4,6 +4,7 @@ import * as apigateway from "@pulumi/aws-apigateway";
 import { createMainRestFunction } from "./lambda/rest/Main";
 import Database from "./Database";
 import { buildCallbackFunction } from "./Lambda";
+import lambdaPolicy from "./policies/LambdaPolicy";
 
 export interface ApiArgs {
   subDomain?: string;
@@ -23,10 +24,13 @@ export default class Api extends pulumi.ComponentResource {
     super("pkg:index:Api", name, args, opts);
 
     // Create lambda role with basic execution policy
+    const policy = args.database.table.arn.apply((tableArn) =>
+      lambdaPolicy(`${name}-RestLambdaPolicy`, tableArn)
+    );
     const callbackFunction = buildCallbackFunction(
       `${name}-RestFunction`,
-      args.database.table.arn,
-      createMainRestFunction(args.database.table.name)
+      createMainRestFunction(args.database.table.name),
+      policy
     );
 
     const api = new apigateway.RestAPI(`${name}-Api`, {

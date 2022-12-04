@@ -15,7 +15,7 @@ export function parseBodyAsJson(event: {
   if (event.body === null || event.body === undefined) {
     return event.body;
   } else if (event.body.length === 0) {
-    return {};
+    return null;
   } else if (event.isBase64Encoded) {
     return JSON.parse(Buffer.from(event.body, "base64").toString("utf-8"));
   } else {
