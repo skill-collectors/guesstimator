@@ -44,120 +44,84 @@ export function createMainWebSocketFunction(
           "Missing body.data"
         );
       } else {
-        switch (body.action) {
-          case "subscribe": {
-            const roomId = body.data.roomId;
-            const roomData = await db.getRoomMetadata(roomId);
-            if (roomData === undefined) {
+        const roomId = body.data.roomId;
+        const roomData = await db.getRoomMetadata(roomId);
+        if (roomData === undefined) {
+          await publisher.sendError(
+            event.requestContext.connectionId,
+            404,
+            `No room with ID ${roomId}`
+          );
+        } else {
+          switch (body.action) {
+            case "subscribe": {
+              console.log(
+                `(${event.requestContext.connectionId}) Subscribing  to ${roomId}`
+              );
+              await db.subscribe(roomId, event.requestContext.connectionId);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            case "join": {
+              const { roomId, userKey, username } = body.data;
+              console.log(
+                `(${event.requestContext.connectionId}) Joining ${roomId} as ${username}`
+              );
+              await db.join(roomId, userKey, username);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            case "vote": {
+              const { roomId, userKey, vote } = body.data;
+              console.log(
+                `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`
+              );
+              await db.vote(roomId, userKey, vote);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            case "reveal": {
+              const { roomId, hostKey } = body.data;
+              if (hostKey !== roomData.hostKey) {
+                await publisher.sendError(
+                  event.requestContext.connectionId,
+                  403,
+                  `Invalid hostKey ${hostKey} for room ${roomId}`
+                );
+                break;
+              }
+              console.log(
+                `(${event.requestContext.connectionId}) Revealing cards in ${roomId}`
+              );
+              await db.setCardsRevealed(roomId, true);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            case "reset": {
+              const { roomId, hostKey } = body.data;
+              if (hostKey !== roomData.hostKey) {
+                await publisher.sendError(
+                  event.requestContext.connectionId,
+                  403,
+                  `Invalid hostKey ${hostKey} for room ${roomId}`
+                );
+                break;
+              }
+              console.log(
+                `(${event.requestContext.connectionId}) Resetting cards in ${roomId}`
+              );
+              await db.setCardsRevealed(roomId, false);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            default: {
               await publisher.sendError(
                 event.requestContext.connectionId,
-                404,
-                `No room with ID ${roomId}`
+                400,
+                `Invalid action ${body.action}`
               );
               break;
             }
-            console.log(
-              `(${event.requestContext.connectionId}) Subscribing  to ${roomId}`
-            );
-            await db.subscribe(roomId, event.requestContext.connectionId);
-            await publisher.publishRoomData(await db.getRoom(roomId));
-            break;
-          }
-          case "join": {
-            const { roomId, userKey, username } = body.data;
-            const roomData = await db.getRoomMetadata(roomId);
-            if (roomData === undefined) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                404,
-                `No room with ID ${roomId}`
-              );
-              break;
-            }
-            console.log(
-              `(${event.requestContext.connectionId}) Joining ${roomId} as ${username}`
-            );
-            await db.join(roomId, userKey, username);
-            await publisher.publishRoomData(await db.getRoom(roomId));
-            break;
-          }
-          case "vote": {
-            const { roomId, userKey, vote } = body.data;
-            const roomData = await db.getRoomMetadata(roomId);
-            if (roomData === undefined) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                404,
-                `No room with ID ${roomId}`
-              );
-              break;
-            }
-            console.log(
-              `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`
-            );
-            await db.vote(roomId, userKey, vote);
-            await publisher.publishRoomData(await db.getRoom(roomId));
-            break;
-          }
-          case "reveal": {
-            const { roomId, hostKey } = body.data;
-            const roomData = await db.getRoomMetadata(roomId);
-            if (roomData === undefined) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                404,
-                `No room with Id ${roomId}`
-              );
-              break;
-            }
-            if (hostKey !== roomData.hostKey) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                404,
-                `Invalid hostKey ${hostKey} for room ${roomId}`
-              );
-              break;
-            }
-            console.log(
-              `(${event.requestContext.connectionId}) Revealing cards in ${roomId}`
-            );
-            await db.setCardsRevealed(roomId, true);
-            await publisher.publishRoomData(await db.getRoom(roomId));
-            break;
-          }
-          case "reset": {
-            const { roomId, hostKey } = body.data;
-            const roomData = await db.getRoomMetadata(roomId);
-            if (roomData === undefined) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                404,
-                `No room with Id ${roomId}`
-              );
-              break;
-            }
-            if (hostKey !== roomData.hostKey) {
-              await publisher.sendError(
-                event.requestContext.connectionId,
-                403,
-                `Invalid hostKey ${hostKey} for room ${roomId}`
-              );
-              break;
-            }
-            console.log(
-              `(${event.requestContext.connectionId}) Resetting cards in ${roomId}`
-            );
-            await db.setCardsRevealed(roomId, false);
-            await publisher.publishRoomData(await db.getRoom(roomId));
-            break;
-          }
-          default: {
-            await publisher.sendError(
-              event.requestContext.connectionId,
-              400,
-              `Invalid action ${body.action}`
-            );
-            break;
           }
         }
       }

@@ -1,6 +1,7 @@
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyEventHeaders,
+  APIGatewayProxyWebsocketEventV2,
 } from "aws-lambda";
 
 type DeepPartial<T> = T extends object
@@ -9,6 +10,33 @@ type DeepPartial<T> = T extends object
     }
   : T;
 
+export function stubWebSocketEvent(
+  event: DeepPartial<APIGatewayProxyWebsocketEventV2>
+): APIGatewayProxyWebsocketEventV2 {
+  return {
+    requestContext: {
+      routeKey: "",
+      messageId: "",
+      eventType: "MESSAGE",
+      extendedRequestId: "",
+      requestTime: "",
+      messageDirection: "IN",
+      stage: "",
+      connectedAt: 0,
+      requestTimeEpoch: 0,
+      requestId: "",
+      domainName: "",
+      connectionId: "",
+      apiId: "",
+      ...event.requestContext,
+    },
+    isBase64Encoded: event.isBase64Encoded || false,
+    body: event.body,
+    stageVariables: {
+      ...event.stageVariables,
+    },
+  };
+}
 
 export function stubEvent(
   event: DeepPartial<APIGatewayProxyEvent>
