@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import {
-  APIGatewayProxyResultV2,
+  APIGatewayProxyStructuredResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from "aws-lambda";
 import { DbService } from "../DbService";
@@ -16,7 +16,7 @@ export function createMainWebSocketFunction(
 ) {
   return async function (
     event: APIGatewayProxyWebsocketEventV2
-  ): Promise<APIGatewayProxyResultV2> {
+  ): Promise<APIGatewayProxyStructuredResultV2> {
     const db = new DbService(tableNameOutput.get());
     const publisher = webSocketPublisher(event);
     console.log(event);
@@ -26,7 +26,7 @@ export function createMainWebSocketFunction(
       console.log(`(${event.requestContext.connectionId}) Disconnecting`);
     } else {
       const body = parseBodyAsJson(event);
-      if (body === null) {
+      if (body === null || body === undefined) {
         await publisher.sendError(
           event.requestContext.connectionId,
           400,
@@ -163,6 +163,8 @@ export function createMainWebSocketFunction(
         }
       }
     }
-    return ok("Message handled");
+    return {
+      statusCode: 200,
+    };
   };
 }
