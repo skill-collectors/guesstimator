@@ -11,6 +11,7 @@ export class GuesstimatorWebSocket {
     messageHandler: (this: WebSocket, ev: MessageEvent<unknown>) => unknown,
     errorHandler: (this: WebSocket, ev: Event) => unknown,
     openHandler: (this: WebSocket, ev: Event) => unknown,
+    closeHandler: (this: WebSocket, ev: Event) => unknown,
     userKey: string | undefined = undefined,
     hostKey: string | undefined = undefined
   ) {
@@ -20,6 +21,7 @@ export class GuesstimatorWebSocket {
     this.webSocket.onmessage = messageHandler;
     this.webSocket.onerror = errorHandler;
     this.webSocket.onopen = openHandler;
+    this.webSocket.onclose = closeHandler;
 
     this.userKey = userKey;
     this.hostKey = hostKey;

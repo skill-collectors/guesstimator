@@ -34,6 +34,7 @@
       onWebSocketMessage,
       onWebSocketError,
       onWebSocketOpen,
+      onWebSocketClose,
       userKey,
       hostKey
     );
@@ -71,7 +72,13 @@
   }
 
   function onWebSocketError(this: WebSocket, event: Event) {
+    console.log("WebSocket error");
     console.error(event);
+  }
+
+  function onWebSocketClose(this: WebSocket, event: Event) {
+    console.log("WebSocket closed");
+    console.log(event);
   }
 
   $: spectatorCount = roomData?.users.filter(
