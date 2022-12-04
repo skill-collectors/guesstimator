@@ -5,8 +5,7 @@ import {
 } from "aws-lambda";
 import { DbService } from "../DbService";
 import { parseBodyAsJson } from "../rest/RequestWrapper";
-import { ok } from "../rest/Response";
-import { webSocketPublisher } from "./WebSocketHelper";
+import { WebSocketPublisher } from "./WebSocketHelper";
 
 /**
  * Creates the main Lambda Function for this WebSocket API.
@@ -18,7 +17,7 @@ export function createMainWebSocketFunction(
     event: APIGatewayProxyWebsocketEventV2
   ): Promise<APIGatewayProxyStructuredResultV2> {
     const db = new DbService(tableNameOutput.get());
-    const publisher = webSocketPublisher(event);
+    const publisher = new WebSocketPublisher(event);
     console.log(event);
     if (event.requestContext.routeKey === "$connect") {
       console.log(`(${event.requestContext.connectionId}) Connecting `);
