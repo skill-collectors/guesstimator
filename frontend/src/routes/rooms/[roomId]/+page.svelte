@@ -67,6 +67,13 @@
         if (webSocket !== undefined) {
           webSocket.userKey = currentUser?.userKey;
         }
+        if (currentUser !== undefined && currentUser.userKey !== undefined) {
+          localStorage.storeUserData(
+            roomId,
+            currentUser.userKey,
+            currentUser.username
+          );
+        }
       }
     }
   }
