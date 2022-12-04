@@ -54,15 +54,10 @@ async function sendMessage(
     await api
       .postToConnection({
         ConnectionId: connectionId,
-        Data: convertToData(message),
+        Data: JSON.stringify(message),
       })
       .promise();
   } catch (err) {
     console.log(JSON.stringify(err));
   }
-}
-
-function convertToData(message: object) {
-  const json = JSON.stringify(message);
-  return Uint8Array.from(json.split("").map((x) => x.charCodeAt(0)));
 }
