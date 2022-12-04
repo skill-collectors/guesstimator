@@ -73,6 +73,15 @@ export function createMainWebSocketFunction(
             }
             case "vote": {
               const { roomId, userKey, vote } = body.data;
+              const validSizes = roomData.validSizes.split(" ");
+              if (!validSizes.includes(vote)) {
+                await publisher.sendError(
+                  event.requestContext.connectionId,
+                  400,
+                  `Invalid vote: ${vote}. Valid values: ${validSizes}`
+                );
+                break;
+              }
               console.log(
                 `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`
               );

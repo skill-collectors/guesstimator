@@ -6,14 +6,13 @@ import {
   describe,
   expect,
   it,
-  Mock,
   MockedObject,
   vi,
 } from "vitest";
 import { DbService } from "../../../../lib/lambda/DbService";
 import { createMainWebSocketFunction } from "../../../../lib/lambda/websockets/Main";
 import { WebSocketPublisher } from "../../../../lib/lambda/websockets/WebSocketHelper";
-import { stubEvent, stubWebSocketEvent } from "../Stubs";
+import { stubWebSocketEvent } from "../Stubs";
 
 describe("WebSocket Main function", () => {
   vi.mock("../../../../lib/lambda/DbService", () => {
@@ -212,9 +211,10 @@ describe("WebSocket Main function", () => {
     });
   });
   describe("vote", () => {
-    it("Votes and publishes update", async () => {
+    it("Rejects invalid sizes", async () => {
       // Given
       const roomId = "roomId";
+      const vote = "a";
       const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
         requestContext: {
           routeKey: "$default",
@@ -222,10 +222,39 @@ describe("WebSocket Main function", () => {
         },
         body: JSON.stringify({
           action: "vote",
-          data: { roomId },
+          data: { roomId, vote },
         }),
       });
-      mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
+      mockDbService.getRoomMetadata.mockResolvedValue({
+        roomId,
+        validSizes: "1 2 3",
+      });
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockDbService.vote).not.toHaveBeenCalled();
+      expect(mockWebSocketPublisher.sendError).toHaveBeenCalled();
+    });
+    it("Votes and publishes update", async () => {
+      // Given
+      const roomId = "roomId";
+      const vote = "1";
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "vote",
+          data: { roomId, vote },
+        }),
+      });
+      mockDbService.getRoomMetadata.mockResolvedValue({
+        roomId,
+        validSizes: "1 2 3",
+      });
 
       // When
       await main(event);
