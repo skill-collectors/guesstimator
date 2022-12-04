@@ -9,25 +9,25 @@
   import { GuesstimatorWebSocket } from "$lib/services/websockets";
   import type { Room, User } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
-  import { onMount, onDestroy } from "svelte";
   import InvalidRoom from "./InvalidRoom.svelte";
+  import { onDestroy, onMount } from "svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
 
-  let hostKey: string | undefined = undefined;
-  let userKey: string | null = null;
+  let currentUser: User | undefined;
   let usernameFieldValue = "";
   let roomData: Room | null = null;
-  let webSocket: GuesstimatorWebSocket | null = null;
 
-  onMount(async () => {
+  let webSocket: GuesstimatorWebSocket | undefined;
+
+  onMount(() => {
     const hostData = localStorage.getHostData(roomId);
-    hostKey = hostData.hostKey;
+    const hostKey = hostData.hostKey;
 
     const userData = localStorage.getUserData(roomId);
-    userKey = userData.userKey;
+    const userKey = userData.userKey;
 
     console.log("Creating websocket");
     webSocket = new GuesstimatorWebSocket(
@@ -35,19 +35,28 @@
       onWebSocketMessage,
       onWebSocketError,
       onWebSocketOpen,
+      userKey,
       hostKey
     );
   });
 
   onDestroy(() => {
     console.log("Closing websocket");
-    if (webSocket !== null) {
-      webSocket.close();
-    }
+    webSocket?.close();
   });
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
     console.log(event);
+    const json = event.data;
+    if (json !== undefined) {
+      const data = JSON.parse(json);
+      console.log(data);
+      roomData = data;
+      currentUser = roomData?.users.find((user) => user.userKey !== undefined);
+      if (webSocket !== undefined) {
+        webSocket.userKey = currentUser?.userKey;
+      }
+    }
   }
 
   function onWebSocketError(this: WebSocket, event: Event) {
@@ -55,23 +64,24 @@
   }
 
   function onWebSocketOpen(this: WebSocket) {
-    console.log("Socket is open");
     webSocket?.subscribe();
   }
 
-  let currentUser: User | undefined;
-  $: {
-    currentUser = roomData?.users.find(
-      (user) => user.userKey !== undefined && user.userKey === userKey
-    );
-  }
+  $: spectatorCount = roomData?.users.filter(
+    (user) => user.username === ""
+  ).length;
+
+  $: players =
+    roomData?.users.filter((user) => user.username?.length > 0) ?? [];
 
   function handleJoinRoomClick() {
-    webSocket?.join(usernameFieldValue);
+    if (usernameFieldValue.length > 0) {
+      webSocket?.join(usernameFieldValue);
+    }
   }
 
   function handleVote(vote = "") {
-    if (currentUser !== undefined && userKey !== null) {
+    if (currentUser !== undefined) {
       currentUser.vote = vote;
       webSocket?.vote(vote);
     }
@@ -89,10 +99,10 @@
     if (roomData === null) {
       return;
     }
-    if (hostKey === undefined) {
+    if (webSocket?.hostKey === undefined) {
       return;
     }
-    await rooms.deleteRoom(roomData.roomId, hostKey);
+    await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
   }
@@ -105,7 +115,7 @@
 {:else}
   <header class="mt-8">
     Room URL: <span class="whitespace-nowrap">{url}</span>
-    {#if hostKey}
+    {#if webSocket?.hostKey}
       <TgButton
         id="deleteRoomButton"
         type="danger"
@@ -120,21 +130,21 @@
       Cards are
       {#if roomData.isRevealed}
         <strong>visible</strong>
-        {#if hostKey}
+        {#if webSocket?.hostKey}
           <TgButton id="hideCardsButton" type="secondary" on:click={reset}
             >Reset</TgButton
           >
         {/if}
       {:else}
         <strong>not visible</strong>
-        {#if hostKey}
+        {#if webSocket?.hostKey}
           <TgButton id="showCardsButton" type="secondary" on:click={reveal}
             >Reveal cards</TgButton
           >
         {/if}
       {/if}
     </TgParagraph>
-    {#each roomData?.users as user (user.userId)}
+    {#each players as user (user.userId)}
       <Card
         username={user.username}
         isRevealed={roomData.isRevealed}
@@ -142,10 +152,19 @@
         value={user.vote}
       />
     {/each}
+    <TgParagraph>
+      {#if spectatorCount === 0}
+        There are no spectators.
+      {:else if spectatorCount === 1}
+        There is 1 spectator.
+      {:else}
+        There are {spectatorCount} spectators.
+      {/if}
+    </TgParagraph>
   </section>
   {#if !roomData?.isRevealed}
     <section class="mt-32">
-      {#if currentUser !== undefined}
+      {#if currentUser !== undefined && currentUser.username.length > 0}
         <TgHeadingSub>Your votes:</TgHeadingSub>
         {#each roomData.validSizes as vote}
           {#if vote === currentUser.vote}

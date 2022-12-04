@@ -11,6 +11,7 @@ export class GuesstimatorWebSocket {
     messageHandler: (this: WebSocket, ev: MessageEvent<unknown>) => unknown,
     errorHandler: (this: WebSocket, ev: Event) => unknown,
     openHandler: (this: WebSocket, ev: Event) => unknown,
+    userKey: string | undefined = undefined,
     hostKey: string | undefined = undefined
   ) {
     console.log(`Establishing connection to ${roomId}`);
@@ -19,18 +20,18 @@ export class GuesstimatorWebSocket {
     this.webSocket.onmessage = messageHandler;
     this.webSocket.onerror = errorHandler;
     this.webSocket.onopen = openHandler;
+    this.userKey = userKey;
     this.hostKey = hostKey;
   }
 
   subscribe() {
     console.log("Sending subscribe");
     this.webSocket.send(
-      JSON.stringify({ action: "subscribe", data: { roomId: this.roomId } })
+      JSON.stringify({
+        action: "subscribe",
+        data: { roomId: this.roomId, userKey: this.userKey },
+      })
     );
-  }
-
-  setUserKey(userKey: string) {
-    this.userKey = userKey;
   }
 
   join(username: string) {
@@ -47,7 +48,7 @@ export class GuesstimatorWebSocket {
 
   vote(vote: string) {
     if (this.userKey === undefined) {
-      throw new Error("Cannot join without a userKey");
+      throw new Error("Cannot vote without a userKey");
     }
     this.webSocket.send(
       JSON.stringify({
@@ -74,7 +75,7 @@ export class GuesstimatorWebSocket {
 
   reset() {
     if (this.hostKey === undefined) {
-      throw new Error("Cannot reveal cards without a hostKey");
+      throw new Error("Cannot reset cards without a hostKey");
     }
     this.webSocket.send(
       JSON.stringify({
