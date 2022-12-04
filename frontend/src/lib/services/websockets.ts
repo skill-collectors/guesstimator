@@ -20,11 +20,13 @@ export class GuesstimatorWebSocket {
     this.webSocket.onmessage = messageHandler;
     this.webSocket.onerror = errorHandler;
     this.webSocket.onopen = openHandler;
+
     this.userKey = userKey;
     this.hostKey = hostKey;
   }
 
   subscribe() {
+    console.log(`Subscribing to ${this.roomId}`);
     this.webSocket.send(
       JSON.stringify({
         action: "subscribe",

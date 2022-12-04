@@ -43,24 +43,35 @@
     webSocket?.close();
   });
 
+  function onWebSocketOpen(this: WebSocket) {
+    console.log("Connection established");
+    webSocket?.subscribe();
+  }
+
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
+    console.log(event);
     const json = event.data;
     if (json !== undefined) {
-      const data = JSON.parse(json);
-      roomData = data;
-      currentUser = roomData?.users.find((user) => user.userKey !== undefined);
-      if (webSocket !== undefined) {
-        webSocket.userKey = currentUser?.userKey;
+      const message = JSON.parse(json);
+      if (message.status !== 200) {
+        console.error(message.error);
+        if (message.status === 404) {
+          notFound = true;
+        }
+      } else {
+        roomData = message.data;
+        currentUser = roomData?.users.find(
+          (user) => user.userKey !== undefined
+        );
+        if (webSocket !== undefined) {
+          webSocket.userKey = currentUser?.userKey;
+        }
       }
     }
   }
 
   function onWebSocketError(this: WebSocket, event: Event) {
     console.error(event);
-  }
-
-  function onWebSocketOpen(this: WebSocket) {
-    webSocket?.subscribe();
   }
 
   $: spectatorCount = roomData?.users.filter(

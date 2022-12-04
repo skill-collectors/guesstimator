@@ -6,6 +6,9 @@ export function webSocketPublisher(event: APIGatewayProxyWebsocketEventV2) {
   const { domainName, stage } = event.requestContext;
   const endpoint = `https://${domainName}/${stage}/`;
   return {
+    async sendError(connectionId: string, status: number, message: string) {
+      await sendMessage(endpoint, connectionId, { status, error: message });
+    },
     async publishRoomData(roomData: RoomData | null) {
       if (roomData == null) {
         return;
@@ -28,7 +31,10 @@ export function webSocketPublisher(event: APIGatewayProxyWebsocketEventV2) {
               }
             }
           }
-          await sendMessage(endpoint, recipient.connectionId, recipientData);
+          await sendMessage(endpoint, recipient.connectionId, {
+            status: 200,
+            data: recipientData,
+          });
         }
       }
     },
