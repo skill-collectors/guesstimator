@@ -12,14 +12,13 @@ import { webSocketPublisher } from "./WebSocketHelper";
  * Creates the main Lambda Function for this WebSocket API.
  */
 export function createMainWebSocketFunction(
-  tableNameOutput: pulumi.Output<string>,
-  endpointOutput: pulumi.Output<string>
+  tableNameOutput: pulumi.Output<string>
 ) {
   return async function (
     event: APIGatewayProxyWebsocketEventV2
   ): Promise<APIGatewayProxyResultV2> {
     const db = new DbService(tableNameOutput.get());
-    const publisher = webSocketPublisher(endpointOutput.get());
+    const publisher = webSocketPublisher(event);
     console.log(event);
     if (event.requestContext.routeKey === "$connect") {
       console.log(`(${event.requestContext.connectionId}) Connecting `);

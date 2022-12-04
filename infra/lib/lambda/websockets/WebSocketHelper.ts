@@ -1,7 +1,10 @@
+import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 import ApiGatewayManagementApi = require("aws-sdk/clients/apigatewaymanagementapi");
 import { RoomData } from "../DbService";
 
-export function webSocketPublisher(endpoint: string) {
+export function webSocketPublisher(event: APIGatewayProxyWebsocketEventV2) {
+  const { domainName, stage } = event.requestContext;
+  const endpoint = `https://${domainName}/${stage}/`;
   return {
     publishRoomData(roomData: RoomData | null) {
       if (roomData == null) {

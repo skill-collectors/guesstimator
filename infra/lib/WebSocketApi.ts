@@ -35,10 +35,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       });
     const webSocketCallback = buildCallbackFunction(
       `${name}-Lambda`,
-      createMainWebSocketFunction(
-        args.database.table.name,
-        webSocketApi.apiEndpoint
-      ),
+      createMainWebSocketFunction(args.database.table.name),
       policy
     );
 
