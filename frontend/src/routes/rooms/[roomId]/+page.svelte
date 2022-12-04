@@ -29,7 +29,6 @@
     const userData = localStorage.getUserData(roomId);
     const userKey = userData.userKey;
 
-    console.log("Creating websocket");
     webSocket = new GuesstimatorWebSocket(
       roomId,
       onWebSocketMessage,
@@ -41,16 +40,13 @@
   });
 
   onDestroy(() => {
-    console.log("Closing websocket");
     webSocket?.close();
   });
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
-    console.log(event);
     const json = event.data;
     if (json !== undefined) {
       const data = JSON.parse(json);
-      console.log(data);
       roomData = data;
       currentUser = roomData?.users.find((user) => user.userKey !== undefined);
       if (webSocket !== undefined) {

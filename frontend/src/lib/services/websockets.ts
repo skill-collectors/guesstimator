@@ -25,7 +25,6 @@ export class GuesstimatorWebSocket {
   }
 
   subscribe() {
-    console.log("Sending subscribe");
     this.webSocket.send(
       JSON.stringify({
         action: "subscribe",
@@ -89,6 +88,7 @@ export class GuesstimatorWebSocket {
   }
 
   close() {
+    console.log(`Closing connection`);
     this.webSocket.close();
   }
 }
