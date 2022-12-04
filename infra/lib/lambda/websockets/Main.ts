@@ -6,19 +6,20 @@ import {
 import { DbService } from "../DbService";
 import { parseBodyAsJson } from "../rest/RequestWrapper";
 import { clientError, notFound, ok } from "../rest/Response";
-import { publishRoomData } from "./WebSocketHelper";
+import { webSocketPublisher } from "./WebSocketHelper";
 
 /**
  * Creates the main Lambda Function for this WebSocket API.
  */
 export function createMainWebSocketFunction(
-  tableNameOutput: pulumi.Output<string>
+  tableNameOutput: pulumi.Output<string>,
+  endpointOutput: pulumi.Output<string>
 ) {
   return async function (
     event: APIGatewayProxyWebsocketEventV2
   ): Promise<APIGatewayProxyResultV2> {
-    const tableName = tableNameOutput.get();
-    const db = new DbService(tableName);
+    const db = new DbService(tableNameOutput.get());
+    const publisher = webSocketPublisher(endpointOutput.get());
     console.log(event);
     if (event.requestContext.routeKey === "$connect") {
       console.log(`(${event.requestContext.connectionId}) Connecting `);
@@ -46,7 +47,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Subscribing  to ${roomId}`
           );
           await db.subscribe(roomId, event.requestContext.connectionId);
-          publishRoomData(await db.getRoom(roomId));
+          publisher.publishRoomData(await db.getRoom(roomId));
           return ok("subscribe");
         }
         case "join": {
@@ -63,7 +64,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Joining ${roomId} as ${username}`
           );
           await db.join(roomId, userKey, username);
-          publishRoomData(await db.getRoom(roomId));
+          publisher.publishRoomData(await db.getRoom(roomId));
           return ok("join");
         }
         case "vote": {
@@ -76,7 +77,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`
           );
           await db.vote(roomId, userKey, vote);
-          publishRoomData(await db.getRoom(roomId));
+          publisher.publishRoomData(await db.getRoom(roomId));
           return ok("vote");
         }
         case "reveal": {
@@ -96,7 +97,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Revealing cards in ${roomId}`
           );
           await db.setCardsRevealed(roomId, true);
-          publishRoomData(await db.getRoom(roomId));
+          publisher.publishRoomData(await db.getRoom(roomId));
           return ok("reveal");
         }
         case "reset": {
@@ -116,7 +117,7 @@ export function createMainWebSocketFunction(
             `(${event.requestContext.connectionId}) Resetting cards in ${roomId}`
           );
           await db.setCardsRevealed(roomId, false);
-          publishRoomData(await db.getRoom(roomId));
+          publisher.publishRoomData(await db.getRoom(roomId));
           return ok("reset");
         }
         case "$default":
