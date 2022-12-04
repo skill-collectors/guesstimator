@@ -88,6 +88,10 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       name: "stage",
       apiId: webSocketApi.id,
       deploymentId: deployment.id,
+      defaultRouteSettings: {
+        throttlingBurstLimit: 1000,
+        throttlingRateLimit: 500,
+      },
       routeSettings: routes.map((route) => ({
         routeKey: route.routeKey,
         throttlingBurstLimit: 1000,
