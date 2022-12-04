@@ -15,7 +15,7 @@ export class GuesstimatorWebSocket {
     userKey: string | undefined = undefined,
     hostKey: string | undefined = undefined
   ) {
-    console.log(`Establishing connection to ${roomId}`);
+    console.log(`Establishing connection to ${roomId} via ${webSocketUrl}`);
     this.roomId = roomId;
     this.webSocket = new WebSocket(webSocketUrl);
     this.webSocket.onmessage = messageHandler;
