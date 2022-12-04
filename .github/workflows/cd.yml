@@ -69,6 +69,7 @@ jobs:
         env:
           VITE_PUBLIC_API_URL: ${{ steps.pulumi.outputs.apiUrl }}
           VITE_PUBLIC_API_KEY: ${{ steps.pulumi.outputs.apiKey }}
+          VITE_PUBLIC_WEB_SOCKET_URL: ${{ steps.pulumi.outputs.webSocketUrl }}
 
       - name: Deploy frontend build to S3 bucket
         if: env.HAVE_SECRETS == 'true'
