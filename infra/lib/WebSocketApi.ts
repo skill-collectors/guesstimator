@@ -55,16 +55,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       }
     );
 
-    const routes = [
-      "$default",
-      "$connect",
-      "$disconnect",
-      "subscribe",
-      "join",
-      "vote",
-      "reveal",
-      "reset",
-    ].map((routeKey) => {
+    const routes = ["$default", "$connect", "$disconnect"].map((routeKey) => {
       const route = new aws.apigatewayv2.Route(
         `${name}-Route-${routeKey.substring(1)}`, // remove $ prefix
         {
