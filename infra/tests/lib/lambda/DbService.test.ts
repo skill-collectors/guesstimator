@@ -46,6 +46,29 @@ describe("DbService", () => {
           })
         ),
     }));
+    client.prototype.scan = vi.fn(() => ({
+      promise: () =>
+        new Promise((resolve) =>
+          resolve({
+            Items: [
+              {
+                PK: "ROOM:abc",
+                SK: "ROOM",
+                hostKey: "def",
+                isRevealed: false,
+                validSizes: "1 2 3",
+              },
+              {
+                PK: "ROOM:abc",
+                SK: "USER:ghi",
+                userId: "jkl",
+                username: "alice",
+                vote: "1",
+              },
+            ],
+          })
+        ),
+    }));
     client.prototype.batchWrite = vi.fn(() => ({
       promise: () => new Promise((resolve) => resolve(true)),
     }));
@@ -130,7 +153,7 @@ describe("DbService", () => {
     });
   });
   describe("subscribe", () => {
-    it("Generates a User ID", async () => {
+    it("Generates a User Key for new users", async () => {
       // Given
       const service = new DbService(tableName);
 
@@ -140,8 +163,30 @@ describe("DbService", () => {
       // Then
       expect(result).toHaveProperty("userKey");
     });
+    it("Updates connection string for existing user", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.subscribe("abc123", "connectionId", "userKey");
+
+      // Then
+      expect(service.client.update).toHaveBeenCalled();
+    });
   });
-  describe("setVote", () => {
+  describe("join", () => {
+    it("Updates user", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.join("roomId", "userKey", "username");
+
+      // Then
+      expect(service.client.update).toHaveBeenCalled();
+    });
+  });
+  describe("vote", () => {
     it("Updates the database", async () => {
       // Given
       const service = new DbService(tableName);
@@ -204,6 +249,19 @@ describe("DbService", () => {
 
       // Then
       expect(service.client.query).toHaveBeenCalled();
+      expect(service.client.batchWrite).toHaveBeenCalled();
+    });
+  });
+  describe("deleteStaleRooms", () => {
+    it("Deletes rooms older than a month ago", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.deleteStaleRooms();
+
+      // Then
+      expect(service.client.scan).toHaveBeenCalled();
       expect(service.client.batchWrite).toHaveBeenCalled();
     });
   });
