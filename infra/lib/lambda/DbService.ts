@@ -4,7 +4,6 @@ import * as aws from "@pulumi/aws";
 import {
   deleteBatchOperation,
   updateBatchOperation,
-  forEach,
   query,
   scan,
 } from "./DynamoUtils";
@@ -86,8 +85,7 @@ export class DbService {
     };
     let roomData: Room | undefined;
     const users: User[] = [];
-    console.log("DEBUG: Querying room data");
-    await forEach(query(this.client, queryParams), async (item) => {
+    await query(this.client, queryParams, async (item) => {
       if (item.SK === "ROOM") {
         roomData = {
           roomId: item.PK.substring("ROOM:".length),
@@ -203,7 +201,7 @@ export class DbService {
       },
     };
     const updateOperation = updateBatchOperation(this.client, this.tableName);
-    await forEach(query(this.client, queryParams), async (item) => {
+    await query(this.client, queryParams, async (item) => {
       if (item.SK === "ROOM") {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
@@ -227,7 +225,7 @@ export class DbService {
       },
     };
     const deleteOperation = deleteBatchOperation(this.client, this.tableName);
-    await forEach(query(this.client, queryParams), async (item) => {
+    await query(this.client, queryParams, async (item) => {
       await deleteOperation.push(item);
     });
     await deleteOperation.flush();
@@ -250,7 +248,7 @@ export class DbService {
     };
 
     let count = 0;
-    await forEach(scan(this.client, queryParams), async (item) => {
+    await scan(this.client, queryParams, async (item) => {
       const roomId = item.PK.substring("ROOM:".length);
       await this.deleteRoom(roomId);
       count++;
