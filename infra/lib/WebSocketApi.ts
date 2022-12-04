@@ -25,12 +25,12 @@ export default class WebSocketApi extends pulumi.ComponentResource {
     });
 
     const policy = pulumi
-      .all([args.database.table.arn, webSocketApi.arn])
-      .apply(([tableArn, webSocketGatewayArn]) => {
+      .all([args.database.table.arn, webSocketApi.executionArn])
+      .apply(([tableArn, gatewayExecutionArn]) => {
         return lambdaPolicy(
           `${name}-WebSocketLambda-Policy`,
           tableArn,
-          webSocketGatewayArn
+          gatewayExecutionArn
         );
       });
     const webSocketCallback = buildCallbackFunction(

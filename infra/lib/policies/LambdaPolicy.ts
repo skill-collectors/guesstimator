@@ -3,7 +3,7 @@ import * as aws from "@pulumi/aws";
 export default function lambdaPolicy(
   name: string,
   tableArn: string,
-  webSocketGatewayArn?: string
+  gatewayExecutionArn?: string
 ) {
   const policy = {
     Version: "2012-10-17",
@@ -38,12 +38,12 @@ export default function lambdaPolicy(
       },
     ],
   };
-  if (webSocketGatewayArn !== undefined) {
+  if (gatewayExecutionArn !== undefined) {
     policy.Statement.push({
       Sid: "WebSocketPublish",
       Effect: "Allow",
-      Action: ["execute-api:*"],
-      Resource: webSocketGatewayArn,
+      Action: ["execute-api:Invoke", "execute-api:ManageConnections"],
+      Resource: `${gatewayExecutionArn}/*/*/*`,
     });
   }
   return new aws.iam.Policy(name, {
