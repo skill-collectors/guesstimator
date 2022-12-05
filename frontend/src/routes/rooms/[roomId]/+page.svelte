@@ -224,7 +224,7 @@
         >
         <TgParagraph>
           You are joined as <strong>{currentUser.username}</strong>
-          <TgButton type="secondary" on:click={handleLeave}>Leave</TgButton>
+          <TgButton type="danger" on:click={handleLeave}>Leave</TgButton>
         </TgParagraph>
       {:else}
         <TgParagraph
