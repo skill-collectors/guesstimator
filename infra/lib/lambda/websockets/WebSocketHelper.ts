@@ -11,7 +11,7 @@ export class WebSocketPublisher {
   }
 
   async sendError(connectionId: string, status: number, message: string) {
-    await this.sendMessage(this.endpoint, connectionId, {
+    await this.sendMessage(connectionId, {
       status,
       error: message,
     });
@@ -39,7 +39,7 @@ export class WebSocketPublisher {
             }
           }
         }
-        await this.sendMessage(this.endpoint, recipient.connectionId, {
+        await this.sendMessage(recipient.connectionId, {
           status: 200,
           data: recipientData,
         });
@@ -47,13 +47,13 @@ export class WebSocketPublisher {
     }
   }
 
-  async sendMessage(endpoint: string, connectionId: string, message: object) {
+  async sendMessage(connectionId: string, message: object) {
     const api = new ApiGatewayManagementApi({
-      endpoint,
+      endpoint: this.endpoint,
     });
     console.log(
       JSON.stringify({
-        endpoint,
+        endpoint: this.endpoint,
         connectionId,
         message,
       })

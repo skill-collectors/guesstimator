@@ -246,15 +246,17 @@ export class DbService {
   }
 
   async deleteUser(roomId: string, userKey: string) {
-    await this.client
+    const output = await this.client
       .delete({
         TableName: this.tableName,
         Key: {
           PK: `ROOM:${roomId}`,
-          SK: `USERS:${userKey}`,
+          SK: `USER:${userKey}`,
         },
+        ReturnValues: "ALL_OLD",
       })
       .promise();
+    return output.Attributes;
   }
 
   async deleteRoom(roomId: string) {

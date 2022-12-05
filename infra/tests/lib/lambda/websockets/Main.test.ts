@@ -370,9 +370,29 @@ describe("WebSocket Main function", () => {
     });
   });
   describe("leave", () => {
-    // NOTE we don't validate the user key or test that case here. If the
-    // userKey is wrong, then the delete will just be a noop because there's no
-    // matching item.
+    it("Rejects invalid userKey", async () => {
+      // Given
+      const roomId = "roomId";
+      const userKey = "WRONG";
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "leave",
+          data: { roomId, userKey },
+        }),
+      });
+      mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
+      mockDbService.deleteUser.mockResolvedValue(undefined);
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockWebSocketPublisher.sendError.mock.calls[0][1]).toBe(403);
+    });
     it("Deletes the user", async () => {
       // Given
       const roomId = "roomId";
