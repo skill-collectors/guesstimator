@@ -61,6 +61,18 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  leave() {
+    if (this.userKey === undefined) {
+      throw new Error("Cannot vote without a userKey");
+    }
+    this.webSocket.send(
+      JSON.stringify({
+        action: "leave",
+        data: { roomId: this.roomId, userKey: this.userKey },
+      })
+    );
+  }
+
   reveal() {
     if (this.hostKey === undefined) {
       throw new Error("Cannot reveal cards without a hostKey");

@@ -22,8 +22,8 @@ export function getHostData(roomId: string) {
 
 export function storeUserData(
   roomId: string,
-  userKey: string,
-  username: string
+  userKey?: string,
+  username?: string
 ) {
   window.localStorage.setItem(
     `${roomKey(roomId)}:userKey`,

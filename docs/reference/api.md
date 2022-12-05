@@ -83,6 +83,20 @@ Hides the cards and erases any current votes.
 }
 ```
 
+#### Leave room
+
+Removes the user from the room.
+
+```ts
+{
+  action: "leave",
+  data: {
+    roomId: string,
+    userKey: string,
+  }
+}
+```
+
 ### Server respones
 
 All actions result in the following data being sent to all users:

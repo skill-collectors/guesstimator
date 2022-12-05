@@ -51,6 +51,11 @@
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
     console.log(event);
+    if (webSocket === undefined) {
+      // It would be really weird if this happend.
+      console.log("Got a message, but websocket is undefined!?");
+      return;
+    }
     const json = event.data;
     if (json !== undefined) {
       const message = JSON.parse(json);
@@ -59,20 +64,28 @@
         if (message.status === 404) {
           notFound = true;
         }
+      } else if (
+        message.data.type === "DELETE_USER" &&
+        message.data.result === "SUCCESS"
+      ) {
+        webSocket.close();
+        window.location.reload();
       } else {
         roomData = message.data;
         currentUser = roomData?.users.find(
           (user) => user.userKey !== undefined
         );
-        if (webSocket !== undefined) {
-          webSocket.userKey = currentUser?.userKey;
-        }
-        if (currentUser !== undefined && currentUser.userKey !== undefined) {
-          localStorage.storeUserData(
-            roomId,
-            currentUser.userKey,
-            currentUser.username
-          );
+        if (currentUser === undefined) {
+          console.log("NO CURRENT USER!");
+        } else {
+          webSocket.userKey = currentUser.userKey;
+          if (currentUser.userKey !== undefined) {
+            localStorage.storeUserData(
+              roomId,
+              currentUser.userKey,
+              currentUser.username
+            );
+          }
         }
       }
     }
@@ -105,6 +118,12 @@
     if (currentUser !== undefined) {
       currentUser.vote = vote;
       webSocket?.vote(vote);
+    }
+  }
+
+  function handleLeave() {
+    if (currentUser !== undefined) {
+      webSocket?.leave();
     }
   }
 
@@ -203,10 +222,10 @@
         <TgButton type="danger" class="m-2" on:click={() => handleVote("")}
           >Clear</TgButton
         >
-        <TgParagraph
-          >You are joined as <strong>{currentUser.username}</strong
-          ></TgParagraph
-        >
+        <TgParagraph>
+          You are joined as <strong>{currentUser.username}</strong>
+          <TgButton type="secondary" on:click={handleLeave}>Leave</TgButton>
+        </TgParagraph>
       {:else}
         <TgParagraph
           >If you'd like to vote, enter a name and join the room:</TgParagraph

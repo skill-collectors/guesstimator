@@ -75,6 +75,9 @@ describe("DbService", () => {
     client.prototype.update = vi.fn(() => ({
       promise: () => new Promise((resolve) => resolve(true)),
     }));
+    client.prototype.delete = vi.fn(() => ({
+      promise: () => new Promise((resolve) => resolve(true)),
+    }));
     return {
       sdk: {
         DynamoDB: {
@@ -237,6 +240,18 @@ describe("DbService", () => {
         .map((item) => item.PutRequest?.Item)
         .find((item) => item?.SK.startsWith("USER:"));
       expect(userUpdateRequest?.vote).not.toBe("");
+    });
+  });
+  describe("deleteUser", () => {
+    it("Deletes a USER item from the table", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.deleteUser("roomId", "userKey");
+
+      // Then
+      expect(service.client.delete).toHaveBeenCalled();
     });
   });
   describe("deleteRoom", () => {

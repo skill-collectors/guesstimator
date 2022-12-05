@@ -74,7 +74,7 @@ export function createMainWebSocketFunction(
             case "vote": {
               const { roomId, userKey, vote } = body.data;
               const validSizes = roomData.validSizes.split(" ");
-              if (!validSizes.includes(vote)) {
+              if (!validSizes.includes(vote) && vote !== "") {
                 await publisher.sendError(
                   event.requestContext.connectionId,
                   400,
@@ -121,6 +121,27 @@ export function createMainWebSocketFunction(
               );
               await db.setCardsRevealed(roomId, false);
               await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
+            case "leave": {
+              const { roomId, userKey } = body.data;
+              console.log(
+                `(${event.requestContext.connectionId}) Leaving room ${roomId}`
+              );
+              const result = await db.deleteUser(roomId, userKey);
+              if (result === undefined) {
+                await publisher.sendError(
+                  event.requestContext.connectionId,
+                  403,
+                  `Invalid userKey ${userKey} for room ${roomId}`
+                );
+              } else {
+                await publisher.sendMessage(event.requestContext.connectionId, {
+                  status: 200,
+                  data: { type: "DELETE_USER", result: "SUCCESS" },
+                });
+                await publisher.publishRoomData(await db.getRoom(roomId));
+              }
               break;
             }
             default: {

@@ -7,6 +7,7 @@ import {
   query,
   scan,
 } from "./DynamoUtils";
+import { DeleteRequestFilterSensitiveLog } from "@aws-sdk/client-dynamodb";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -242,6 +243,20 @@ export class DbService {
       }
     });
     await updateOperation.flush();
+  }
+
+  async deleteUser(roomId: string, userKey: string) {
+    const output = await this.client
+      .delete({
+        TableName: this.tableName,
+        Key: {
+          PK: `ROOM:${roomId}`,
+          SK: `USER:${userKey}`,
+        },
+        ReturnValues: "ALL_OLD",
+      })
+      .promise();
+    return output.Attributes;
   }
 
   async deleteRoom(roomId: string) {
