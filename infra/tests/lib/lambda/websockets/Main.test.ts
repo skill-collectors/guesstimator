@@ -23,6 +23,7 @@ describe("WebSocket Main function", () => {
     DbService.prototype.join = vi.fn();
     DbService.prototype.vote = vi.fn();
     DbService.prototype.setCardsRevealed = vi.fn();
+    DbService.prototype.deleteUser = vi.fn();
     return { DbService };
   });
   vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
@@ -366,6 +367,33 @@ describe("WebSocket Main function", () => {
       expect(mockDbService.setCardsRevealed).toHaveBeenCalled();
       expect(mockDbService.setCardsRevealed.mock.calls[0][1]).toBe(false);
       expect(mockWebSocketPublisher.publishRoomData).toHaveBeenCalled();
+    });
+  });
+  describe("leave", () => {
+    // NOTE we don't validate the user key or test that case here. If the
+    // userKey is wrong, then the delete will just be a noop because there's no
+    // matching item.
+    it("Deletes the user", async () => {
+      // Given
+      const roomId = "roomId";
+      const userKey = "userKey";
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "leave",
+          data: { roomId, userKey },
+        }),
+      });
+      mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockDbService.deleteUser).toHaveBeenCalled();
     });
   });
 });

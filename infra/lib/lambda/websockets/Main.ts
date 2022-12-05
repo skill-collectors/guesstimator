@@ -123,6 +123,12 @@ export function createMainWebSocketFunction(
               await publisher.publishRoomData(await db.getRoom(roomId));
               break;
             }
+            case "leave": {
+              const { roomId, userKey } = body.data;
+              await db.deleteUser(roomId, userKey);
+              await publisher.publishRoomData(await db.getRoom(roomId));
+              break;
+            }
             default: {
               await publisher.sendError(
                 event.requestContext.connectionId,
