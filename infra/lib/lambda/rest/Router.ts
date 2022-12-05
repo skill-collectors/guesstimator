@@ -3,7 +3,7 @@
  * parameter parsing is handled by PathParser.
  */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import DbService from "../DbService";
+import { DbService } from "../DbService";
 import { PathParser } from "./PathParser";
 import { RequestWrapper } from "./RequestWrapper";
 import { notFound, ok, clientError } from "./Response";
@@ -152,57 +152,9 @@ export function initRouter(tableName: string) {
     return ok({ status: "UP" });
   });
 
-  router.get("/rooms/:id", async (params, event) => {
-    const roomId = params.id;
-    const room = await db.getRoom(roomId.toUpperCase());
-    if (room === null) {
-      return notFound(`No room with id ${roomId}`);
-    } else {
-      const userKey = event.queryStringParameters?.userKey;
-      const users = room.users.map((user) => {
-        if (user.userKey === userKey) {
-          return {
-            ...user,
-            hasVote: user.vote !== "",
-          };
-        } else {
-          return {
-            userId: user.userId,
-            username: user.username,
-            hasVote: user.vote !== "",
-            vote: room.isRevealed ? user.vote : "",
-          };
-        }
-      });
-      return ok({
-        roomId: room.roomId,
-        validSizes: room.validSizes,
-        isRevealed: room.isRevealed,
-        users,
-        // Intentionally exclude hostKey
-      });
-    }
-  });
-
   router.post("/rooms", async () => {
     const room = await db.createRoom();
     return ok(room);
-  });
-
-  router.post("/rooms/:id/users", async (params, event) => {
-    const roomId = params.id;
-    const req = new RequestWrapper(event);
-    req.validate().hasLength("name", { max: 30 });
-    if (req.hasErrors) {
-      return clientError(req.clientError);
-    }
-    const { name } = req.parsedBody;
-    const result = await db.addUser(roomId, name);
-    if (result === null) {
-      return notFound(`No room with id ${roomId}`);
-    } else {
-      return ok(result);
-    }
   });
 
   router.del("/rooms/:id", async (params, event) => {
@@ -219,47 +171,6 @@ export function initRouter(tableName: string) {
     }
     await db.deleteRoom(roomId.toUpperCase());
     return ok(`Room ${roomId} was deleted.`);
-  });
-
-  router.post("/rooms/:id/votes", async (params, event) => {
-    const roomId = params.id;
-    const req = new RequestWrapper(event);
-    req.validate().hasField("userKey").hasField("vote");
-    if (req.hasErrors) {
-      return clientError(req.clientError);
-    }
-    const { userKey, vote } = req.parsedBody;
-
-    const room = await db.getRoomMetadata(roomId);
-    if (room === null) {
-      return notFound(`No room with ID ${roomId}`);
-    }
-    const validSizes = room?.validSizes.split(" ") || [];
-    if (!validSizes.includes(vote) && vote !== "") {
-      return clientError(`Invalid vote: ${vote}`);
-    }
-
-    await db.setVote(roomId, userKey, vote);
-    return ok("Vote updated");
-  });
-
-  router.put("/rooms/:id/isRevealed", async (params, event) => {
-    const roomId = params.id;
-    const room = await db.getRoomMetadata(roomId.toUpperCase());
-    if (!room) {
-      return notFound(`No room with ID ${roomId}`);
-    }
-
-    const req = new RequestWrapper(event);
-    req.validate().isBoolean("value").hasSecretValue("hostKey", room.hostKey);
-    if (req.hasErrors) {
-      return clientError(req.clientError);
-    }
-    const requestBody = req.parsedBody;
-    await db.setCardsRevealed(roomId, requestBody.value);
-    return ok(
-      `Room ${roomId} cards ${requestBody.value ? "are" : "are not"} revealed.`
-    );
   });
 
   return router;

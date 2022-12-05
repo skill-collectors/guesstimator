@@ -2,12 +2,14 @@ import SvelteApp from "./lib/SvelteApp";
 import Database from "./lib/Database";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import Api from "./lib/Api";
+import Api from "./lib/RestApi";
 import { registerAutoTags } from "./lib/AutoTag";
 import { subDomain, apexDomain } from "./lib/DomainName";
 import { capitalize } from "./lib/utils/StringUtils";
 import { buildCallbackFunction } from "./lib/Lambda";
 import { createStaleRoomCleanupFunction } from "./lib/lambda/CleanupMain";
+import WebSocketApi from "./lib/WebSocketApi";
+import lambdaPolicy from "./lib/policies/LambdaPolicy";
 
 const project = pulumi.getProject();
 const stack = pulumi.getStack();
@@ -28,17 +30,24 @@ const svelteApp = isLocalDev
 
 const database = new Database(`${resourceNamePrefix}-Database`);
 
-const api = new Api(`${resourceNamePrefix}-Api`, {
+const restApi = new Api(`${resourceNamePrefix}-RestApi`, {
   database,
 });
 
+const webSocketApi = new WebSocketApi(`${resourceNamePrefix}-WebSocketApi`, {
+  database,
+});
+
+const cleanUpLambdaPolicy = database.table.arn.apply((tableArn) =>
+  lambdaPolicy(`${resourceNamePrefix}-CleanupLambdaPolicy`, tableArn)
+);
 aws.cloudwatch.onSchedule(
   `${resourceNamePrefix}-CleanupEvent`,
   "rate(1 day)",
   buildCallbackFunction(
     `${resourceNamePrefix}-CleanupFunction`,
-    database.table.arn,
-    createStaleRoomCleanupFunction(database.table.name)
+    createStaleRoomCleanupFunction(database.table.name),
+    cleanUpLambdaPolicy
   )
 );
 
@@ -46,8 +55,9 @@ aws.cloudwatch.onSchedule(
 // (so they don't have to parse json and require something like 'jq')
 export const bucketName = svelteApp?.siteBucket.id;
 export const distributionId = svelteApp?.cdn.id;
-export const apiUrl = api.url;
-export const apiKey = api.apiKey;
+export const apiUrl = restApi.url;
+export const apiKey = restApi.apiKey;
+export const webSocketUrl = webSocketApi.invokeUrl;
 
 // These are just informational:
 export const appOutput = {

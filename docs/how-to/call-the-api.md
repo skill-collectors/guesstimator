@@ -6,7 +6,20 @@ permalink: /how-to/call-the-api
 
 # How to call the API from the frontend
 
-Calls to the API from a Svelte component should be performed using services in `src/lib/services` that group similar calls into a client-side SDK (`rooms.ts` is a good example). Those services should use `src/lib/services/rest.ts` to actually make the HTTP Request instead of using `fetch` directly.
+## WebSockets
+
+Use `GuesstimatorWebSocket` in `src/lib/services/websockets.ts` to send messages to the server. When you create a new `GuesstimatorWebSocket`, you need to provide the following callbacks:
+
+- `onmessage`: Handle messages (including expected errors, when the service returns `{ status, error }`).
+- `onerror`: Handle unexpected errors.
+- `onopen`: Called when the connection is open and ready to be used. **Do not attempt to send any messages until this callback is called.**
+- `onclose`: Called when the connection is closed. If this callback is called, do not attempt to send any more messages. If you did not expect the connection to be closed, then you can treat this as an error and inform the user of an unexpected situation.
+
+`GuesstimatorWebSocket` is tailored for use on the `src/routes/rooms/[roomId]/+page.svelte` route. If needed, you could create another service for other purposes that uses the [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) differently.
+
+## REST
+
+REST calls to the API from a Svelte component should be performed using services in `src/lib/services` that group similar calls into a client-side SDK (`rooms.ts` is a good example). Those services should use `src/lib/services/rest.ts` to actually make the HTTP Request instead of using `fetch` directly.
 
 Functions in `rest.ts` are `async` and should be called using the `async/await` syntax unless there is a compelling reason to deal with `Promises` directly.
 

@@ -13,8 +13,11 @@ describe("CorsPlugin", () => {
 
   it("Forces all headers to lowercase", async () => {
     // Given
-    const event = stubEvent("OPTIONS", "/", "", {
-      Origin: "http://localhost",
+    const event = stubEvent({
+      httpMethod: "OPTIONS",
+      headers: {
+        Origin: "http://localhost",
+      },
     });
 
     // When

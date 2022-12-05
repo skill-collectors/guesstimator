@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import DbService from "./DbService";
+import { DbService } from "./DbService";
 
 export function createStaleRoomCleanupFunction(
   tableNameOutput: pulumi.Output<string>

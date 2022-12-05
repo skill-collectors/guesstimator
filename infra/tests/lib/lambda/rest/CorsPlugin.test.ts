@@ -14,8 +14,11 @@ describe("CorsPlugin", () => {
 
   it("Handles CORS preflight requests", async () => {
     // Given
-    const event = stubEvent("OPTIONS", "/", "", {
-      origin: "http://localhost",
+    const event = stubEvent({
+      httpMethod: "OPTIONS",
+      headers: {
+        origin: "http://localhost",
+      },
     });
 
     // When
@@ -29,8 +32,11 @@ describe("CorsPlugin", () => {
 
   it("Allows expected origins", async () => {
     // Given
-    const event = stubEvent("GET", "/", "", {
-      origin: "http://localhost",
+    const event = stubEvent({
+      httpMethod: "GET",
+      headers: {
+        origin: "http://localhost",
+      },
     });
 
     // When
@@ -43,8 +49,11 @@ describe("CorsPlugin", () => {
   });
   it("Rejects unexpected origins", async () => {
     // Given
-    const event = stubEvent("GET", "/", "", {
-      origin: "http://example.com",
+    const event = stubEvent({
+      httpMethod: "GET",
+      headers: {
+        origin: "http://example.com",
+      },
     });
 
     // When
@@ -55,8 +64,11 @@ describe("CorsPlugin", () => {
   });
   it("Allows the specified methods", async () => {
     // Given
-    const event = stubEvent("GET", "/", "", {
-      origin: "http://localhost",
+    const event = stubEvent({
+      httpMethod: "GET",
+      headers: {
+        origin: "http://localhost",
+      },
     });
 
     // When
@@ -69,8 +81,11 @@ describe("CorsPlugin", () => {
   });
   it("Allows the specified headers", async () => {
     // Given
-    const event = stubEvent("GET", "/", "", {
-      origin: "http://localhost",
+    const event = stubEvent({
+      httpMethod: "GET",
+      headers: {
+        origin: "http://localhost",
+      },
     });
 
     // When

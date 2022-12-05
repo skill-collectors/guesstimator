@@ -5,120 +5,125 @@
   import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
-  import { redirectToErrorPage } from "$lib/services/errorHandler";
   import * as localStorage from "$lib/services/localStorage";
-  import { ApiEndpointNotFoundError } from "$lib/services/rest";
+  import { GuesstimatorWebSocket } from "$lib/services/websockets";
   import type { Room, User } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
-  import { onMount, onDestroy } from "svelte";
   import InvalidRoom from "./InvalidRoom.svelte";
+  import { onDestroy, onMount } from "svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
 
-  let hostKey: string | null = null;
-  let userKey: string | null = null;
+  let currentUser: User | undefined;
   let usernameFieldValue = "";
   let roomData: Room | null = null;
-  let reloadIntervalId: number | undefined;
 
-  onMount(async () => {
+  let webSocket: GuesstimatorWebSocket | undefined;
+
+  onMount(() => {
     const hostData = localStorage.getHostData(roomId);
-    hostKey = hostData.hostKey;
+    const hostKey = hostData.hostKey;
 
     const userData = localStorage.getUserData(roomId);
-    userKey = userData.userKey;
+    const userKey = userData.userKey;
 
-    await resetReloadInterval();
+    webSocket = new GuesstimatorWebSocket(
+      roomId,
+      onWebSocketMessage,
+      onWebSocketError,
+      onWebSocketOpen,
+      onWebSocketClose,
+      userKey,
+      hostKey
+    );
   });
 
   onDestroy(() => {
-    clearInterval(reloadIntervalId);
+    webSocket?.close();
   });
 
-  /**
-   * Reloads the room immediately and resets the reload interval.
-   * @param action An optional action to perform while reloading is suspended.
-   */
-  async function resetReloadInterval(action?: () => Promise<void>) {
-    window.clearInterval(reloadIntervalId);
-    reloadIntervalId = undefined;
-    if (action !== undefined) {
-      await action();
-    }
-    await loadRoomData();
-    // Don't create a second interval if one is already defined
-    if (reloadIntervalId === undefined) {
-      reloadIntervalId = window.setInterval(
-        async () => await loadRoomData(),
-        2_000
-      );
-    }
+  function onWebSocketOpen(this: WebSocket) {
+    console.log("Connection established");
+    webSocket?.subscribe();
   }
 
-  async function loadRoomData() {
-    try {
-      roomData = await rooms.getRoom(roomId, userKey);
-    } catch (err) {
-      if (err instanceof ApiEndpointNotFoundError) {
-        notFound = true;
+  function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
+    console.log(event);
+    const json = event.data;
+    if (json !== undefined) {
+      const message = JSON.parse(json);
+      if (message.status !== 200) {
+        console.error(message.error);
+        if (message.status === 404) {
+          notFound = true;
+        }
       } else {
-        redirectToErrorPage(err);
+        roomData = message.data;
+        currentUser = roomData?.users.find(
+          (user) => user.userKey !== undefined
+        );
+        if (webSocket !== undefined) {
+          webSocket.userKey = currentUser?.userKey;
+        }
+        if (currentUser !== undefined && currentUser.userKey !== undefined) {
+          localStorage.storeUserData(
+            roomId,
+            currentUser.userKey,
+            currentUser.username
+          );
+        }
       }
     }
   }
 
-  let currentUser: User | undefined;
-  $: {
-    currentUser = roomData?.users.find(
-      (user) => user.userKey !== undefined && user.userKey === userKey
-    );
+  function onWebSocketError(this: WebSocket, event: Event) {
+    console.log("WebSocket error");
+    console.error(event);
   }
 
-  async function handleJoinRoomClick() {
-    await resetReloadInterval(async () => {
-      if (roomData !== null) {
-        const result = await rooms.joinRoom(
-          roomData.roomId,
-          usernameFieldValue
-        );
-        userKey = result.userKey;
-        localStorage.storeUserData(
-          result.roomId,
-          result.userKey,
-          usernameFieldValue
-        );
-      }
-    });
+  function onWebSocketClose(this: WebSocket, event: Event) {
+    console.log("WebSocket closed");
+    console.log(event);
   }
 
-  async function setSelection(size = "") {
-    await resetReloadInterval(async () => {
-      if (currentUser !== undefined && userKey !== null) {
-        currentUser.vote = size;
-        await rooms.vote(roomId, userKey, size);
-      }
-    });
+  $: spectatorCount = roomData?.users.filter(
+    (user) => user.username === ""
+  ).length;
+
+  $: players =
+    roomData?.users.filter((user) => user.username?.length > 0) ?? [];
+
+  function handleJoinRoomClick() {
+    if (usernameFieldValue.length > 0) {
+      webSocket?.join(usernameFieldValue);
+    }
   }
 
-  async function setIsRevealed(isRevealed: boolean) {
-    await resetReloadInterval(async () => {
-      if (roomData !== null && hostKey !== null) {
-        await rooms.setIsRevealed(roomData.roomId, isRevealed, hostKey);
-      }
-    });
+  function handleVote(vote = "") {
+    if (currentUser !== undefined) {
+      currentUser.vote = vote;
+      webSocket?.vote(vote);
+    }
+  }
+
+  function reveal() {
+    webSocket?.reveal();
+  }
+
+  function reset() {
+    webSocket?.reset();
   }
 
   async function handleDeleteRoom() {
     if (roomData === null) {
       return;
     }
-    if (hostKey === null) {
+    if (webSocket?.hostKey === undefined) {
       return;
     }
-    clearInterval(reloadIntervalId);
-    await rooms.deleteRoom(roomData.roomId, hostKey);
+    await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
   }
@@ -131,7 +136,7 @@
 {:else}
   <header class="mt-8">
     Room URL: <span class="whitespace-nowrap">{url}</span>
-    {#if hostKey}
+    {#if webSocket?.hostKey}
       <TgButton
         id="deleteRoomButton"
         type="danger"
@@ -146,25 +151,21 @@
       Cards are
       {#if roomData.isRevealed}
         <strong>visible</strong>
-        {#if hostKey}
-          <TgButton
-            id="hideCardsButton"
-            type="secondary"
-            on:click={() => setIsRevealed(false)}>Hide cards</TgButton
+        {#if webSocket?.hostKey}
+          <TgButton id="hideCardsButton" type="secondary" on:click={reset}
+            >Reset</TgButton
           >
         {/if}
       {:else}
         <strong>not visible</strong>
-        {#if hostKey}
-          <TgButton
-            id="showCardsButton"
-            type="secondary"
-            on:click={() => setIsRevealed(true)}>Reveal cards</TgButton
+        {#if webSocket?.hostKey}
+          <TgButton id="showCardsButton" type="secondary" on:click={reveal}
+            >Reveal cards</TgButton
           >
         {/if}
       {/if}
     </TgParagraph>
-    {#each roomData?.users as user (user.userId)}
+    {#each players as user (user.userId)}
       <Card
         username={user.username}
         isRevealed={roomData.isRevealed}
@@ -172,25 +173,34 @@
         value={user.vote}
       />
     {/each}
+    <TgParagraph>
+      {#if spectatorCount === 0}
+        There are no spectators.
+      {:else if spectatorCount === 1}
+        There is 1 spectator.
+      {:else}
+        There are {spectatorCount} spectators.
+      {/if}
+    </TgParagraph>
   </section>
   {#if !roomData?.isRevealed}
     <section class="mt-32">
-      {#if currentUser !== undefined}
+      {#if currentUser !== undefined && currentUser.username.length > 0}
         <TgHeadingSub>Your votes:</TgHeadingSub>
-        {#each roomData.validSizes as size}
-          {#if size === currentUser.vote}
-            <TgButton type="primary" class="m-2" on:click={() => setSelection()}
-              >{size}</TgButton
+        {#each roomData.validSizes as vote}
+          {#if vote === currentUser.vote}
+            <TgButton type="primary" class="m-2" on:click={() => handleVote()}
+              >{vote}</TgButton
             >
           {:else}
             <TgButton
               type="secondary"
               class="m-2"
-              on:click={() => setSelection(size)}>{size}</TgButton
+              on:click={() => handleVote(vote)}>{vote}</TgButton
             >
           {/if}
         {/each}
-        <TgButton type="danger" class="m-2" on:click={() => setSelection("")}
+        <TgButton type="danger" class="m-2" on:click={() => handleVote("")}
           >Clear</TgButton
         >
         <TgParagraph

@@ -1,28 +1,72 @@
-import { APIGatewayProxyEvent, APIGatewayProxyEventHeaders } from "aws-lambda";
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyEventHeaders,
+  APIGatewayProxyWebsocketEventV2,
+} from "aws-lambda";
+
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
+export function stubWebSocketEvent(
+  event: DeepPartial<APIGatewayProxyWebsocketEventV2>
+): APIGatewayProxyWebsocketEventV2 {
+  return {
+    requestContext: {
+      routeKey: "",
+      messageId: "",
+      eventType: "MESSAGE",
+      extendedRequestId: "",
+      requestTime: "",
+      messageDirection: "IN",
+      stage: "",
+      connectedAt: 0,
+      requestTimeEpoch: 0,
+      requestId: "",
+      domainName: "",
+      connectionId: "",
+      apiId: "",
+      ...event.requestContext,
+    },
+    isBase64Encoded: event.isBase64Encoded || false,
+    body: event.body,
+    stageVariables: {
+      ...event.stageVariables,
+    },
+  };
+}
 
 export function stubEvent(
-  method: string,
-  path: string,
-  body = "",
-  headers: APIGatewayProxyEventHeaders = {}
+  event: DeepPartial<APIGatewayProxyEvent>
 ): APIGatewayProxyEvent {
   return {
-    body,
-    headers,
-    multiValueHeaders: {},
-    httpMethod: method,
+    body: "",
+    headers: {},
+    httpMethod: "GET",
     isBase64Encoded: false,
-    path,
+    path: "/",
     pathParameters: null, // APIGatewayProxyEventPathParameters | null;
     queryStringParameters: null, // APIGatewayProxyEventQueryStringParameters | null;
-    multiValueQueryStringParameters: null, // APIGatewayProxyEventMultiValueQueryStringParameters | null;
     stageVariables: null, // APIGatewayProxyEventStageVariables | null;
+    resource: "not used",
+    ...event,
+    multiValueHeaders: {},
+    multiValueQueryStringParameters: null, // APIGatewayProxyEventMultiValueQueryStringParameters | null;
     requestContext: {
       accountId: "not used",
       apiId: "not used",
       authorizer: null,
       protocol: "not used",
       httpMethod: "not used",
+      path: "not used",
+      stage: "not used",
+      requestId: "not used",
+      requestTimeEpoch: 0,
+      resourceId: "not used",
+      resourcePath: "not used",
+      ...event.requestContext,
       identity: {
         accessKey: null,
         accountId: null,
@@ -40,13 +84,6 @@ export function stubEvent(
         userAgent: null,
         userArn: null,
       },
-      path: "not used",
-      stage: "not used",
-      requestId: "not used",
-      requestTimeEpoch: 0,
-      resourceId: "not used",
-      resourcePath: "not used",
     },
-    resource: "not used",
   };
 }

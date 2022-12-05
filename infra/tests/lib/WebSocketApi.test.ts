@@ -1,8 +1,11 @@
 import * as pulumi from "@pulumi/pulumi";
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import {
+  APIGatewayProxyResultV2,
+  APIGatewayProxyWebsocketEventV2,
+} from "aws-lambda";
 import { describe, it, expect, beforeAll, vi } from "vitest";
-import Api from "../../lib/Api";
 import Database from "../../lib/Database";
+import WebSocketApi from "../../lib/WebSocketApi";
 
 pulumi.runtime.setMocks({
   newResource: function (args: pulumi.runtime.MockResourceArgs): {
@@ -14,8 +17,7 @@ pulumi.runtime.setMocks({
     return {
       id: `${args.name}Id`,
       state: {
-        url: "https://raw.apigatewayurl.com",
-        value: "API_KEY", // for the key
+        invokeUrl: "wss://example.com",
       },
     };
   },
@@ -26,11 +28,11 @@ pulumi.runtime.setMocks({
 
 describe("infrastructure", () => {
   beforeAll(async function () {
-    vi.mock("../../lib/lambda/rest/Main", () => {
+    vi.mock("../../lib/lambda/websockets/Main", () => {
       const mockHandler = function () {
-        return async function handleDocument(
-          event: APIGatewayProxyEvent
-        ): Promise<APIGatewayProxyResult> {
+        return async function (
+          event: APIGatewayProxyWebsocketEventV2
+        ): Promise<APIGatewayProxyResultV2> {
           console.log(JSON.stringify(event));
           return {
             statusCode: 200,
@@ -38,12 +40,12 @@ describe("infrastructure", () => {
           };
         };
       };
-      return { createMainRestFunction: mockHandler };
+      return { createMainWebSocketFunction: mockHandler };
     });
   });
 
   function buildApi() {
-    return new Api("GuesstimatorApi", {
+    return new WebSocketApi("GuesstimatorWebSocketApi", {
       database: {
         table: {
           arn: pulumi.Output.create("tableArn"),
@@ -53,19 +55,11 @@ describe("infrastructure", () => {
     });
   }
 
-  it("Exports an API url", async () => {
+  it("Exports an invoke url", async () => {
     const api = buildApi();
-    const apiUrl = await new Promise((resolve) => {
-      api.url.apply((url) => resolve(url));
+    const invokeUrl = await new Promise((resolve) => {
+      api.invokeUrl.apply((url) => resolve(url));
     });
-    expect(apiUrl).toBe("https://raw.apigatewayurl.com");
-  });
-
-  it("Creates an API key", async () => {
-    const api = buildApi();
-    const apiKey = await new Promise((resolve) => {
-      api.apiKey.apply((key) => resolve(key));
-    });
-    expect(apiKey).toBe("API_KEY");
+    expect(invokeUrl).toBe("wss://example.com");
   });
 });

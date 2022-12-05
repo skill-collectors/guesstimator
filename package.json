@@ -18,7 +18,8 @@
     "check-all": "npm run check-frontend && npm run check-infra",
     "test:frontend": "cd frontend && npm run test",
     "test:infra": "cd infra && npm run test",
-    "test": "npm run test:frontend && npm run test:infra"
+    "test": "npm run test:frontend && npm run test:infra",
+    "coverage": "npm run coverage -w frontend && npm run coverage -w infra"
   },
   "workspaces": [
     "frontend",

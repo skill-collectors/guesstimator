@@ -1,12 +1,12 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import dynamoTableAccessPolicy from "./policies/LambdaPolicy";
 import { Callback } from "@pulumi/aws/lambda";
+import { Policy } from "@pulumi/aws/iam";
 
 export function buildCallbackFunction<E, R>(
   name: string,
-  tableArn: pulumi.Output<string>,
-  handler: Callback<E, R>
+  handler: Callback<E, R>,
+  policy: pulumi.Output<Policy>
 ) {
   const lambdaRole = new aws.iam.Role(`${name}-Role`, {
     assumeRolePolicy: JSON.stringify({
@@ -32,14 +32,10 @@ export function buildCallbackFunction<E, R>(
     }
   );
 
-  // Attach policy to allow DB access
-  const tableAccessPolicy = tableArn.apply((arn) =>
-    dynamoTableAccessPolicy(`${name}-AccessPolicy`, arn)
-  );
-
+  // Attach policy
   new aws.iam.RolePolicyAttachment(`${name}-RolePolicyAttachment`, {
     role: lambdaRole,
-    policyArn: tableAccessPolicy.arn,
+    policyArn: policy.apply((p) => p.arn),
   });
 
   const callbackFunction = new aws.lambda.CallbackFunction(`${name}-Function`, {

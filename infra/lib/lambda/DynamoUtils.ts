@@ -1,12 +1,13 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
-export async function* query(
+export async function query(
   client: DocumentClient,
-  params: DocumentClient.QueryInput
+  params: DocumentClient.QueryInput,
+  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
 ) {
   let output = await client.query(params).promise();
   for (const item of output.Items || []) {
-    yield item;
+    await consumer(item);
   }
   while (
     output.LastEvaluatedKey !== undefined &&
@@ -19,47 +20,19 @@ export async function* query(
       })
       .promise();
     for (const item of output.Items || []) {
-      yield item;
+      await consumer(item);
     }
   }
 }
 
-/**
- * Normally, you could use for..of for generator output:
- *
- *   for await (const item of query(...)) {
- *     // do something with item
- *   }
- *
- * However, there is a known issue that prevents Pulumi from serializing that:
- *
- * https://github.com/pulumi/pulumi/issues/4479
- *
- * Pulumi *is* able to serialize manual iteration using next(), so this function
- * is a workaround until the above issue is resolved.
- *
- * @param it An async generator function
- * @param consumer a function to handle each item yielded by the generator
- */
-export async function forEach(
-  it: AsyncGenerator<DocumentClient.AttributeMap, void, unknown>,
-  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
-) {
-  let result = await it.next();
-  while (!result.done) {
-    const item = result.value;
-    await consumer(item);
-    result = await it.next();
-  }
-}
-
-export async function* scan(
+export async function scan(
   client: DocumentClient,
-  params: DocumentClient.ScanInput
+  params: DocumentClient.ScanInput,
+  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
 ) {
   let output = await client.scan(params).promise();
   for (const item of output.Items || []) {
-    yield item;
+    await consumer(item);
   }
   while (
     output.LastEvaluatedKey !== undefined &&
@@ -72,7 +45,7 @@ export async function* scan(
       })
       .promise();
     for (const item of output.Items || []) {
-      yield item;
+      await consumer(item);
     }
   }
 }

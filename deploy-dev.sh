@@ -13,11 +13,13 @@ bucketName=$(pulumi stack output -s dev bucketName 2>/dev/null)
 distributionId=$(pulumi stack output -s dev distributionId 2>/dev/null)
 apiUrl=$(pulumi stack output -s dev apiUrl 2>/dev/null)
 apiKey=$(pulumi stack output -s dev --show-secrets apiKey 2>/dev/null)
+webSocketUrl=$(pulumi stack output -s dev webSocketUrl 2>/dev/null)
 
 cd ../frontend
 echo "Setting env vars"
 echo "VITE_PUBLIC_API_URL=${apiUrl}" > .env.development
 echo "VITE_PUBLIC_API_KEY=${apiKey}" >> .env.development
+echo "VITE_PUBLIC_WEB_SOCKET_URL=${webSocketUrl}" >> .env.development
 # .env.production is used by playwright when it runs the app in preview mode
 cp .env.development .env.production
 
