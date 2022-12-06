@@ -3,7 +3,7 @@ import * as rest from "$lib/services/rest";
 export interface Room {
   roomId: string;
   hostKey: string | undefined;
-  validSizes: string;
+  validSizes: string[];
   isRevealed: boolean;
   users: User[];
 }

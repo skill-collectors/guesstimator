@@ -12,6 +12,7 @@
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
   import Loader from "$lib/components/Loader.svelte";
+  import Chart from "$lib/components/Chart.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -27,7 +28,24 @@
   let pendingRevealOrReset = false;
   let pendingDelete = false;
 
+  let chartLabels: string[] = [];
+  let chartDataSeries: number[] = [];
+  $: {
+    chartLabels = roomData?.validSizes ?? [];
+    const currentVotes =
+      roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ??
+      [];
+    const valueFrequencies = currentVotes?.reduce((map, vote) => {
+      map.set(vote, (map.get(vote) ?? 0) + 1);
+      return map;
+    }, new Map<string, number>());
+    chartDataSeries = chartLabels.map(
+      (vote) => valueFrequencies.get(vote) ?? 0
+    );
+  }
+
   onMount(() => {
+    console.log(chartLabels);
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
 
@@ -218,7 +236,9 @@
       {/if}
     </TgParagraph>
   </section>
-  {#if !roomData?.isRevealed}
+  {#if roomData?.isRevealed}
+    <Chart labels={chartLabels} series={[chartDataSeries]} />
+  {:else}
     <section class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
         <TgHeadingSub>Your votes:</TgHeadingSub>
