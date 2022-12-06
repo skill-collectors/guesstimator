@@ -63,7 +63,7 @@ export class GuesstimatorWebSocket {
 
   leave() {
     if (this.userKey === undefined) {
-      throw new Error("Cannot vote without a userKey");
+      throw new Error("Cannot leave without a userKey");
     }
     this.webSocket.send(
       JSON.stringify({

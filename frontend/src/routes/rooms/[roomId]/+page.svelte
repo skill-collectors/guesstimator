@@ -65,7 +65,7 @@
     if (json !== undefined) {
       const message = JSON.parse(json);
       if (message.status !== 200) {
-        console.error(message.error);
+        console.error(message);
         if (message.status === 404) {
           notFound = true;
         }
@@ -74,6 +74,7 @@
         message.data.result === "SUCCESS"
       ) {
         webSocket.close();
+        localStorage.clearUserData(roomId);
         window.location.reload();
       } else {
         roomData = message.data;

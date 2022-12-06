@@ -27,13 +27,13 @@ export function storeUserData(
 ) {
   console.log(`Saving user data for ${roomId}: ${userKey}`);
   window.localStorage.setItem(
-    `${roomKey(roomId)}:userKey`,
+    `${roomKey(roomId)}:userData`,
     JSON.stringify({ userKey, username })
   );
 }
 
 export function getUserData(roomId: string) {
-  const result = window.localStorage.getItem(`${roomKey(roomId)}:userKey`);
+  const result = window.localStorage.getItem(`${roomKey(roomId)}:userData`);
   if (result === null) {
     console.log(`No user data for ${roomId}`);
     return {};
@@ -41,6 +41,10 @@ export function getUserData(roomId: string) {
     console.log(`Got user data for ${roomId}: ${result}`);
     return JSON.parse(result);
   }
+}
+
+export function clearUserData(roomId: string) {
+  window.localStorage.removeItem(`${roomKey(roomId)}:userData`);
 }
 
 export function deleteHostKey(roomId: string) {
