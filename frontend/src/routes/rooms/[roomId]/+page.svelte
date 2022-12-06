@@ -240,7 +240,9 @@
         >
         <TgParagraph>
           You are joined as <strong>{currentUser.username}</strong>
-          <TgButton type="danger" on:click={handleLeave}>Leave</TgButton>
+          <TgButton type="danger" class="m-2" on:click={handleLeave}
+            >Leave</TgButton
+          >
         </TgParagraph>
       {:else}
         <TgParagraph
@@ -251,7 +253,7 @@
           maxlength={30}
           bind:value={usernameFieldValue}
         />
-        <TgButton type="primary" on:click={handleJoinRoomClick}
+        <TgButton type="primary" class="m-2" on:click={handleJoinRoomClick}
           >Join room</TgButton
         >
       {/if}
