@@ -174,31 +174,28 @@
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <TgParagraph>
-      Cards are
-      {#if roomData.isRevealed}
-        <strong>visible</strong>
-        {#if webSocket?.hostKey}
+      {#if webSocket?.hostKey}
+        {#if roomData.isRevealed}
           <TgButton id="hideCardsButton" type="secondary" on:click={reset}
             >Reset</TgButton
           >
-        {/if}
-      {:else}
-        <strong>not visible</strong>
-        {#if webSocket?.hostKey}
+        {:else}
           <TgButton id="showCardsButton" type="secondary" on:click={reveal}
             >Reveal cards</TgButton
           >
         {/if}
       {/if}
     </TgParagraph>
-    {#each players as user (user.userId)}
-      <Card
-        username={user.username}
-        isRevealed={roomData.isRevealed}
-        hasValue={user.hasVote}
-        value={user.vote}
-      />
-    {/each}
+    <div class="mb-6">
+      {#each players as user (user.userId)}
+        <Card
+          username={user.username}
+          isRevealed={roomData.isRevealed}
+          hasValue={user.hasVote}
+          value={user.vote}
+        />
+      {/each}
+    </div>
     <TgParagraph>
       {#if spectatorCount === 0}
         There are no spectators.
