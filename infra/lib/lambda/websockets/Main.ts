@@ -58,7 +58,11 @@ export function createMainWebSocketFunction(
               console.log(
                 `(${event.requestContext.connectionId}) Subscribing  to ${roomId}`
               );
-              await db.subscribe(roomId, event.requestContext.connectionId);
+              await db.subscribe(
+                roomId,
+                event.requestContext.connectionId,
+                body.data.userKey
+              );
               await publisher.publishRoomData(await db.getRoom(roomId));
               break;
             }

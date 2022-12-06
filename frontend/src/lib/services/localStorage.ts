@@ -25,6 +25,7 @@ export function storeUserData(
   userKey?: string,
   username?: string
 ) {
+  console.log(`Saving user data for ${roomId}: ${userKey}`);
   window.localStorage.setItem(
     `${roomKey(roomId)}:userKey`,
     JSON.stringify({ userKey, username })
@@ -34,8 +35,10 @@ export function storeUserData(
 export function getUserData(roomId: string) {
   const result = window.localStorage.getItem(`${roomKey(roomId)}:userKey`);
   if (result === null) {
+    console.log(`No user data for ${roomId}`);
     return {};
   } else {
+    console.log(`Got user data for ${roomId}: ${result}`);
     return JSON.parse(result);
   }
 }
