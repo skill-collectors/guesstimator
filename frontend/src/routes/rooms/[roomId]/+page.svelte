@@ -237,7 +237,11 @@
     </TgParagraph>
   </section>
   {#if roomData?.isRevealed}
-    <Chart labels={chartLabels} series={[chartDataSeries]} />
+    <Chart
+      labels={chartLabels}
+      series={chartDataSeries}
+      options={{ distributeSeries: true }}
+    />
   {:else}
     <section class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
