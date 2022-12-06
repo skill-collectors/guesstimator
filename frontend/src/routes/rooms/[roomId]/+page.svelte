@@ -11,6 +11,7 @@
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
+  import Loader from "$lib/components/Loader.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -22,6 +23,8 @@
 
   let webSocket: GuesstimatorWebSocket | undefined;
 
+  let loadingStatus = "";
+
   onMount(() => {
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
@@ -29,6 +32,7 @@
     const userData = localStorage.getUserData(roomId);
     const userKey = userData.userKey;
 
+    loadingStatus = "Connecting to room...";
     webSocket = new GuesstimatorWebSocket(
       roomId,
       onWebSocketMessage,
@@ -45,11 +49,12 @@
   });
 
   function onWebSocketOpen(this: WebSocket) {
-    console.log("Connection established");
+    loadingStatus = "Subscribing to updates...";
     webSocket?.subscribe();
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
+    loadingStatus = "";
     console.log(event);
     if (webSocket === undefined) {
       // It would be really weird if this happend.
@@ -151,7 +156,8 @@
 {#if notFound}
   <InvalidRoom />
 {:else if roomData === null}
-  <TgParagraph>Loading room...</TgParagraph>
+  <TgParagraph>{loadingStatus}</TgParagraph>
+  <Loader />
 {:else}
   <header class="mt-8">
     Room URL: <span class="whitespace-nowrap">{url}</span>
