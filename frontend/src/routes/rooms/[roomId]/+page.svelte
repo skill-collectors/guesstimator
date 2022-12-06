@@ -11,6 +11,8 @@
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
+  import Loader from "$lib/components/Loader.svelte";
+  import Chart from "$lib/components/Chart.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -22,13 +24,35 @@
 
   let webSocket: GuesstimatorWebSocket | undefined;
 
+  let loadingStatus = "";
+  let pendingRevealOrReset = false;
+  let pendingDelete = false;
+
+  let chartLabels: string[] = [];
+  let chartDataSeries: number[] = [];
+  $: {
+    chartLabels = roomData?.validSizes ?? [];
+    const currentVotes =
+      roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ??
+      [];
+    const valueFrequencies = currentVotes?.reduce((map, vote) => {
+      map.set(vote, (map.get(vote) ?? 0) + 1);
+      return map;
+    }, new Map<string, number>());
+    chartDataSeries = chartLabels.map(
+      (vote) => valueFrequencies.get(vote) ?? 0
+    );
+  }
+
   onMount(() => {
+    console.log(chartLabels);
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
 
     const userData = localStorage.getUserData(roomId);
     const userKey = userData.userKey;
 
+    loadingStatus = "Connecting to room...";
     webSocket = new GuesstimatorWebSocket(
       roomId,
       onWebSocketMessage,
@@ -45,11 +69,12 @@
   });
 
   function onWebSocketOpen(this: WebSocket) {
-    console.log("Connection established");
+    loadingStatus = "Subscribing to updates...";
     webSocket?.subscribe();
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
+    loadingStatus = "";
     console.log(event);
     if (webSocket === undefined) {
       // It would be really weird if this happend.
@@ -60,7 +85,7 @@
     if (json !== undefined) {
       const message = JSON.parse(json);
       if (message.status !== 200) {
-        console.error(message.error);
+        console.error(message);
         if (message.status === 404) {
           notFound = true;
         }
@@ -69,6 +94,7 @@
         message.data.result === "SUCCESS"
       ) {
         webSocket.close();
+        localStorage.clearUserData(roomId);
         window.location.reload();
       } else {
         roomData = message.data;
@@ -87,6 +113,7 @@
             );
           }
         }
+        pendingRevealOrReset = false;
       }
     }
   }
@@ -128,10 +155,12 @@
   }
 
   function reveal() {
+    pendingRevealOrReset = true;
     webSocket?.reveal();
   }
 
   function reset() {
+    pendingRevealOrReset = true;
     webSocket?.reset();
   }
 
@@ -142,6 +171,7 @@
     if (webSocket?.hostKey === undefined) {
       return;
     }
+    pendingDelete = true;
     await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
@@ -151,47 +181,51 @@
 {#if notFound}
   <InvalidRoom />
 {:else if roomData === null}
-  <TgParagraph>Loading room...</TgParagraph>
+  <TgParagraph>{loadingStatus}</TgParagraph>
+  <Loader />
 {:else}
   <header class="mt-8">
     Room URL: <span class="whitespace-nowrap">{url}</span>
     {#if webSocket?.hostKey}
-      <TgButton
-        id="deleteRoomButton"
-        type="danger"
-        class="m-2"
-        on:click={handleDeleteRoom}>X</TgButton
-      >
+      {#if pendingDelete}
+        <Loader />
+      {:else}
+        <TgButton
+          id="deleteRoomButton"
+          type="danger"
+          class="m-2"
+          on:click={handleDeleteRoom}>X</TgButton
+        >
+      {/if}
     {/if}
   </header>
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <TgParagraph>
-      Cards are
-      {#if roomData.isRevealed}
-        <strong>visible</strong>
-        {#if webSocket?.hostKey}
+      {#if webSocket?.hostKey}
+        {#if pendingRevealOrReset === true}
+          <Loader />
+        {:else if roomData.isRevealed}
           <TgButton id="hideCardsButton" type="secondary" on:click={reset}
             >Reset</TgButton
           >
-        {/if}
-      {:else}
-        <strong>not visible</strong>
-        {#if webSocket?.hostKey}
+        {:else}
           <TgButton id="showCardsButton" type="secondary" on:click={reveal}
             >Reveal cards</TgButton
           >
         {/if}
       {/if}
     </TgParagraph>
-    {#each players as user (user.userId)}
-      <Card
-        username={user.username}
-        isRevealed={roomData.isRevealed}
-        hasValue={user.hasVote}
-        value={user.vote}
-      />
-    {/each}
+    <div class="mb-6">
+      {#each players as user (user.userId)}
+        <Card
+          username={user.username}
+          isRevealed={roomData.isRevealed}
+          hasValue={user.hasVote}
+          value={user.vote}
+        />
+      {/each}
+    </div>
     <TgParagraph>
       {#if spectatorCount === 0}
         There are no spectators.
@@ -202,7 +236,13 @@
       {/if}
     </TgParagraph>
   </section>
-  {#if !roomData?.isRevealed}
+  {#if roomData?.isRevealed}
+    <Chart
+      labels={chartLabels}
+      series={chartDataSeries}
+      options={{ distributeSeries: true }}
+    />
+  {:else}
     <section class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
         <TgHeadingSub>Your votes:</TgHeadingSub>
@@ -224,7 +264,9 @@
         >
         <TgParagraph>
           You are joined as <strong>{currentUser.username}</strong>
-          <TgButton type="danger" on:click={handleLeave}>Leave</TgButton>
+          <TgButton type="danger" class="m-2" on:click={handleLeave}
+            >Leave</TgButton
+          >
         </TgParagraph>
       {:else}
         <TgParagraph
@@ -235,7 +277,7 @@
           maxlength={30}
           bind:value={usernameFieldValue}
         />
-        <TgButton type="primary" on:click={handleJoinRoomClick}
+        <TgButton type="primary" class="m-2" on:click={handleJoinRoomClick}
           >Join room</TgButton
         >
       {/if}
