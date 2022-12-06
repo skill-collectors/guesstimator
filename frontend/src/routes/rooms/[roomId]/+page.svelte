@@ -24,6 +24,7 @@
   let webSocket: GuesstimatorWebSocket | undefined;
 
   let loadingStatus = "";
+  let pendingRevealOrReset = false;
   let pendingDelete = false;
 
   onMount(() => {
@@ -94,6 +95,7 @@
             );
           }
         }
+        pendingRevealOrReset = false;
       }
     }
   }
@@ -135,10 +137,12 @@
   }
 
   function reveal() {
+    pendingRevealOrReset = true;
     webSocket?.reveal();
   }
 
   function reset() {
+    pendingRevealOrReset = true;
     webSocket?.reset();
   }
 
@@ -181,7 +185,9 @@
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <TgParagraph>
       {#if webSocket?.hostKey}
-        {#if roomData.isRevealed}
+        {#if pendingRevealOrReset === true}
+          <Loader />
+        {:else if roomData.isRevealed}
           <TgButton id="hideCardsButton" type="secondary" on:click={reset}
             >Reset</TgButton
           >
