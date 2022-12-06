@@ -24,6 +24,7 @@
   let webSocket: GuesstimatorWebSocket | undefined;
 
   let loadingStatus = "";
+  let pendingDelete = false;
 
   onMount(() => {
     const hostData = localStorage.getHostData(roomId);
@@ -148,6 +149,7 @@
     if (webSocket?.hostKey === undefined) {
       return;
     }
+    pendingDelete = true;
     await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
@@ -163,12 +165,16 @@
   <header class="mt-8">
     Room URL: <span class="whitespace-nowrap">{url}</span>
     {#if webSocket?.hostKey}
-      <TgButton
-        id="deleteRoomButton"
-        type="danger"
-        class="m-2"
-        on:click={handleDeleteRoom}>X</TgButton
-      >
+      {#if pendingDelete}
+        <Loader />
+      {:else}
+        <TgButton
+          id="deleteRoomButton"
+          type="danger"
+          class="m-2"
+          on:click={handleDeleteRoom}>X</TgButton
+        >
+      {/if}
     {/if}
   </header>
   <section class="mt-8">
