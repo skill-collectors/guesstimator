@@ -14,6 +14,7 @@
   import Loader from "$lib/components/Loader.svelte";
   import Chart from "$lib/components/Chart.svelte";
   import RoomHeader from "./RoomHeader.svelte";
+  import SpectatorCounter from "./SpectatorCounter.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -188,6 +189,7 @@
     isHost={webSocket?.hostKey !== undefined}
     on:click-delete={handleDeleteRoom}
   />
+  <SpectatorCounter {spectatorCount} />
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <TgParagraph>
@@ -215,15 +217,6 @@
         />
       {/each}
     </div>
-    <TgParagraph>
-      {#if spectatorCount === 0}
-        There are no spectators.
-      {:else if spectatorCount === 1}
-        There is 1 spectator.
-      {:else}
-        There are {spectatorCount} spectators.
-      {/if}
-    </TgParagraph>
   </section>
   {#if roomData?.isRevealed}
     <Chart
