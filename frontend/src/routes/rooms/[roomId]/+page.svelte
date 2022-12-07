@@ -15,6 +15,7 @@
   import Chart from "$lib/components/Chart.svelte";
   import RoomHeader from "./RoomHeader.svelte";
   import SpectatorCounter from "./SpectatorCounter.svelte";
+  import HostControls from "./HostControls.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -192,21 +193,13 @@
   <SpectatorCounter {spectatorCount} />
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    <TgParagraph>
-      {#if webSocket?.hostKey}
-        {#if pendingRevealOrReset === true}
-          <Loader />
-        {:else if roomData.isRevealed}
-          <TgButton id="hideCardsButton" type="secondary" on:click={reset}
-            >Reset</TgButton
-          >
-        {:else}
-          <TgButton id="showCardsButton" type="secondary" on:click={reveal}
-            >Reveal cards</TgButton
-          >
-        {/if}
-      {/if}
-    </TgParagraph>
+    <HostControls
+      isHost={webSocket?.hostKey !== undefined}
+      isRevealed={roomData.isRevealed}
+      isPending={pendingRevealOrReset}
+      on:reset={reset}
+      on:reveal={reveal}
+    />
     <div class="mb-6">
       {#each players as user (user.userId)}
         <Card
