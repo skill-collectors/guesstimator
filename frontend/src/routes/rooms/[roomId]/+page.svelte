@@ -130,10 +130,6 @@
     console.log(event);
   }
 
-  $: spectatorCount = roomData?.users.filter(
-    (user) => user.username === ""
-  ).length;
-
   $: players =
     roomData?.users.filter((user) => user.username?.length > 0) ?? [];
 
@@ -190,7 +186,7 @@
     isHost={webSocket?.hostKey !== undefined}
     on:click-delete={handleDeleteRoom}
   />
-  <SpectatorCounter {spectatorCount} />
+  <SpectatorCounter {roomData} />
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <HostControls

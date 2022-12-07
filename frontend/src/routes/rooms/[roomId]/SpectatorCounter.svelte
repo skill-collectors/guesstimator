@@ -1,7 +1,12 @@
 <script type="ts">
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+  import type { Room } from "$lib/services/rooms";
 
-  export let spectatorCount: number | undefined;
+  export let roomData: Room;
+
+  $: spectatorCount = roomData?.users.filter(
+    (user) => user.username === ""
+  ).length;
 </script>
 
 {#if spectatorCount !== undefined}
