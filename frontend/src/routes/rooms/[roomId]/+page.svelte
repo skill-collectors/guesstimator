@@ -13,6 +13,7 @@
   import { onDestroy, onMount } from "svelte";
   import Loader from "$lib/components/Loader.svelte";
   import Chart from "$lib/components/Chart.svelte";
+  import RoomHeader from "./RoomHeader.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -26,7 +27,6 @@
 
   let loadingStatus = "";
   let pendingRevealOrReset = false;
-  let pendingDelete = false;
 
   let chartLabels: string[] = [];
   let chartDataSeries: number[] = [];
@@ -171,7 +171,6 @@
     if (webSocket?.hostKey === undefined) {
       return;
     }
-    pendingDelete = true;
     await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
@@ -184,21 +183,11 @@
   <TgParagraph>{loadingStatus}</TgParagraph>
   <Loader />
 {:else}
-  <header class="mt-8">
-    Room URL: <span class="whitespace-nowrap">{url}</span>
-    {#if webSocket?.hostKey}
-      {#if pendingDelete}
-        <Loader />
-      {:else}
-        <TgButton
-          id="deleteRoomButton"
-          type="danger"
-          class="m-2"
-          on:click={handleDeleteRoom}>X</TgButton
-        >
-      {/if}
-    {/if}
-  </header>
+  <RoomHeader
+    {url}
+    isHost={webSocket?.hostKey !== undefined}
+    on:click-delete={handleDeleteRoom}
+  />
   <section class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <TgParagraph>
