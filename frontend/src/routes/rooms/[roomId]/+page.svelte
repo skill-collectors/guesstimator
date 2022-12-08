@@ -169,24 +169,21 @@
     on:click-delete={handleDeleteRoom}
   />
   <SpectatorCounter {roomData} />
-  <section class="mt-8">
+  <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    <HostControls
-      isHost={webSocket?.hostKey !== undefined}
-      {roomData}
-      on:reset={reset}
-      on:reveal={reveal}
-    />
+    {#if webSocket?.hostKey !== undefined}
+      <HostControls {roomData} on:reset={reset} on:reveal={reveal} />
+    {/if}
     <div class="mb-6">
       <CardGroup {roomData} />
     </div>
   </section>
   {#if roomData?.isRevealed}
-    <section class="m-x-auto max-w-xl">
+    <section id="resultsChart" class="m-x-auto max-w-xl">
       <ResultsChart {roomData} />
     </section>
   {:else}
-    <section class="mt-32">
+    <section id="userControls" class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
         <TgHeadingSub>Your votes:</TgHeadingSub>
         {#each roomData.validSizes as vote}

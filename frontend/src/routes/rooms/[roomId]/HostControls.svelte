@@ -5,7 +5,6 @@
   import type { Room } from "$lib/services/rooms";
   import { createEventDispatcher } from "svelte";
 
-  export let isHost: boolean;
   export let roomData: Room;
 
   let isPending = false;
@@ -27,18 +26,16 @@
   }
 </script>
 
-{#if isHost && roomData !== undefined}
-  <TgParagraph>
-    {#if isPending === true}
-      <Loader />
-    {:else if roomData.isRevealed}
-      <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
-        >Reset</TgButton
-      >
-    {:else}
-      <TgButton id="showCardsButton" type="secondary" on:click={handleReveal}
-        >Reveal cards</TgButton
-      >
-    {/if}
-  </TgParagraph>
-{/if}
+<TgParagraph>
+  {#if isPending === true}
+    <Loader />
+  {:else if roomData.isRevealed}
+    <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
+      >Reset</TgButton
+    >
+  {:else}
+    <TgButton id="showCardsButton" type="secondary" on:click={handleReveal}
+      >Reveal cards</TgButton
+    >
+  {/if}
+</TgParagraph>
