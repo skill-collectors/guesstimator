@@ -80,7 +80,9 @@
     console.log(event);
     if (webSocket === undefined) {
       // It would be really weird if this happend.
-      console.log("Got a message, but websocket is undefined!?");
+      console.log("Got a message, but the websocket is gone.");
+      // Try reloading the page
+      window.location.reload();
       return;
     }
     const json = event.data;
@@ -191,8 +193,7 @@
     <TgHeadingSub>Current votes:</TgHeadingSub>
     <HostControls
       isHost={webSocket?.hostKey !== undefined}
-      isRevealed={roomData.isRevealed}
-      isPending={pendingRevealOrReset}
+      {roomData}
       on:reset={reset}
       on:reveal={reveal}
     />
