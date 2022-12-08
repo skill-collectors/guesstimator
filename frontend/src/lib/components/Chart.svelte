@@ -10,6 +10,8 @@
 
   export let labels: Label[] = [];
   export let series: AllSeriesTypes = [];
+  let className = "";
+  export { className as class };
 
   const data: BarChartData = {
     labels,
@@ -27,4 +29,4 @@
   }
 </script>
 
-<div bind:this={chartContainer} />
+<div class={className} bind:this={chartContainer} />

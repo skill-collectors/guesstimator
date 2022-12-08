@@ -4,7 +4,6 @@
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
-  import Card from "$lib/components/Card.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { GuesstimatorWebSocket } from "$lib/services/websockets";
   import type { Room, User } from "$lib/services/rooms";
@@ -12,11 +11,11 @@
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
   import Loader from "$lib/components/Loader.svelte";
-  import Chart from "$lib/components/Chart.svelte";
   import RoomHeader from "./RoomHeader.svelte";
   import SpectatorCounter from "./SpectatorCounter.svelte";
   import HostControls from "./HostControls.svelte";
   import CardGroup from "./CardGroup.svelte";
+  import ResultsChart from "./ResultsChart.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -31,24 +30,7 @@
   let loadingStatus = "";
   let pendingRevealOrReset = false;
 
-  let chartLabels: string[] = [];
-  let chartDataSeries: number[] = [];
-  $: {
-    chartLabels = roomData?.validSizes ?? [];
-    const currentVotes =
-      roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ??
-      [];
-    const valueFrequencies = currentVotes?.reduce((map, vote) => {
-      map.set(vote, (map.get(vote) ?? 0) + 1);
-      return map;
-    }, new Map<string, number>());
-    chartDataSeries = chartLabels.map(
-      (vote) => valueFrequencies.get(vote) ?? 0
-    );
-  }
-
   onMount(() => {
-    console.log(chartLabels);
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
 
@@ -200,11 +182,9 @@
     </div>
   </section>
   {#if roomData?.isRevealed}
-    <Chart
-      labels={chartLabels}
-      series={chartDataSeries}
-      options={{ distributeSeries: true }}
-    />
+    <section class="m-x-auto max-w-xl">
+      <ResultsChart {roomData} />
+    </section>
   {:else}
     <section class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
