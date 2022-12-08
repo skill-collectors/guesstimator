@@ -16,6 +16,7 @@
   import RoomHeader from "./RoomHeader.svelte";
   import SpectatorCounter from "./SpectatorCounter.svelte";
   import HostControls from "./HostControls.svelte";
+  import CardGroup from "./CardGroup.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -132,9 +133,6 @@
     console.log(event);
   }
 
-  $: players =
-    roomData?.users.filter((user) => user.username?.length > 0) ?? [];
-
   function handleJoinRoomClick() {
     if (usernameFieldValue.length > 0) {
       webSocket?.join(usernameFieldValue);
@@ -198,14 +196,7 @@
       on:reveal={reveal}
     />
     <div class="mb-6">
-      {#each players as user (user.userId)}
-        <Card
-          username={user.username}
-          isRevealed={roomData.isRevealed}
-          hasValue={user.hasVote}
-          value={user.vote}
-        />
-      {/each}
+      <CardGroup {roomData} />
     </div>
   </section>
   {#if roomData?.isRevealed}
