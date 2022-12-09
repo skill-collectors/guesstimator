@@ -2,11 +2,10 @@
   import { page } from "$app/stores";
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
-  import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { GuesstimatorWebSocket } from "$lib/services/websockets";
-  import type { Room, User } from "$lib/services/rooms";
+  import type { Room } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
@@ -16,15 +15,15 @@
   import HostControls from "./HostControls.svelte";
   import CardGroup from "./CardGroup.svelte";
   import ResultsChart from "./ResultsChart.svelte";
+  import VoteControls from "./VoteControls.svelte";
+  import NewUserForm from "./NewUserForm.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
 
-  let usernameFieldValue = "";
-  let roomData: Room | null = null;
-
   let webSocket: GuesstimatorWebSocket | undefined;
+  let roomData: Room | null = null;
 
   let loadingStatus = "";
   let pendingRevealOrReset = false;
@@ -110,16 +109,17 @@
     console.log(event);
   }
 
-  function handleJoinRoomClick() {
-    if (usernameFieldValue.length > 0) {
-      webSocket?.join(usernameFieldValue);
+  function handleNewUser(e: CustomEvent<{ username: string }>) {
+    const newUsername = e.detail.username;
+    if (newUsername.length > 0) {
+      webSocket?.join(newUsername);
     }
   }
 
-  function handleVote(vote = "") {
+  function handleVote(e: CustomEvent<{ vote: string }>) {
     if (currentUser !== undefined) {
-      currentUser.vote = vote;
-      webSocket?.vote(vote);
+      currentUser.vote = e.detail.vote;
+      webSocket?.vote(e.detail.vote);
     }
   }
 
@@ -184,23 +184,8 @@
   {:else}
     <section id="userControls" class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
-        <TgHeadingSub>Your votes:</TgHeadingSub>
-        {#each roomData.validSizes as vote}
-          {#if vote === currentUser.vote}
-            <TgButton type="primary" class="m-2" on:click={() => handleVote()}
-              >{vote}</TgButton
-            >
-          {:else}
-            <TgButton
-              type="secondary"
-              class="m-2"
-              on:click={() => handleVote(vote)}>{vote}</TgButton
-            >
-          {/if}
-        {/each}
-        <TgButton type="danger" class="m-2" on:click={() => handleVote("")}
-          >Clear</TgButton
-        >
+        <TgHeadingSub>Your vote:</TgHeadingSub>
+        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
         <TgParagraph>
           You are joined as <strong>{currentUser.username}</strong>
           <TgButton type="danger" class="m-2" on:click={handleLeave}
@@ -211,14 +196,7 @@
         <TgParagraph
           >If you'd like to vote, enter a name and join the room:</TgParagraph
         >
-        <TgInputText
-          name="newUser"
-          maxlength={30}
-          bind:value={usernameFieldValue}
-        />
-        <TgButton type="primary" class="m-2" on:click={handleJoinRoomClick}
-          >Join room</TgButton
-        >
+        <NewUserForm on:submit={handleNewUser} />
       {/if}
     </section>
   {/if}
