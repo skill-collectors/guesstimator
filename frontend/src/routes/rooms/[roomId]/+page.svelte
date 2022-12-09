@@ -129,12 +129,12 @@
     }
   }
 
-  function reveal() {
+  function handleReveal() {
     pendingRevealOrReset = true;
     webSocket?.reveal();
   }
 
-  function reset() {
+  function handleReset() {
     pendingRevealOrReset = true;
     webSocket?.reset();
   }
@@ -167,7 +167,11 @@
   <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     {#if webSocket?.hostKey !== undefined}
-      <HostControls {roomData} on:reset={reset} on:reveal={reveal} />
+      <HostControls
+        {roomData}
+        on:reset={handleReset}
+        on:reveal={handleReveal}
+      />
     {/if}
     <div class="mb-6">
       <CardGroup {roomData} />
