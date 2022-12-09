@@ -69,13 +69,13 @@
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
-    loadingStatus = "";
     console.log(event);
+
+    loadingStatus = "";
+
     if (webSocket === undefined) {
       // It would be really weird if this happend.
       console.log("Got a message, but the websocket is gone.");
-      // Try reloading the page
-      window.location.reload();
       return;
     }
     const json = event.data;
