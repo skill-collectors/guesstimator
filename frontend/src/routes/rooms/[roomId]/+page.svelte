@@ -21,7 +21,6 @@
   const roomId = $page.params.roomId;
   const url = $page.url;
 
-  let currentUser: User | undefined;
   let usernameFieldValue = "";
   let roomData: Room | null = null;
 
@@ -29,6 +28,17 @@
 
   let loadingStatus = "";
   let pendingRevealOrReset = false;
+
+  $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
+
+  $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
+    webSocket.userKey = currentUser.userKey;
+    localStorage.storeUserData(
+      roomId,
+      currentUser.userKey,
+      currentUser.username
+    );
+  }
 
   onMount(() => {
     const hostData = localStorage.getHostData(roomId);
@@ -85,21 +95,6 @@
         window.location.reload();
       } else {
         roomData = message.data;
-        currentUser = roomData?.users.find(
-          (user) => user.userKey !== undefined
-        );
-        if (currentUser === undefined) {
-          console.log("NO CURRENT USER!");
-        } else {
-          webSocket.userKey = currentUser.userKey;
-          if (currentUser.userKey !== undefined) {
-            localStorage.storeUserData(
-              roomId,
-              currentUser.userKey,
-              currentUser.username
-            );
-          }
-        }
         pendingRevealOrReset = false;
       }
     }
