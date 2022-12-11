@@ -7,7 +7,9 @@
 
   const dispatch = createEventDispatcher();
   function handleSubmit() {
-    dispatch("submit", { username });
+    if (username.length > 0) {
+      dispatch("submit", { username });
+    }
   }
 </script>
 

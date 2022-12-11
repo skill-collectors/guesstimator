@@ -110,10 +110,7 @@
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
-    const newUsername = e.detail.username;
-    if (newUsername.length > 0) {
-      webSocket?.join(newUsername);
-    }
+    webSocket?.join(e.detail.username);
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
