@@ -4,14 +4,10 @@ import HostControls from "src/routes/rooms/[roomId]/HostControls.svelte";
 import userEvent from "@testing-library/user-event";
 import type { Room } from "$lib/services/rooms";
 
-function stubRoom(): Room {
+function stubRoom(isRevealed = false): Room {
   return {
-    roomId: "roomId",
-    hostKey: "hostKey",
-    validSizes: ["1", "2", "3"],
-    isRevealed: false,
-    users: [],
-  };
+    isRevealed,
+  } as Room;
 }
 describe("HostControls", () => {
   it("Renders 'reveal' button if cards are not revealed", () => {
@@ -29,16 +25,14 @@ describe("HostControls", () => {
     expect(() => getByText("Reveal cards")).toThrow();
   });
   it("Renders 'reset' button if cards are not revealed", () => {
-    const roomData = stubRoom();
-    roomData.isRevealed = true;
+    const roomData = stubRoom(true);
     const { getByText } = render(HostControls, { roomData });
 
     expect(() => getByText("Reset")).not.toThrow();
   });
   it("Hides button when reset clicked", async () => {
     const user = userEvent.setup();
-    const roomData = stubRoom();
-    roomData.isRevealed = true;
+    const roomData = stubRoom(true);
     const { getByText } = render(HostControls, { roomData });
 
     await user.click(getByText("Reset"));
