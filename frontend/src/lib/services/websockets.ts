@@ -1,5 +1,9 @@
 const webSocketUrl = import.meta.env.VITE_PUBLIC_WEB_SOCKET_URL;
 
+/**
+ * A wrapper around a standard WebSocket with convenience methods for
+ * interacting with the Guesstimator API.
+ */
 export class GuesstimatorWebSocket {
   webSocket;
   roomId;
@@ -27,6 +31,10 @@ export class GuesstimatorWebSocket {
     this.hostKey = hostKey;
   }
 
+  /**
+   * Sends the 'subscribe' action. Should be called shortly after connecting, or
+   * perhaps after an unexpected disconnect.
+   */
   subscribe() {
     console.log(`Subscribing to ${this.roomId}`);
     this.webSocket.send(
@@ -37,6 +45,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Sends the 'join' action to associate the current user's key with a username.
+   */
   join(username: string) {
     if (this.userKey === undefined) {
       throw new Error("Cannot join without a userKey");
@@ -49,6 +60,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Submits a vote for the user. The user must be joined.
+   */
   vote(vote: string) {
     if (this.userKey === undefined) {
       throw new Error("Cannot vote without a userKey");
@@ -61,6 +75,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Leave the room. The page should be reloaded or redirected after calling this.
+   */
   leave() {
     if (this.userKey === undefined) {
       throw new Error("Cannot leave without a userKey");
@@ -73,6 +90,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Sends the 'reveal' action. Caller must be the host.
+   */
   reveal() {
     if (this.hostKey === undefined) {
       throw new Error("Cannot reveal cards without a hostKey");
@@ -88,6 +108,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Hides the cards and clears the votes. Caller must be the host.
+   */
   reset() {
     if (this.hostKey === undefined) {
       throw new Error("Cannot reset cards without a hostKey");
@@ -103,6 +126,9 @@ export class GuesstimatorWebSocket {
     );
   }
 
+  /**
+   * Closes the connection. Should only be called when leaving the page.
+   */
   close() {
     console.log(`Closing connection`);
     this.webSocket.close();
