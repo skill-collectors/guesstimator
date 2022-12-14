@@ -2,50 +2,44 @@
   import { page } from "$app/stores";
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
-  import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
-  import Card from "$lib/components/Card.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { GuesstimatorWebSocket } from "$lib/services/websockets";
-  import type { Room, User } from "$lib/services/rooms";
+  import type { Room } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
   import Loader from "$lib/components/Loader.svelte";
-  import Chart from "$lib/components/Chart.svelte";
+  import RoomHeader from "./RoomHeader.svelte";
+  import SpectatorCounter from "./SpectatorCounter.svelte";
+  import HostControls from "./HostControls.svelte";
+  import CardGroup from "./CardGroup.svelte";
+  import ResultsChart from "./ResultsChart.svelte";
+  import VoteControls from "./VoteControls.svelte";
+  import NewUserForm from "./NewUserForm.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
   const url = $page.url;
 
-  let currentUser: User | undefined;
-  let usernameFieldValue = "";
-  let roomData: Room | null = null;
-
   let webSocket: GuesstimatorWebSocket | undefined;
+  let roomData: Room | null = null;
 
   let loadingStatus = "";
   let pendingRevealOrReset = false;
-  let pendingDelete = false;
 
-  let chartLabels: string[] = [];
-  let chartDataSeries: number[] = [];
-  $: {
-    chartLabels = roomData?.validSizes ?? [];
-    const currentVotes =
-      roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ??
-      [];
-    const valueFrequencies = currentVotes?.reduce((map, vote) => {
-      map.set(vote, (map.get(vote) ?? 0) + 1);
-      return map;
-    }, new Map<string, number>());
-    chartDataSeries = chartLabels.map(
-      (vote) => valueFrequencies.get(vote) ?? 0
+  $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
+
+  $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
+    webSocket.userKey = currentUser.userKey;
+    localStorage.storeUserData(
+      roomId,
+      currentUser.userKey,
+      currentUser.username
     );
   }
 
   onMount(() => {
-    console.log(chartLabels);
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
 
@@ -74,11 +68,13 @@
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
-    loadingStatus = "";
     console.log(event);
+
+    loadingStatus = "";
+
     if (webSocket === undefined) {
       // It would be really weird if this happend.
-      console.log("Got a message, but websocket is undefined!?");
+      console.log("Got a message, but the websocket is gone.");
       return;
     }
     const json = event.data;
@@ -98,21 +94,6 @@
         window.location.reload();
       } else {
         roomData = message.data;
-        currentUser = roomData?.users.find(
-          (user) => user.userKey !== undefined
-        );
-        if (currentUser === undefined) {
-          console.log("NO CURRENT USER!");
-        } else {
-          webSocket.userKey = currentUser.userKey;
-          if (currentUser.userKey !== undefined) {
-            localStorage.storeUserData(
-              roomId,
-              currentUser.userKey,
-              currentUser.username
-            );
-          }
-        }
         pendingRevealOrReset = false;
       }
     }
@@ -128,23 +109,14 @@
     console.log(event);
   }
 
-  $: spectatorCount = roomData?.users.filter(
-    (user) => user.username === ""
-  ).length;
-
-  $: players =
-    roomData?.users.filter((user) => user.username?.length > 0) ?? [];
-
-  function handleJoinRoomClick() {
-    if (usernameFieldValue.length > 0) {
-      webSocket?.join(usernameFieldValue);
-    }
+  function handleNewUser(e: CustomEvent<{ username: string }>) {
+    webSocket?.join(e.detail.username);
   }
 
-  function handleVote(vote = "") {
+  function handleVote(e: CustomEvent<{ vote: string }>) {
     if (currentUser !== undefined) {
-      currentUser.vote = vote;
-      webSocket?.vote(vote);
+      currentUser.vote = e.detail.vote;
+      webSocket?.vote(e.detail.vote);
     }
   }
 
@@ -154,12 +126,12 @@
     }
   }
 
-  function reveal() {
+  function handleReveal() {
     pendingRevealOrReset = true;
     webSocket?.reveal();
   }
 
-  function reset() {
+  function handleReset() {
     pendingRevealOrReset = true;
     webSocket?.reset();
   }
@@ -171,7 +143,6 @@
     if (webSocket?.hostKey === undefined) {
       return;
     }
-    pendingDelete = true;
     await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
@@ -184,84 +155,34 @@
   <TgParagraph>{loadingStatus}</TgParagraph>
   <Loader />
 {:else}
-  <header class="mt-8">
-    Room URL: <span class="whitespace-nowrap">{url}</span>
-    {#if webSocket?.hostKey}
-      {#if pendingDelete}
-        <Loader />
-      {:else}
-        <TgButton
-          id="deleteRoomButton"
-          type="danger"
-          class="m-2"
-          on:click={handleDeleteRoom}>X</TgButton
-        >
-      {/if}
-    {/if}
-  </header>
-  <section class="mt-8">
+  <RoomHeader
+    {url}
+    isHost={webSocket?.hostKey !== undefined}
+    on:click-delete={handleDeleteRoom}
+  />
+  <SpectatorCounter {roomData} />
+  <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    <TgParagraph>
-      {#if webSocket?.hostKey}
-        {#if pendingRevealOrReset === true}
-          <Loader />
-        {:else if roomData.isRevealed}
-          <TgButton id="hideCardsButton" type="secondary" on:click={reset}
-            >Reset</TgButton
-          >
-        {:else}
-          <TgButton id="showCardsButton" type="secondary" on:click={reveal}
-            >Reveal cards</TgButton
-          >
-        {/if}
-      {/if}
-    </TgParagraph>
+    {#if webSocket?.hostKey !== undefined}
+      <HostControls
+        {roomData}
+        on:reset={handleReset}
+        on:reveal={handleReveal}
+      />
+    {/if}
     <div class="mb-6">
-      {#each players as user (user.userId)}
-        <Card
-          username={user.username}
-          isRevealed={roomData.isRevealed}
-          hasValue={user.hasVote}
-          value={user.vote}
-        />
-      {/each}
+      <CardGroup {roomData} />
     </div>
-    <TgParagraph>
-      {#if spectatorCount === 0}
-        There are no spectators.
-      {:else if spectatorCount === 1}
-        There is 1 spectator.
-      {:else}
-        There are {spectatorCount} spectators.
-      {/if}
-    </TgParagraph>
   </section>
   {#if roomData?.isRevealed}
-    <Chart
-      labels={chartLabels}
-      series={chartDataSeries}
-      options={{ distributeSeries: true }}
-    />
+    <section id="resultsChart" class="m-x-auto max-w-xl">
+      <ResultsChart {roomData} />
+    </section>
   {:else}
-    <section class="mt-32">
+    <section id="userControls" class="mt-32">
       {#if currentUser !== undefined && currentUser.username.length > 0}
-        <TgHeadingSub>Your votes:</TgHeadingSub>
-        {#each roomData.validSizes as vote}
-          {#if vote === currentUser.vote}
-            <TgButton type="primary" class="m-2" on:click={() => handleVote()}
-              >{vote}</TgButton
-            >
-          {:else}
-            <TgButton
-              type="secondary"
-              class="m-2"
-              on:click={() => handleVote(vote)}>{vote}</TgButton
-            >
-          {/if}
-        {/each}
-        <TgButton type="danger" class="m-2" on:click={() => handleVote("")}
-          >Clear</TgButton
-        >
+        <TgHeadingSub>Your vote:</TgHeadingSub>
+        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
         <TgParagraph>
           You are joined as <strong>{currentUser.username}</strong>
           <TgButton type="danger" class="m-2" on:click={handleLeave}
@@ -272,14 +193,7 @@
         <TgParagraph
           >If you'd like to vote, enter a name and join the room:</TgParagraph
         >
-        <TgInputText
-          name="newUser"
-          maxlength={30}
-          bind:value={usernameFieldValue}
-        />
-        <TgButton type="primary" class="m-2" on:click={handleJoinRoomClick}
-          >Join room</TgButton
-        >
+        <NewUserForm on:submit={handleNewUser} />
       {/if}
     </section>
   {/if}
