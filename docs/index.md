@@ -32,6 +32,7 @@ These docs are useful if you need to know how to do a particular kind of task.
 
 These docs are useful if you need to look something up while you're working.
 
+- [Architecture diagram](/reference/architecture.md)
 - [API Reference](/reference/api.md) Describes the backend API
 - [Database schema](/reference/database-schema.md) Describes the database schema
 - [Deploy pipeline](/reference/build.md) describes our GitHub Actions
