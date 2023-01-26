@@ -31,13 +31,6 @@
       >Create a room</TgButton
     >
   {:else}
-    <div id="api-check">API IS UNAVAILABLE</div>
+    <div id="api-check" class="text-red-500 font-bold">API IS UNAVAILABLE</div>
   {/if}
 </div>
-
-<style>
-  #api-check {
-    color: red;
-    font-weight: bold;
-  }
-</style>
