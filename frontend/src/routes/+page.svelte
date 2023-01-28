@@ -3,6 +3,7 @@
   import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
   import TgHeadingTitle from "$lib/components/base/TgHeadingTitle.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+  import TgLink from "$lib/components/base/TgLink.svelte";
   import { get } from "$lib/services/rest";
   import { onMount } from "svelte";
 
@@ -27,10 +28,18 @@
     This is an app for "pointing" agile stories. To get started
   </TgParagraph>
   {#if status}
-    <TgButton id="createRoomButton" type="primary" href="/rooms" class="mt-4"
-      >Create a room</TgButton
-    >
+    <TgButton id="createRoomButton" type="primary" href="/rooms" class="mt-4">
+      Create a room
+    </TgButton>
   {:else}
-    <div id="apiCheck" class="text-red-500 font-bold">API IS UNAVAILABLE</div>
+    <TgParagraph class="text-orange-800 font-bold">
+      The Guesstimator is currently unavailable, probably due to higher than
+      expected demand. Please try again later, or if the problem persists for
+      more than a day you can
+      <TgLink
+        href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+        >submit a bug report.
+      </TgLink>
+    </TgParagraph>
   {/if}
 </div>
