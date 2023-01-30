@@ -7,15 +7,16 @@
   import { get } from "$lib/services/rest";
   import { onMount } from "svelte";
 
-  var status = true;
+  let isApiAvailable = true;
 
   onMount(async () => {
     try {
       const res = await get("status");
       if (res.status !== "UP") {
-        status = false;
+        isApiAvailable = false;
       }
     } catch (err) {
+      isApiAvailable = false;
       console.error("err: ", err);
     }
   });
@@ -27,7 +28,7 @@
   <TgParagraph>
     This is an app for "pointing" agile stories. To get started
   </TgParagraph>
-  {#if status}
+  {#if isApiAvailable}
     <TgButton id="createRoomButton" type="primary" href="/rooms" class="mt-4">
       Create a room
     </TgButton>
