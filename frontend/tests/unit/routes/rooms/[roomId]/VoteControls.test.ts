@@ -1,7 +1,7 @@
 import type { Room, User } from "$lib/services/rooms";
 import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
-import VoteControls from "src/routes/rooms/[roomId]/VoteControls.svelte";
+import VoteControls from "$routes/rooms/[roomId]/VoteControls.svelte";
 import { describe, it, vi } from "vitest";
 
 function stubRoomData(): Room {

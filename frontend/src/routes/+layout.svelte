@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import "virtual:windi.css";
 
   // if you want to enable windi devtools

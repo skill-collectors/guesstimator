@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   export let type: "primary" | "secondary" | "danger" | "success";
   export let href: string | undefined = undefined;
   export let id: string | undefined = undefined;

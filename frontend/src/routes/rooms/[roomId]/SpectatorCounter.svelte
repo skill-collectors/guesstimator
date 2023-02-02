@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import type { Room } from "$lib/services/rooms";
 

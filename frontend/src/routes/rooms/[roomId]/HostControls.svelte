@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Loader from "$lib/components/Loader.svelte";

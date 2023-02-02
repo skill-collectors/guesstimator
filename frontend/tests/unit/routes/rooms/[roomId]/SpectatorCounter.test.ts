@@ -1,6 +1,6 @@
 import type { Room, User } from "$lib/services/rooms";
 import { render } from "@testing-library/svelte";
-import SpectatorCounter from "src/routes/rooms/[roomId]/SpectatorCounter.svelte";
+import SpectatorCounter from "$routes/rooms/[roomId]/SpectatorCounter.svelte";
 import { describe, it } from "vitest";
 import matchers from "@testing-library/jest-dom/matchers";
 

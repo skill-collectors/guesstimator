@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import { onMount } from "svelte";
   import { createRoom } from "$lib/services/rooms";
   import type { Room } from "$lib/services/rooms";

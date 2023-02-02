@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/svelte";
-import HostControls from "src/routes/rooms/[roomId]/HostControls.svelte";
+import HostControls from "$routes/rooms/[roomId]/HostControls.svelte";
 import userEvent from "@testing-library/user-event";
 import type { Room } from "$lib/services/rooms";
 
