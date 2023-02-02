@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   let additionalClasses = "";
   export { additionalClasses as class };
 </script>

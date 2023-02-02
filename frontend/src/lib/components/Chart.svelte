@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import "chartist/dist/index.css";
   import { BarChart } from "chartist";
   import type {

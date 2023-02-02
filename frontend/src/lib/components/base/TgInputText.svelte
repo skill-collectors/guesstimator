@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   export let name: string | null | undefined = undefined;
   export let value = "";
   export let maxlength: number | null | undefined = undefined;

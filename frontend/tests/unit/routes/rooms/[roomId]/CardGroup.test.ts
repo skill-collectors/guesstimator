@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/svelte";
-import CardGroup from "src/routes/rooms/[roomId]/CardGroup.svelte";
+import CardGroup from "$routes/rooms/[roomId]/CardGroup.svelte";
 import type { Room } from "$lib/services/rooms";
 
 describe("CardGroup", () => {

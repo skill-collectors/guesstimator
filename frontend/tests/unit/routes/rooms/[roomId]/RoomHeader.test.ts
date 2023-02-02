@@ -1,5 +1,5 @@
 import { render } from "@testing-library/svelte";
-import RoomHeader from "src/routes/rooms/[roomId]/RoomHeader.svelte";
+import RoomHeader from "$routes/rooms/[roomId]/RoomHeader.svelte";
 import { describe, it, expect } from "vitest";
 import matchers from "@testing-library/jest-dom/matchers";
 expect.extend(matchers);

@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   import Card from "$lib/components/Card.svelte";
   import type { Room } from "$lib/services/rooms";
 
