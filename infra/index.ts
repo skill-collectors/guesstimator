@@ -16,17 +16,13 @@ const stack = pulumi.getStack();
 
 const resourceNamePrefix = `${capitalize(project)}-${capitalize(stack)}`;
 
-const isLocalDev = stack === "localstack";
-
 registerAutoTags({ org: "tsc", iac: "pulumi", project, stack });
 
 // In localdev, we can just run the app with Vite
-const svelteApp = isLocalDev
-  ? null
-  : new SvelteApp(`${resourceNamePrefix}-App`, {
-      subDomain,
-      apexDomain,
-    });
+const svelteApp = new SvelteApp(`${resourceNamePrefix}-App`, {
+  subDomain,
+  apexDomain,
+});
 
 const database = new Database(`${resourceNamePrefix}-Database`);
 
