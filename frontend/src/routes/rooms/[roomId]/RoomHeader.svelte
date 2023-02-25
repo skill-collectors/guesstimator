@@ -2,11 +2,29 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import Loader from "$lib/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
+  import { IconShare } from "@tabler/icons-svelte";
 
   export let url: URL;
   export let isHost: boolean;
 
   let pendingDelete = false;
+
+  let shareData = {
+    title: "Guesstimator",
+    text: "An app for 'pointing' agile stories",
+    url: url.toString()
+  };
+  let canShare = true;
+
+  if (!navigator.canShare) {
+    canShare = false;
+  }
+
+  function handleShareRoom() {
+    if (canShare) {
+      navigator.share(shareData);
+    }
+  }
 
   const dispatch = createEventDispatcher();
 
@@ -17,7 +35,17 @@
 </script>
 
 <header class="mt-8">
-  Room URL: <span class="whitespace-nowrap">{url}</span>
+  {#if canShare}
+    Room URL: <span class="whitespace-nowrap">{url}</span>
+    <TgButton
+      id="shareRoomButton"
+      type="primary"
+      class="m-2 p-1 bg-white text-black shadow"
+      on:click={handleShareRoom}><IconShare class="inline" /></TgButton
+    >
+  {:else}
+    Room URL: <span class="whitespace-nowrap">{url}</span>
+  {/if}
   {#if isHost}
     {#if pendingDelete}
       <Loader />
