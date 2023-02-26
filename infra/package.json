@@ -15,12 +15,12 @@
     "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.8.3",
-    "vitest": "^0.28.3"
+    "prettier": "^2.8.4",
+    "vitest": "^0.29.1"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.264.0",
-    "@aws-sdk/client-dynamodb": "^3.196.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.276.0",
+    "@aws-sdk/client-dynamodb": "^3.276.0",
     "@pulumi/aws": "^5.28.0",
     "@pulumi/aws-apigateway": "^1.0.0",
     "@pulumi/pulumi": "^3.46.0"
