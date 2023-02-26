@@ -16,7 +16,7 @@
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.3.0",
     "prettier": "^2.8.4",
-    "vitest": "^0.28.3"
+    "vitest": "^0.29.1"
   },
   "dependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.276.0",
