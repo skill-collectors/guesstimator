@@ -20,7 +20,7 @@
     "@playwright/test": "^1.30.0",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/adapter-static": "^2.0.0",
-    "@sveltejs/kit": "^1.8.3",
+    "@sveltejs/kit": "^1.9.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.2.1",
     "@testing-library/user-event": "^14.4.3",
