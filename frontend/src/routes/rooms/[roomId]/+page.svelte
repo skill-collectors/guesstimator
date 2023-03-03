@@ -11,7 +11,6 @@
   import { onDestroy, onMount } from "svelte";
   import Loader from "$lib/components/Loader.svelte";
   import RoomHeader from "./RoomHeader.svelte";
-  import SpectatorCounter from "./SpectatorCounter.svelte";
   import HostControls from "./HostControls.svelte";
   import CardGroup from "./CardGroup.svelte";
   import ResultsChart from "./ResultsChart.svelte";
@@ -173,7 +172,6 @@
     isHost={webSocket?.hostKey !== undefined}
     on:click-delete={handleDeleteRoom}
   />
-  <SpectatorCounter {roomData} />
   <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     {#if webSocket?.hostKey !== undefined}
