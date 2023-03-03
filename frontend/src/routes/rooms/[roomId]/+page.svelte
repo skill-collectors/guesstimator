@@ -23,6 +23,7 @@
   const url = $page.url;
 
   let webSocket: GuesstimatorWebSocket | undefined;
+  let webSocketNeedsReconnect = false;
   let roomData: Room | null = null;
 
   let loadingStatus = "";
@@ -40,12 +41,22 @@
   }
 
   onMount(() => {
+    connectWebSocket();
+  });
+
+  onDestroy(() => {
+    webSocket?.close();
+  });
+
+  function connectWebSocket() {
     const hostData = localStorage.getHostData(roomId);
     const hostKey = hostData.hostKey;
 
     const userData = localStorage.getUserData(roomId);
     const userKey = userData.userKey;
 
+    roomData = null;
+    webSocketNeedsReconnect = false;
     loadingStatus = "Connecting to room...";
     webSocket = new GuesstimatorWebSocket(
       roomId,
@@ -56,11 +67,7 @@
       userKey,
       hostKey
     );
-  });
-
-  onDestroy(() => {
-    webSocket?.close();
-  });
+  }
 
   function onWebSocketOpen(this: WebSocket) {
     loadingStatus = "Subscribing to updates...";
@@ -107,6 +114,7 @@
   function onWebSocketClose(this: WebSocket, event: Event) {
     console.log("WebSocket closed");
     console.log(event);
+    webSocketNeedsReconnect = true;
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
@@ -154,6 +162,11 @@
 {:else if roomData === null}
   <TgParagraph>{loadingStatus}</TgParagraph>
   <Loader />
+{:else if webSocketNeedsReconnect}
+  <TgParagraph>
+    You have been disconnected due to inactivity. To keep using the room you can
+  </TgParagraph>
+  <TgButton type="primary" on:click={connectWebSocket}>Reconnect</TgButton>
 {:else}
   <RoomHeader
     {url}
