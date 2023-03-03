@@ -1,6 +1,5 @@
 import {
   APIGatewayProxyEvent,
-  APIGatewayProxyEventHeaders,
   APIGatewayProxyWebsocketEventV2,
 } from "aws-lambda";
 
