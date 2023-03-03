@@ -13,9 +13,9 @@ jobs:
       HAVE_SECRETS: ${{ secrets.PULUMI_ACCESS_TOKEN != '' && secrets.AWS_REGION != '' && secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
@@ -37,7 +37,7 @@ jobs:
 
       - name: Configure AWS Credentials
         if: env.HAVE_SECRETS == 'true'
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -54,7 +54,7 @@ jobs:
       - name: Deploy infrastructure
         if: env.HAVE_SECRETS == 'true'
         id: pulumi
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v4
         with:
           command: up
           # GitHub actions does not currently support a ternary operator in conditions.
