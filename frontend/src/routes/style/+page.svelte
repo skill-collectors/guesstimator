@@ -9,6 +9,10 @@
   import Card from "$lib/components/Card.svelte";
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Style</title>
+  <meta name="description" content="CSS style demo for the Guesstimator" />
+</svelte:head>
 <TgHeadingMain>Main Heading</TgHeadingMain>
 <TgHeadingSub>Subheading</TgHeadingSub>
 <TgHeadingMinor>Minor heading</TgHeadingMinor>

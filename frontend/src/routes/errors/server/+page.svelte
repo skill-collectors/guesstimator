@@ -9,6 +9,10 @@
   let timestamp: string | null = $page.url.searchParams.get("timestamp");
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Error</title>
+  <meta name="description" content="Error page" />
+</svelte:head>
 <TgHeadingMain>
   The application was not able to complete the requested action
 </TgHeadingMain>
