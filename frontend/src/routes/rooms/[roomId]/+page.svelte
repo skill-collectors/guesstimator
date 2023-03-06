@@ -156,6 +156,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Guesstimator - {roomData?.roomId ?? "New"}</title>
+  <meta name="description" content={`Page for room ${roomData?.roomId}`} />
+</svelte:head>
 {#if notFound}
   <InvalidRoom />
 {:else if roomData === null}

@@ -4,6 +4,10 @@
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Error</title>
+  <meta name="description" content="Server overloaded error page" />
+</svelte:head>
 <TgHeadingMain>The application is overloaded</TgHeadingMain>
 <TgParagraph>
   In order to control costs, the application limits requests per second and per
