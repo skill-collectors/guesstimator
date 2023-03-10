@@ -4,6 +4,10 @@
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Error</title>
+  <meta name="description" content="Error page" />
+</svelte:head>
 <TgHeadingMain>
   The application was not able to complete the requested action
 </TgHeadingMain>

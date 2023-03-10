@@ -11,38 +11,35 @@ You will need to install the following software to work on this project.
 <!-- If you update this list, also update bootstrap.sh -->
 
 1. [Node](https://nodejs.org/en/download/). We recommend the LTS version.
-1. [Python3](https://www.python.org/downloads/).
-1. [Docker](https://docs.docker.com/get-docker/).
 1. [Pulumi](https://www.pulumi.com/docs/get-started/install/).
 1. [Ruby](https://www.ruby-lang.org/en/downloads/).
 
-## First steps
+## Required accounts
 
-Clone the project
+### AWS
+
+You will need to [create a new AWS account](https://portal.aws.amazon.com/billing/signup#/start/email) if you don't have one.
+
+- If you create an IAM user for CLI access, ensure that it has the correct deploy permissions. The following policies should be sufficient, but could be a lot narrower if you wanted to figure that out:
+  - `AWSCertificateManagerFullAccess`
+  - `AWSLambda_FullAccess `
+  - `AmazonAPIGatewayAdministrator`
+  - `AmazonDynamoDBFullAccess`
+  - `AmazonEventBridgeFullAccess`
+  - `AmazonRoute53FullAccess`
+  - `AmazonS3FullAccess`
+  - `CloudFrontFullAccess`
+  - `IAMFullAccess`
+
+### Pulumi
+
+You will need to [create a Pulumi account](https://app.pulumi.com/signup) if you don't already have one, and then follow [these instructions](https://www.pulumi.com/docs/get-started/aws/begin/) to install it locally and set it up to allow access to your AWS account.
+
+## Clone the project
 
 ```bash
-git clone https://github.com/dave-burke/guesstimator.git
+git clone https://github.com/skill-collectors/guesstimator.git
 ```
-
-Go to the project directory
-
-```bash
-cd guesstimator
-```
-
-Run the bootstrap script
-
-```bash
-./bootstrap.sh
-```
-
-This script should work on Linux and MacOS. A Windows script would need to be
-written. As a workaround, you can read the script and execute the commands it
-runs.
-
-The bootstrap script is meant to be repeatable; if you run it a second time it
-should not hurt anything. That means if we add something to it later, people
-who already ran it before can just run it again to gain the additional setup.
 
 ## Set up your editor
 
@@ -70,15 +67,31 @@ Workspace settings should be configured to lint and format-on-save correctly. To
 
 ## Running the code
 
+Ensure that you have all the [required software](#required-development-software) and the [required accounts](#required-accounts).
+
 ### Backend
 
-Run the infrastructure locally using localstack:
+Update the `apexDomain` in `infra/lib/DomainName.ts` to specify a domain that you already own and have set up in Route53.
 
+- Ideally the domain should be more externalized. This is a good opportunity to improve the codebase. Consider [creating a task](https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=&template=new-task.md&title=Externalize%20domain) on the project board and giving it a try.
+
+Run the bootstrap script:
+
+```bash
+./bootstrap.sh
 ```
-./deploy-local.sh
-```
+
+This script should work on Linux and MacOS. A Windows script would need to be written. As a workaround, you can read the script and execute the commands it runs.
+
+The bootstrap script is meant to be repeatable; if you run it a second time it should not hurt anything. That means if we add something to it later, people who already ran it before can just run it again to gain the additional setup.
+
+If everything completes without any errors, you should have a working backend available to use for development.
+
+After you've run the `bootstrap.sh` script once, then you can run `deploy-dev.sh` to re-deploy. You only need to re-run `bootstrap.sh` if that script is updated or if you need to re-initialize your environment.
 
 ### Frontend
+
+If you don't have a running backend instance, please go back and follow the [Backend](#backend) instructions first.
 
 To start the frontend server:
 

@@ -4,6 +4,10 @@
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Not found</title>
+  <meta name="description" content="404 Not Found" />
+</svelte:head>
 <TgHeadingMain>Couldn't find the requested data</TgHeadingMain>
 <TgParagraph>
   The application requested some data that couldn't be found. Please try again,

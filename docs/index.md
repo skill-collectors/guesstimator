@@ -26,7 +26,6 @@ These docs are useful if you need to know how to do a particular kind of task.
 - [How to write unit tests](/how-to/unit-tests.md)
 - [How to update dependencies](/how-to/update-dependencies.md)
 - [How to edit these docs](/how-to/edit-docs.md)
-- [How to manually deploy the app](/how-to/deploy-manually.md)
 
 ## Reference documentation
 
