@@ -2,7 +2,8 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import Loader from "$lib/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
-  import { IconShare } from "@tabler/icons-svelte";
+  // import { IconShare } from "@tabler/icons-svelte";
+  import TgShare from "$lib/components/base/TgShare.svelte";
 
   export let url: URL;
   export let isHost: boolean;
@@ -36,13 +37,13 @@
 
 <header class="mt-8">
   {#if canShare}
-    Room URL: <span class="whitespace-nowrap">{url}</span>
     <TgButton
       id="shareRoomButton"
       type="primary"
       class="m-2 p-1 bg-white text-black shadow"
-      on:click={handleShareRoom}><IconShare class="inline" /></TgButton
+      on:click={handleShareRoom}><TgShare /></TgButton
     >
+    Room URL: <span class="whitespace-nowrap">{url}</span>
   {:else}
     Room URL: <span class="whitespace-nowrap">{url}</span>
   {/if}
@@ -53,7 +54,7 @@
       <TgButton
         id="deleteRoomButton"
         type="danger"
-        class="m-2"
+        class="m-2 inline"
         on:click={handleDeleteRoom}>X</TgButton
       >
     {/if}
