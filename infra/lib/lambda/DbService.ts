@@ -7,7 +7,6 @@ import {
   query,
   scan,
 } from "./DynamoUtils";
-import { DeleteRequestFilterSensitiveLog } from "@aws-sdk/client-dynamodb";
 
 const ROOM_ID_LENGTH = 6;
 const HOST_KEY_LENGTH = 4;
@@ -38,13 +37,7 @@ export class DbService {
   tableName: string;
 
   constructor(tableName: string) {
-    const { LOCALSTACK_HOSTNAME } = process.env;
-    this.client =
-      LOCALSTACK_HOSTNAME !== undefined
-        ? new aws.sdk.DynamoDB.DocumentClient({
-            endpoint: `http://${LOCALSTACK_HOSTNAME}:4566`,
-          })
-        : new aws.sdk.DynamoDB.DocumentClient();
+    this.client = new aws.sdk.DynamoDB.DocumentClient();
 
     this.tableName = tableName;
   }

@@ -18,6 +18,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Guesstimator - New</title>
+  <meta name="description" content="New room redirect" />
+</svelte:head>
 {#if roomData == null}
   <TgParagraph>Hang on while we get a room ready for you...</TgParagraph>
   <Loader />

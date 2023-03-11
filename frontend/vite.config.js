@@ -1,6 +1,5 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import WindiCSS from "vite-plugin-windicss";
-import { resolve } from "path";
 
 /** @type {import('vite').UserConfig} */
 const config = {

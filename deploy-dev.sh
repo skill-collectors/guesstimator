@@ -31,4 +31,3 @@ echo "Invalidating cloudfront cache"
 aws cloudfront create-invalidation --distribution-id ${distributionId} --paths '/'
 
 echo "You can now use 'npm run dev --workspace=frontend' and it will use the 'dev' stack on AWS"
-

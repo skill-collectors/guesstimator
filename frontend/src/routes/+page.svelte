@@ -22,6 +22,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Guesstimator - Home</title>
+  <meta name="description" content="The Guesstimator home page" />
+</svelte:head>
 <div class="text-center">
   <TgHeadingMain>Welcome to</TgHeadingMain>
   <TgHeadingTitle>The Guesstimator</TgHeadingTitle>

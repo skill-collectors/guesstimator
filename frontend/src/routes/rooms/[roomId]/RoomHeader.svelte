@@ -2,7 +2,6 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import Loader from "$lib/components/Loader.svelte";
   import { createEventDispatcher } from "svelte";
-  // import { IconShare } from "@tabler/icons-svelte";
   import TgShare from "$lib/components/base/TgShare.svelte";
 
   export let url: URL;
