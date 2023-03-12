@@ -10,7 +10,35 @@ Fetch the `main` branch and create a new branch from the latest commit on `main`
 
 Run `npm check-all` from the project root directory to verify that everything is currently working on your device.
 
+## Merging dependabot PRs
+
+If there are open dependabot PRs and you wan to include them in your branch, you can `cherry-pick` each commit, but you will need to deal with merge conflicts. This bash snippet provides a basic workflow for doing that:
+
+```bash
+for b in $(git branch -r | grep dependabot | awk '{print $1}'); do
+  git cherry-pick $b || bash
+done
+```
+
+This will cherry-pick each dependabot update, and if the cherry-pick fails (likely due to a merge conflict) it will drop you into a new bash shell to resolve. Each time this happens, you'll want to follow these basic steps:
+
+```bash
+rm package-lock.json # don't bother resolving conflicts in the lock file
+git mergetool # fix merge conflicts in package.json files
+npm install # regenerate the lock file
+git cherry-pick --continue # finish the cherry-pick operation for the current dependabot branch
+exit # drop out of the subshell and back into the for loop above
+```
+
+Eventually the `for` loop will complete and you should have a branch that includes all the dependabot updates together.
+
+#### A note about dependabot and @types/node
+
+`@types/node` is the TypeScript type definitions for Node. The versions corresponde to Node releases. At the time of this writing `16.x` is the latest LTS, but `18.x` is the latest. Dependabot blindly tries to update to the latest, so in `dependabot.yml` we ignore non-LTS versions. Unfortunately this requires periodic updates. Eventually `18.x` will be LTS and we should stop ignoring it, but maybe start ignoring the next major version. Such is life.
+
 ## Update minor versions
+
+Even if you include dependabot updates (see above) there are likely a few minor/patch versions you can apply and it's a good idea to do so.
 
 ```sh
 npm update
@@ -56,14 +84,6 @@ At this point it's s little more likely that something will break. You will have
   - If the dependency needs to be updated for a security fix, mark the task _Priority_ as **Urgent**.
 - If it's not clear what dependency caused the break, you could `git checkout . && npm install` to undo the update and then try updating one item at a time.
 - Don't be afraid to ask for help in the [Gitter chat](https://gitter.im/skill-collectors/guesstimator)!
-
-### About dependabot
-
-Dependabot will automatically open PRs each week when our dependencies are out of date. This is a good reminder, but the problem is that it will open a separate PR for each dependency. It's certainly possible to merge one at a time (and wait for the rebase + build every time), but that's really tedious. It might be easier to just follow the instructions above, or cherry-pick all the updates into one branch. In the latter case resolving conflicts in `package-lock.json` will be annoying. Perhaps this could be automated somehow.
-
-#### A note about dependabot and @types/node
-
-`@types/node` is the TypeScript type definitions for Node. The versions corresponde to Node releases. At the time of this writing `16.x` is the latest LTS, but `18.x` is the latest. Dependabot blindly tries to update to the latest, so in `dependabot.yml` we ignore non-LTS versions. Unfortunately this requires periodic updates. Eventually `18.x` will be LTS and we should stop ignoring it, but maybe start ignoring the next major version. Such is life.
 
 ## Update GitHub Pages dependencies
 
