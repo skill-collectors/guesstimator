@@ -9,7 +9,7 @@
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.104",
+    "@types/aws-lambda": "^8.10.113",
     "@types/node": "^16",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.0",
