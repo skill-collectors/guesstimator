@@ -32,10 +32,6 @@ exit # drop out of the subshell and back into the for loop above
 
 Eventually the `for` loop will complete and you should have a branch that includes all the dependabot updates together.
 
-#### A note about dependabot and @types/node
-
-`@types/node` is the TypeScript type definitions for Node. The versions corresponde to Node releases. At the time of this writing `16.x` is the latest LTS, but `18.x` is the latest. Dependabot blindly tries to update to the latest, so in `dependabot.yml` we ignore non-LTS versions. Unfortunately this requires periodic updates. Eventually `18.x` will be LTS and we should stop ignoring it, but maybe start ignoring the next major version. Such is life.
-
 ## Update minor versions
 
 Even if you include dependabot updates (see above) there are likely a few minor/patch versions you can apply and it's a good idea to do so.
