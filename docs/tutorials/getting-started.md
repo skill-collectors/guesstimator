@@ -10,7 +10,7 @@ You will need to install the following software to work on this project.
 
 <!-- If you update this list, also update bootstrap.sh -->
 
-1. [Node](https://nodejs.org/en/download/). We recommend the LTS version.
+1. [Node](https://nodejs.org/en/download/). This project currently uses v18 (LTS).
 1. [Pulumi](https://www.pulumi.com/docs/get-started/install/).
 1. [Ruby](https://www.ruby-lang.org/en/downloads/).
 
