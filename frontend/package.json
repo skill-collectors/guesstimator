@@ -42,7 +42,7 @@
     "typescript": "~5.0.2",
     "vite": "^4.0.0",
     "vite-plugin-windicss": "^1.8.8",
-    "vitest": "^0.29.3",
+    "vitest": "^0.29.8",
     "windicss": "^3.5.4"
   },
   "type": "module",
