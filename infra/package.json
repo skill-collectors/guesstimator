@@ -21,7 +21,7 @@
   "dependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.312.0",
     "@aws-sdk/client-dynamodb": "^3.287.0",
-    "@pulumi/aws": "^5.33.0",
+    "@pulumi/aws": "^5.35.0",
     "@pulumi/aws-apigateway": "^1.0.0",
     "@pulumi/pulumi": "^3.58.0"
   }
