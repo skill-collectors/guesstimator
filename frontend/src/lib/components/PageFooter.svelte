@@ -12,7 +12,17 @@
   </TgLink>
   (AGPL) |
   <TgLink href="https://skill-collectors.github.io/guesstimator">
-    dev docs
+    dev docs |
+  </TgLink>
+  <TgLink
+    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=enhancement&template=feature_request.md&title="
+  >
+    report a bug |
+  </TgLink>
+  <TgLink
+    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+  >
+    feature request
   </TgLink>
   {#if mode !== "production"}
     | {mode}
