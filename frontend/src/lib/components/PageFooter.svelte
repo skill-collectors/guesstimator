@@ -15,12 +15,12 @@
     dev docs |
   </TgLink>
   <TgLink
-    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=enhancement&template=feature_request.md&title="
+    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
   >
     report a bug |
   </TgLink>
   <TgLink
-    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=enhancement&template=feature_request.md&title="
   >
     feature request
   </TgLink>
