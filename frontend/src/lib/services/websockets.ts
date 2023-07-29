@@ -17,7 +17,7 @@ export class GuesstimatorWebSocket {
     openHandler: (this: WebSocket, ev: Event) => unknown,
     closeHandler: (this: WebSocket, ev: Event) => unknown,
     userKey: string | undefined = undefined,
-    hostKey: string | undefined = undefined
+    hostKey: string | undefined = undefined,
   ) {
     console.log(`Establishing connection to ${roomId} via ${webSocketUrl}`);
     this.roomId = roomId;
@@ -41,7 +41,7 @@ export class GuesstimatorWebSocket {
       JSON.stringify({
         action: "subscribe",
         data: { roomId: this.roomId, userKey: this.userKey },
-      })
+      }),
     );
   }
 
@@ -56,7 +56,7 @@ export class GuesstimatorWebSocket {
       JSON.stringify({
         action: "join",
         data: { roomId: this.roomId, userKey: this.userKey, username },
-      })
+      }),
     );
   }
 
@@ -71,7 +71,7 @@ export class GuesstimatorWebSocket {
       JSON.stringify({
         action: "vote",
         data: { roomId: this.roomId, userKey: this.userKey, vote },
-      })
+      }),
     );
   }
 
@@ -86,7 +86,7 @@ export class GuesstimatorWebSocket {
       JSON.stringify({
         action: "leave",
         data: { roomId: this.roomId, userKey: this.userKey },
-      })
+      }),
     );
   }
 
@@ -104,7 +104,7 @@ export class GuesstimatorWebSocket {
           roomId: this.roomId,
           hostKey: this.hostKey,
         },
-      })
+      }),
     );
   }
 
@@ -122,7 +122,7 @@ export class GuesstimatorWebSocket {
           roomId: this.roomId,
           hostKey: this.hostKey,
         },
-      })
+      }),
     );
   }
 

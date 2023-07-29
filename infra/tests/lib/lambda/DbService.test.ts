@@ -20,7 +20,7 @@ describe("DbService", () => {
               validSizes: "1 2 3",
               isRevealed: false,
             },
-          })
+          }),
         ),
     }));
     client.prototype.query = vi.fn(() => ({
@@ -43,7 +43,7 @@ describe("DbService", () => {
                 vote: "1",
               },
             ],
-          })
+          }),
         ),
     }));
     client.prototype.scan = vi.fn(() => ({
@@ -66,7 +66,7 @@ describe("DbService", () => {
                 vote: "1",
               },
             ],
-          })
+          }),
         ),
     }));
     client.prototype.batchWrite = vi.fn(() => ({

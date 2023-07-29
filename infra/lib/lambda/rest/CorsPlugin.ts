@@ -115,7 +115,7 @@ export function corsRules(opts: CorsOptions) {
    */
   function applyResponseHeaders(
     event: APIGatewayProxyEvent,
-    response: APIGatewayProxyResult
+    response: APIGatewayProxyResult,
   ) {
     response.headers ||= {}; // default to empty headers if no headers are defined
     response.multiValueHeaders ||= {}; // default to empty headers if no headers are defined
@@ -154,7 +154,7 @@ export function corsRules(opts: CorsOptions) {
           return applyResponseHeaders(event, response);
         } else {
           console.log(
-            `Non-cors request. Headers = ${JSON.stringify(event.headers)}`
+            `Non-cors request. Headers = ${JSON.stringify(event.headers)}`,
           );
           return await handler(event);
         }

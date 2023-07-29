@@ -10,7 +10,7 @@ import { caseInsensitiveHeaders } from "./CaseInsensitiveHeadersPlugin";
  */
 export function createMainRestFunction(tableName: pulumi.Output<string>) {
   return async function (
-    event: APIGatewayProxyEvent
+    event: APIGatewayProxyEvent,
   ): Promise<APIGatewayProxyResult> {
     try {
       const corsPlugin = corsRules({
@@ -41,10 +41,10 @@ export function createMainRestFunction(tableName: pulumi.Output<string>) {
           } catch (err) {
             // Catch here to apply CORS if we can
             return await new Promise((resolve) =>
-              resolve(serverError(err, event))
+              resolve(serverError(err, event)),
             );
           }
-        }
+        },
       );
 
       return await main(event);

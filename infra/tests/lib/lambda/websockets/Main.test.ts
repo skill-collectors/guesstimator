@@ -39,7 +39,7 @@ describe("WebSocket Main function", () => {
   beforeEach(() => {
     mockDbService = vi.mocked(new DbService("TableName"));
     mockWebSocketPublisher = vi.mocked(
-      new WebSocketPublisher(stubWebSocketEvent({}))
+      new WebSocketPublisher(stubWebSocketEvent({})),
     );
   });
 

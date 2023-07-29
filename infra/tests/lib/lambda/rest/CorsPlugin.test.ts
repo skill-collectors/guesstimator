@@ -26,7 +26,7 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(result.headers?.["access-control-allow-origin"]).toBe(
-      event.headers.origin
+      event.headers.origin,
     );
   });
 
@@ -44,7 +44,7 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(result.headers?.["access-control-allow-origin"]).toBe(
-      event.headers.origin
+      event.headers.origin,
     );
   });
   it("Rejects unexpected origins", async () => {
@@ -76,7 +76,7 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(
-      result.multiValueHeaders?.["access-control-allow-methods"]
+      result.multiValueHeaders?.["access-control-allow-methods"],
     ).toContain("GET");
   });
   it("Allows the specified headers", async () => {
@@ -93,7 +93,7 @@ describe("CorsPlugin", () => {
 
     // Then
     expect(
-      result.multiValueHeaders?.["access-control-allow-headers"]
+      result.multiValueHeaders?.["access-control-allow-headers"],
     ).toContain("x-api-key");
   });
 });

@@ -7,7 +7,7 @@ export default class Database extends pulumi.ComponentResource {
   constructor(
     name: string,
     args: Record<string, never> = {},
-    opts?: pulumi.ComponentResourceOptions
+    opts?: pulumi.ComponentResourceOptions,
   ) {
     super("pkg:index:Database", name, args, opts);
 

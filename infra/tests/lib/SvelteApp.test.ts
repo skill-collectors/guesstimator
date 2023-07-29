@@ -51,7 +51,7 @@ describe("infrastructure", () => {
       theApp.cdn.customErrorResponses.apply((responses) => resolve(responses));
     });
     expect(customErrorResponses?.map((response) => response.errorCode)).toEqual(
-      [400, 403]
+      [400, 403],
     );
   });
 });

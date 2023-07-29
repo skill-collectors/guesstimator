@@ -19,18 +19,18 @@ export default class Api extends pulumi.ComponentResource {
   constructor(
     name: string,
     args: ApiArgs,
-    opts?: pulumi.ComponentResourceOptions
+    opts?: pulumi.ComponentResourceOptions,
   ) {
     super("pkg:index:Api", name, args, opts);
 
     // Create lambda role with basic execution policy
     const policy = args.database.table.arn.apply((tableArn) =>
-      lambdaPolicy(`${name}-RestLambdaPolicy`, tableArn)
+      lambdaPolicy(`${name}-RestLambdaPolicy`, tableArn),
     );
     const callbackFunction = buildCallbackFunction(
       `${name}-RestFunction`,
       createMainRestFunction(args.database.table.name),
-      policy
+      policy,
     );
 
     const api = new apigateway.RestAPI(`${name}-Api`, {
@@ -139,7 +139,7 @@ export default class Api extends pulumi.ComponentResource {
           type: certificate.domainValidationOptions[0].resourceRecordType,
           records: [certificate.domainValidationOptions[0].resourceRecordValue],
           ttl: 300,
-        }
+        },
       );
 
       const certificateValidation = new aws.acm.CertificateValidation(
@@ -147,7 +147,7 @@ export default class Api extends pulumi.ComponentResource {
         {
           certificateArn: certificate.arn,
           validationRecordFqdns: [certificateValidationDomain.fqdn],
-        }
+        },
       );
 
       const apiDomainName = new aws.apigateway.DomainName(
@@ -155,7 +155,7 @@ export default class Api extends pulumi.ComponentResource {
         {
           certificateArn: certificateValidation.certificateArn,
           domainName: fullDomain,
-        }
+        },
       );
 
       new aws.route53.Record(`${name}-DnsRecord`, {
@@ -178,7 +178,7 @@ export default class Api extends pulumi.ComponentResource {
       });
 
       const url = apiDomainName.domainName.apply(
-        (domain) => `https://${domain}`
+        (domain) => `https://${domain}`,
       );
       return url;
     }
@@ -186,7 +186,7 @@ export default class Api extends pulumi.ComponentResource {
     function addGatewayResponse(
       restApiId: pulumi.Output<string>,
       statusCode: string,
-      responseType: string
+      responseType: string,
     ) {
       new aws.apigateway.Response(`${name}-GatewayResponse-${responseType}`, {
         restApiId: api.api.id,

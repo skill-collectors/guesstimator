@@ -14,7 +14,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
   constructor(
     name: string,
     args: SvelteAppArgs,
-    opts?: pulumi.ComponentResourceOptions
+    opts?: pulumi.ComponentResourceOptions,
   ) {
     super("pkg:index:SvelteApp", name, args, opts);
 
@@ -44,7 +44,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
         type: certificate.domainValidationOptions[0].resourceRecordType,
         records: [certificate.domainValidationOptions[0].resourceRecordValue],
         ttl: 300,
-      }
+      },
     );
 
     const certificateValidation = new aws.acm.CertificateValidation(
@@ -52,14 +52,14 @@ export default class SvelteApp extends pulumi.ComponentResource {
       {
         certificateArn: certificate.arn,
         validationRecordFqdns: [certificateValidationDomain.fqdn],
-      }
+      },
     );
 
     const originAccessIdentity = new aws.cloudfront.OriginAccessIdentity(
       `${name}-OriginAccessIdentity`,
       {
         comment: "this is needed to setup s3 polices and make s3 not public.",
-      }
+      },
     );
 
     this.cdn = new aws.cloudfront.Distribution(`${name}-Cdn`, {
@@ -149,7 +149,7 @@ export default class SvelteApp extends pulumi.ComponentResource {
                 Resource: [`${bucketArn}/*`], // Give Cloudfront access to the entire bucket.
               },
             ],
-          })
+          }),
         ),
     });
 

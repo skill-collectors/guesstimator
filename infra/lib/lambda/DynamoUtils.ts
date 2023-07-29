@@ -3,7 +3,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 export async function query(
   client: DocumentClient,
   params: DocumentClient.QueryInput,
-  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
+  consumer: (item: DocumentClient.AttributeMap) => Promise<void>,
 ) {
   let output = await client.query(params).promise();
   for (const item of output.Items || []) {
@@ -28,7 +28,7 @@ export async function query(
 export async function scan(
   client: DocumentClient,
   params: DocumentClient.ScanInput,
-  consumer: (item: DocumentClient.AttributeMap) => Promise<void>
+  consumer: (item: DocumentClient.AttributeMap) => Promise<void>,
 ) {
   let output = await client.scan(params).promise();
   for (const item of output.Items || []) {
@@ -68,7 +68,7 @@ class BatchOperation {
   constructor(
     client: DocumentClient,
     itemHandler: (items: DocumentClient.ItemList) => Promise<void>,
-    batchSize = 25
+    batchSize = 25,
   ) {
     this.client = client;
     this.itemHandler = itemHandler;
@@ -93,7 +93,7 @@ class BatchOperation {
 
 export function updateBatchOperation(
   client: DocumentClient,
-  tableName: string
+  tableName: string,
 ) {
   return new BatchOperation(client, async (items: DocumentClient.ItemList) => {
     const putRequests =
@@ -112,7 +112,7 @@ export function updateBatchOperation(
 
 export function deleteBatchOperation(
   client: DocumentClient,
-  tableName: string
+  tableName: string,
 ) {
   return new BatchOperation(client, async (items: DocumentClient.ItemList) => {
     const deleteRequests =

@@ -6,7 +6,7 @@ import { Policy } from "@pulumi/aws/iam";
 export function buildCallbackFunction<E, R>(
   name: string,
   handler: Callback<E, R>,
-  policy: pulumi.Output<Policy>
+  policy: pulumi.Output<Policy>,
 ) {
   const lambdaRole = new aws.iam.Role(`${name}-Role`, {
     assumeRolePolicy: JSON.stringify({
@@ -29,7 +29,7 @@ export function buildCallbackFunction<E, R>(
     {
       role: lambdaRole,
       policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
-    }
+    },
   );
 
   // Attach policy
