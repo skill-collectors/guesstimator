@@ -123,7 +123,7 @@ export class DbService {
   async subscribe(
     roomId: string,
     connectionId: string,
-    userKey: string | undefined = undefined
+    userKey: string | undefined = undefined,
   ) {
     if (userKey === undefined) {
       const userKey = generateId(USER_KEY_LENGTH);
@@ -145,7 +145,7 @@ export class DbService {
         })
         .promise();
       console.log(
-        `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`
+        `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`,
       );
     } else {
       const pk = `ROOM:${roomId}`;
@@ -167,7 +167,7 @@ export class DbService {
         })
         .promise();
       console.log(
-        `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`
+        `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`,
       );
     }
     return { userKey };

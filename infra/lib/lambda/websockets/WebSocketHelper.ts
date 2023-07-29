@@ -56,7 +56,7 @@ export class WebSocketPublisher {
         endpoint: this.endpoint,
         connectionId,
         message,
-      })
+      }),
     );
     try {
       await api

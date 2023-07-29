@@ -5,13 +5,13 @@ function roomKey(roomId: string) {
 export function storeHostData(roomId: string, hostKey: string) {
   window.localStorage.setItem(
     `${roomKey(roomId)}:hostKey`,
-    JSON.stringify({ hostKey })
+    JSON.stringify({ hostKey }),
   );
 }
 
 export function getHostData(roomId: string) {
   const hostDataJson = window.localStorage.getItem(
-    `${roomKey(roomId)}:hostKey`
+    `${roomKey(roomId)}:hostKey`,
   );
   if (hostDataJson === null) {
     return {};
@@ -23,12 +23,12 @@ export function getHostData(roomId: string) {
 export function storeUserData(
   roomId: string,
   userKey?: string,
-  username?: string
+  username?: string,
 ) {
   console.log(`Saving user data for ${roomId}: ${userKey}`);
   window.localStorage.setItem(
     `${roomKey(roomId)}:userData`,
-    JSON.stringify({ userKey, username })
+    JSON.stringify({ userKey, username }),
   );
 }
 

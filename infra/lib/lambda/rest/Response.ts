@@ -11,7 +11,7 @@ function responseOf(
     | {
         [header: string]: boolean | number | string;
       }
-    | undefined
+    | undefined,
 ): APIGatewayProxyResult {
   let json;
   if (typeof body === "string") {

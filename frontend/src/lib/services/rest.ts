@@ -21,7 +21,7 @@
 export async function get(
   path: string,
   options: RequestInit = {},
-  headers = new Headers()
+  headers = new Headers(),
 ) {
   const body = null; // GET requests can't contain a body.
   return doFetch("GET", path, body, options, headers);
@@ -43,7 +43,7 @@ export async function post(
   path: string,
   body: object = {},
   options: RequestInit = {},
-  headers = new Headers()
+  headers = new Headers(),
 ) {
   return doFetch("POST", path, body, options, headers);
 }
@@ -64,7 +64,7 @@ export async function put(
   path: string,
   body: object = {},
   options: RequestInit = {},
-  headers = new Headers()
+  headers = new Headers(),
 ) {
   return doFetch("PUT", path, body, options, headers);
 }
@@ -85,7 +85,7 @@ export async function del(
   path: string,
   body: object = {},
   options: RequestInit = {},
-  headers = new Headers()
+  headers = new Headers(),
 ) {
   return doFetch("DELETE", path, body, options, headers);
 }
@@ -105,7 +105,7 @@ async function doFetch(
   path: string,
   body: object | null,
   options: RequestInit,
-  headers: Headers
+  headers: Headers,
 ) {
   const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
   const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
@@ -203,10 +203,10 @@ export class ApiErrorWithId extends Error {
     method: string,
     path: string,
     errorId: string,
-    timestamp: string
+    timestamp: string,
   ) {
     super(
-      `${timestamp}: ${method} ${path} => 500 (Internal Server Error): ${errorId}`
+      `${timestamp}: ${method} ${path} => 500 (Internal Server Error): ${errorId}`,
     );
     this.errorId = errorId;
     this.timestamp = timestamp;

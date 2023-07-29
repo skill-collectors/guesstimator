@@ -29,7 +29,7 @@ describe("infrastructure", () => {
     vi.mock("../../lib/lambda/rest/Main", () => {
       const mockHandler = function () {
         return async function handleDocument(
-          event: APIGatewayProxyEvent
+          event: APIGatewayProxyEvent,
         ): Promise<APIGatewayProxyResult> {
           console.log(JSON.stringify(event));
           return {

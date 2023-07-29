@@ -10,7 +10,7 @@ type DeepPartial<T> = T extends object
   : T;
 
 export function stubWebSocketEvent(
-  event: DeepPartial<APIGatewayProxyWebsocketEventV2>
+  event: DeepPartial<APIGatewayProxyWebsocketEventV2>,
 ): APIGatewayProxyWebsocketEventV2 {
   return {
     requestContext: {
@@ -38,7 +38,7 @@ export function stubWebSocketEvent(
 }
 
 export function stubEvent(
-  event: DeepPartial<APIGatewayProxyEvent>
+  event: DeepPartial<APIGatewayProxyEvent>,
 ): APIGatewayProxyEvent {
   return {
     body: "",

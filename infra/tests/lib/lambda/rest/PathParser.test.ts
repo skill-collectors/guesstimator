@@ -5,7 +5,7 @@ describe("PathParser", () => {
   function testMatch(
     pattern: string,
     path: string,
-    expectedParams: Record<string, string> | null
+    expectedParams: Record<string, string> | null,
   ) {
     // When
     const params = new PathParser(pattern).match(path);

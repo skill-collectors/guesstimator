@@ -31,7 +31,7 @@ describe("infrastructure", () => {
     vi.mock("../../lib/lambda/websockets/Main", () => {
       const mockHandler = function () {
         return async function (
-          event: APIGatewayProxyWebsocketEventV2
+          event: APIGatewayProxyWebsocketEventV2,
         ): Promise<APIGatewayProxyResultV2> {
           console.log(JSON.stringify(event));
           return {

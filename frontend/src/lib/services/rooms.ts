@@ -22,7 +22,7 @@ export async function createRoom(): Promise<Room> {
 
 export async function getRoom(
   roomId: string,
-  userKey: string | null = null
+  userKey: string | null = null,
 ): Promise<Room> {
   if (userKey === null) {
     return await rest.get(`/rooms/${roomId}`);
@@ -42,7 +42,7 @@ export async function deleteRoom(roomId: string, hostKey: string) {
 export async function setIsRevealed(
   roomId: string,
   value: boolean,
-  hostKey: string
+  hostKey: string,
 ) {
   await rest.put(`/rooms/${roomId}/isRevealed`, { value, hostKey });
 }

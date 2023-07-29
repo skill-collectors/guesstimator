@@ -11,10 +11,10 @@ import { notFound, ok, clientError } from "./Response";
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "PATCH";
 type RouteHandler = (
   params: Record<string, string>,
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ) => Promise<APIGatewayProxyResult>;
 export type LambdaHandler = (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ) => Promise<APIGatewayProxyResult>;
 
 /** Represents a single route in the API including the method (e.g. "GET" or "POST") */

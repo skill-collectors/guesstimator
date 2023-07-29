@@ -15,7 +15,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
   constructor(
     name: string,
     args: ApiArgs,
-    opts?: pulumi.ComponentResourceOptions
+    opts?: pulumi.ComponentResourceOptions,
   ) {
     super("pkg:index:Api", name, args, opts);
 
@@ -30,13 +30,13 @@ export default class WebSocketApi extends pulumi.ComponentResource {
         return lambdaPolicy(
           `${name}-WebSocketLambda-Policy`,
           tableArn,
-          gatewayExecutionArn
+          gatewayExecutionArn,
         );
       });
     const webSocketCallback = buildCallbackFunction(
       `${name}-Lambda`,
       createMainWebSocketFunction(args.database.table.name),
-      policy
+      policy,
     );
 
     const lambdaIntegration = new aws.apigatewayv2.Integration(
@@ -49,7 +49,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
         integrationMethod: "POST",
         integrationUri: webSocketCallback.invokeArn,
         passthroughBehavior: "WHEN_NO_MATCH",
-      }
+      },
     );
 
     const routes = ["$default", "$connect", "$disconnect"].map((routeKey) => {
@@ -59,7 +59,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
           apiId: webSocketApi.id,
           routeKey,
           target: pulumi.interpolate`integrations/${lambdaIntegration.id}`,
-        }
+        },
       );
       if (routeKey === "$default") {
         new aws.apigatewayv2.RouteResponse(
@@ -68,7 +68,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
             apiId: webSocketApi.id,
             routeId: route.id,
             routeResponseKey: routeKey,
-          }
+          },
         );
       }
       return route;
@@ -81,7 +81,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
       },
       {
         dependsOn: routes,
-      }
+      },
     );
 
     const stage = new aws.apigatewayv2.Stage(`${name}-Stage`, {
@@ -107,7 +107,7 @@ export default class WebSocketApi extends pulumi.ComponentResource {
         function: webSocketCallback,
         sourceArn: pulumi.interpolate`${webSocketApi.executionArn}/*/*`,
       },
-      { dependsOn: [webSocketApi, webSocketCallback] }
+      { dependsOn: [webSocketApi, webSocketCallback] },
     );
 
     this.invokeUrl = stage.invokeUrl;

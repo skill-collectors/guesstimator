@@ -3,7 +3,7 @@ import * as aws from "@pulumi/aws";
 export default function lambdaPolicy(
   name: string,
   tableArn: string,
-  gatewayExecutionArn?: string
+  gatewayExecutionArn?: string,
 ) {
   const policy = {
     Version: "2012-10-17",

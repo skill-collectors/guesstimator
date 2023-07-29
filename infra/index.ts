@@ -35,7 +35,7 @@ const webSocketApi = new WebSocketApi(`${resourceNamePrefix}-WebSocketApi`, {
 });
 
 const cleanUpLambdaPolicy = database.table.arn.apply((tableArn) =>
-  lambdaPolicy(`${resourceNamePrefix}-CleanupLambdaPolicy`, tableArn)
+  lambdaPolicy(`${resourceNamePrefix}-CleanupLambdaPolicy`, tableArn),
 );
 aws.cloudwatch.onSchedule(
   `${resourceNamePrefix}-CleanupEvent`,
@@ -43,8 +43,8 @@ aws.cloudwatch.onSchedule(
   buildCallbackFunction(
     `${resourceNamePrefix}-CleanupFunction`,
     createStaleRoomCleanupFunction(database.table.name),
-    cleanUpLambdaPolicy
-  )
+    cleanUpLambdaPolicy,
+  ),
 );
 
 // These are needed by deploy-dev.sh or GitHub actions

@@ -58,7 +58,7 @@ describe("rest", () => {
 
       // Then
       expect(
-        (mockFetch.mock.calls[0][1].headers as Headers).has("x-api-key")
+        (mockFetch.mock.calls[0][1].headers as Headers).has("x-api-key"),
       ).toBe(true);
     });
     it("Uses CORS mode", async () => {
@@ -110,7 +110,7 @@ describe("rest", () => {
         mockResponse(500, {
           errorId: "ABCD1234",
           timestamp: new Date().toISOString(),
-        })
+        }),
       );
 
       const path = "/foo";
