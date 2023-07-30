@@ -1,6 +1,7 @@
 <script lang="ts">
   import Chart from "$lib/components/Chart.svelte";
   import type { Room } from "$lib/services/rooms";
+  import UnanimousVoteCelebration from "./UnanimousVoteCelebration.svelte";
 
   export let roomData: Room;
 
@@ -22,6 +23,7 @@
   }
 </script>
 
+<UnanimousVoteCelebration {roomData} />
 <Chart
   labels={chartLabels}
   series={chartDataSeries}
