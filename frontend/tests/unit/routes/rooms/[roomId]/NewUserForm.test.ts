@@ -2,8 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/svelte";
 import NewUserForm from "$routes/rooms/[roomId]/NewUserForm.svelte";
 import userEvent from "@testing-library/user-event";
-import matchers from "@testing-library/jest-dom/matchers";
-expect.extend(matchers);
 
 describe("NewUserForm", () => {
   function init() {
