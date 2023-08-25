@@ -9,7 +9,7 @@
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
-  import Loader from "$lib/components/Loader.svelte";
+  import Loader from "$lib/components/icons/Loader.svelte";
   import RoomHeader from "./RoomHeader.svelte";
   import HostControls from "./HostControls.svelte";
   import CardGroup from "./CardGroup.svelte";

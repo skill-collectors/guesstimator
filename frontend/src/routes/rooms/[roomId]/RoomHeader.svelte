@@ -1,6 +1,6 @@
 <script lang="ts">
   import TgButton from "$lib/components/base/TgButton.svelte";
-  import Loader from "$lib/components/Loader.svelte";
+  import Loader from "$lib/components/icons/Loader.svelte";
   import { createEventDispatcher } from "svelte";
 
   export let url: URL;
