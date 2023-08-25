@@ -26,7 +26,6 @@
   let roomData: Room | null = null;
 
   let loadingStatus = "";
-  let pendingRevealOrReset = false;
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
 
@@ -100,7 +99,6 @@
         window.location.reload();
       } else {
         roomData = message.data;
-        pendingRevealOrReset = false;
       }
     }
   }
@@ -134,12 +132,10 @@
   }
 
   function handleReveal() {
-    pendingRevealOrReset = true;
     webSocket?.reveal();
   }
 
   function handleReset() {
-    pendingRevealOrReset = true;
     webSocket?.reset();
   }
 

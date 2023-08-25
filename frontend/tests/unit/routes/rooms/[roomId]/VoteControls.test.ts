@@ -2,7 +2,7 @@ import type { Room, User } from "$lib/services/rooms";
 import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import VoteControls from "$routes/rooms/[roomId]/VoteControls.svelte";
-import { describe, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 function stubRoomData(): Room {
   return { validSizes: ["1", "2"] } as unknown as Room;
