@@ -4,7 +4,7 @@
   import type { Room } from "$lib/services/rooms";
   import { storeHostData } from "$lib/services/localStorage";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
-  import Loader from "$lib/components/Loader.svelte";
+  import Loader from "$lib/components/icons/Loader.svelte";
 
   let roomData: Room;
   onMount(async () => {

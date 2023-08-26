@@ -7,6 +7,7 @@
   import TgLink from "$lib/components/base/TgLink.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
+  import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
 </script>
 
 <svelte:head>
@@ -32,6 +33,12 @@
   retrospective meeting (i.e. yesterday)" "what went well and adapt process
   otherwise, the result build in the scrum meetings
 </TgParagraph>
+<section>
+  <TgHeadingMinor>Icons</TgHeadingMinor>
+  <TgButton type="secondary">
+    <ShareIcon />
+  </TgButton>
+</section>
 <form>
   <fieldset class="flex flex-col">
     <legend class="font-bold mb-2">Input types</legend>
