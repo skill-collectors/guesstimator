@@ -52,6 +52,13 @@ export function createMainWebSocketFunction(
           400,
           "Missing body.action",
         );
+      } else if (body.action === "ping") {
+        await publisher.sendMessage(event.requestContext.connectionId, {
+          status: 200,
+          data: {
+            type: "PONG",
+          },
+        });
       } else if (typeof body.data !== "object") {
         await publisher.sendError(
           event.requestContext.connectionId,

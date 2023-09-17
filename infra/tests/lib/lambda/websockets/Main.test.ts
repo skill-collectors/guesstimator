@@ -30,6 +30,7 @@ describe("WebSocket Main function", () => {
     const WebSocketPublisher = vi.fn();
     WebSocketPublisher.prototype.sendError = vi.fn();
     WebSocketPublisher.prototype.publishRoomData = vi.fn();
+    WebSocketPublisher.prototype.sendMessage = vi.fn();
     return { WebSocketPublisher };
   });
 
@@ -161,6 +162,31 @@ describe("WebSocket Main function", () => {
 
     // Then
     expect(mockWebSocketPublisher.sendError.mock.calls[0][1]).toBe(400);
+  });
+
+  describe("ping", () => {
+    it("Responds with 'pong'", async () => {
+      // Given
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "ping",
+          data: {},
+        }),
+      });
+
+      // When
+      const response = await main(event);
+
+      // Then
+      console.log(response);
+      expect(
+        mockWebSocketPublisher.sendMessage.mock.calls[0][1].data.type,
+      ).toEqual("PONG");
+    });
   });
 
   describe("subscribe", () => {
