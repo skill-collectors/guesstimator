@@ -18,6 +18,21 @@ export function createMainWebSocketFunction(
   ): Promise<APIGatewayProxyStructuredResultV2> {
     const db = new DbService(tableNameOutput.get());
     const publisher = new WebSocketPublisher(event);
+
+    /**
+     * Just a helper method to ensure that publishing room data happens the same
+     * way every time and includes a step to kick inactive users.
+     */
+    async function publishRoomData(roomId: string) {
+      const publishRoomDataResult = await publisher.publishRoomData(
+        await db.getRoom(roomId),
+      );
+      for (const userKey of publishRoomDataResult.goneUserKeys) {
+        console.log(`Removing gone user ${userKey} from room ${roomId}`);
+        await db.kick(roomId, userKey);
+      }
+    }
+
     console.log(event);
     if (event.requestContext.routeKey === "$connect") {
       console.log(`(${event.requestContext.connectionId}) Connecting `);
@@ -63,7 +78,7 @@ export function createMainWebSocketFunction(
                 event.requestContext.connectionId,
                 body.data.userKey,
               );
-              await publisher.publishRoomData(await db.getRoom(roomId));
+              await publishRoomData(roomId);
               break;
             }
             case "join": {
@@ -72,7 +87,7 @@ export function createMainWebSocketFunction(
                 `(${event.requestContext.connectionId}) Joining ${roomId} as ${username}`,
               );
               await db.join(roomId, userKey, username);
-              await publisher.publishRoomData(await db.getRoom(roomId));
+              await publishRoomData(roomId);
               break;
             }
             case "vote": {
@@ -90,7 +105,7 @@ export function createMainWebSocketFunction(
                 `(${event.requestContext.connectionId}) Voting in ${roomId} for ${vote}`,
               );
               await db.vote(roomId, userKey, vote);
-              await publisher.publishRoomData(await db.getRoom(roomId));
+              await publishRoomData(roomId);
               break;
             }
             case "reveal": {
@@ -107,7 +122,7 @@ export function createMainWebSocketFunction(
                 `(${event.requestContext.connectionId}) Revealing cards in ${roomId}`,
               );
               await db.setCardsRevealed(roomId, true);
-              await publisher.publishRoomData(await db.getRoom(roomId));
+              await publishRoomData(roomId);
               break;
             }
             case "reset": {
@@ -124,7 +139,7 @@ export function createMainWebSocketFunction(
                 `(${event.requestContext.connectionId}) Resetting cards in ${roomId}`,
               );
               await db.setCardsRevealed(roomId, false);
-              await publisher.publishRoomData(await db.getRoom(roomId));
+              await publishRoomData(roomId);
               break;
             }
             case "leave": {
@@ -140,11 +155,22 @@ export function createMainWebSocketFunction(
                   `Invalid userKey ${userKey} for room ${roomId}`,
                 );
               } else {
-                await publisher.sendMessage(event.requestContext.connectionId, {
-                  status: 200,
-                  data: { type: "DELETE_USER", result: "SUCCESS" },
-                });
-                await publisher.publishRoomData(await db.getRoom(roomId));
+                try {
+                  await publisher.sendMessage(
+                    event.requestContext.connectionId,
+                    {
+                      status: 200,
+                      data: { type: "DELETE_USER", result: "SUCCESS" },
+                    },
+                  );
+                } catch (err) {
+                  console.log(
+                    `Failed to confirm user delete for${userKey}. ${JSON.stringify(
+                      err,
+                    )}. Ignoring.`,
+                  );
+                }
+                await publishRoomData(roomId);
               }
               break;
             }

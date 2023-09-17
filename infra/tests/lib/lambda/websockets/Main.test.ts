@@ -178,6 +178,9 @@ describe("WebSocket Main function", () => {
         }),
       });
       mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
+      mockWebSocketPublisher.publishRoomData.mockResolvedValue({
+        goneUserKeys: [],
+      });
 
       // When
       await main(event);

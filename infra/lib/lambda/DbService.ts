@@ -193,6 +193,26 @@ export class DbService {
     console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return { username };
   }
+  async kick(roomId: string, userKey: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression: "SET updatedOn = :updatedOn, username = :username",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":updatedOn": updatedOn,
+          ":username": "",
+        },
+      })
+      .promise();
+    console.log(`Kicked user with key ${userKey} in room ${roomId}`);
+  }
   async vote(roomId: string, userKey: string, vote: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
