@@ -31,11 +31,23 @@
 
   $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
     webSocket.userKey = currentUser.userKey;
-    localStorage.storeUserData(
-      roomId,
-      currentUser.userKey,
-      currentUser.username
-    );
+
+    const existingUserData = localStorage.getUserData(roomId);
+    if (
+      existingUserData !== undefined &&
+      existingUserData.username !== undefined &&
+      existingUserData.username !== "" &&
+      currentUser?.username === ""
+    ) {
+      console.log("Current user got kicked. Rejoining...");
+      webSocket?.join(existingUserData.username);
+    } else {
+      localStorage.storeUserData(
+        roomId,
+        currentUser.userKey,
+        currentUser.username
+      );
+    }
   }
 
   onMount(() => {
