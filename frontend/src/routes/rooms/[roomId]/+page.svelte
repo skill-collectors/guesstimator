@@ -27,6 +27,8 @@
 
   let loadingStatus = "";
 
+  let isJoining = false;
+
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
 
   $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
@@ -41,6 +43,7 @@
     ) {
       console.log("Current user got kicked. Rejoining...");
       webSocket?.join(existingUserData.username);
+      isJoining = true;
     } else {
       localStorage.storeUserData(
         roomId,
@@ -113,6 +116,7 @@
         window.location.reload();
       } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
+        isJoining = false;
       } else {
         console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
@@ -132,6 +136,7 @@
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
     webSocket?.join(e.detail.username);
+    isJoining = true;
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
@@ -228,10 +233,14 @@
   {/if}
   <section id="userControls" class="mt-32">
     {#if currentUser === undefined || currentUser.username.length === 0}
-      <TgParagraph
-        >If you'd like to vote, enter a name and join the room:</TgParagraph
-      >
-      <NewUserForm on:submit={handleNewUser} />
+      {#if isJoining === true}
+        <Loader />
+      {:else}
+        <TgParagraph
+          >If you'd like to vote, enter a name and join the room:</TgParagraph
+        >
+        <NewUserForm on:submit={handleNewUser} />
+      {/if}
     {:else}
       {#if roomData?.isRevealed === true}
         <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
