@@ -29,7 +29,7 @@ export function createMainWebSocketFunction(
       );
       for (const userKey of publishRoomDataResult.goneUserKeys) {
         console.log(`Removing gone user ${userKey} from room ${roomId}`);
-        await db.kick(roomId, userKey);
+        await db.kickUser(roomId, userKey);
       }
     }
 
@@ -154,31 +154,8 @@ export function createMainWebSocketFunction(
               console.log(
                 `(${event.requestContext.connectionId}) Leaving room ${roomId}`,
               );
-              const result = await db.deleteUser(roomId, userKey);
-              if (result === undefined) {
-                await publisher.sendError(
-                  event.requestContext.connectionId,
-                  403,
-                  `Invalid userKey ${userKey} for room ${roomId}`,
-                );
-              } else {
-                try {
-                  await publisher.sendMessage(
-                    event.requestContext.connectionId,
-                    {
-                      status: 200,
-                      data: { type: "DELETE_USER", result: "SUCCESS" },
-                    },
-                  );
-                } catch (err) {
-                  console.log(
-                    `Failed to confirm user delete for${userKey}. ${JSON.stringify(
-                      err,
-                    )}. Ignoring.`,
-                  );
-                }
-                await publishRoomData(roomId);
-              }
+              await db.kickUser(roomId, userKey);
+              await publishRoomData(roomId);
               break;
             }
             default: {

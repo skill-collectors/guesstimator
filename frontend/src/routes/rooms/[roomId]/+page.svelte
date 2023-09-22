@@ -107,13 +107,6 @@
         }
       } else if (message.data.type === "PONG") {
         console.log("<< PONG");
-      } else if (
-        message.data.type === "DELETE_USER" &&
-        message.data.result === "SUCCESS"
-      ) {
-        webSocket.close();
-        localStorage.clearUserData(roomId);
-        window.location.reload();
       } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
         isJoining = false;
@@ -148,6 +141,8 @@
 
   function handleLeave() {
     if (currentUser !== undefined) {
+      currentUser.username = "";
+      localStorage.storeUserData(roomId, currentUser.userKey);
       webSocket?.leave();
     }
   }

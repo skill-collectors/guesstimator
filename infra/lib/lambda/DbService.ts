@@ -193,7 +193,7 @@ export class DbService {
     console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return { username };
   }
-  async kick(roomId: string, userKey: string) {
+  async kickUser(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
