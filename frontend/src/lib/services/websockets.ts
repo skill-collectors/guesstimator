@@ -62,6 +62,18 @@ export class GuesstimatorWebSocket {
   }
 
   /**
+   * Sends a "ping" to keep the web socket open
+   */
+  ping() {
+    console.log(">> PING!");
+    this.webSocket.send(
+      JSON.stringify({
+        action: "ping",
+        data: {},
+      }),
+    );
+  }
+  /**
    * Submits a vote for the user. The user must be joined.
    */
   vote(vote: string) {

@@ -102,6 +102,8 @@
         if (message.status === 404) {
           notFound = true;
         }
+      } else if (message.data.type === "PONG") {
+        console.log("<< PONG");
       } else if (
         message.data.type === "DELETE_USER" &&
         message.data.result === "SUCCESS"
@@ -164,8 +166,28 @@
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
   }
+
+  let clearReloadInterval: number;
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      if (clearReloadInterval !== undefined) {
+        window.clearInterval(clearReloadInterval);
+      }
+    } else {
+      if (roomData !== null) {
+        webSocket?.ping();
+      }
+      clearReloadInterval = window.setInterval(() => {
+        webSocket?.ping();
+      }, 300_000); // every 5 minutes
+    }
+  }
+  onMount(() => {
+    handleVisibilityChange();
+  });
 </script>
 
+<svelte:document on:visibilitychange={handleVisibilityChange} />
 <svelte:head>
   <title>Guesstimator - {roomData?.roomId ?? "New"}</title>
   <meta name="description" content={`Page for room ${roomData?.roomId}`} />
