@@ -76,11 +76,11 @@ export class WebSocketPublisher {
       endpoint: this.endpoint,
     });
     console.log(
-      JSON.stringify({
+      `Sending message: ${JSON.stringify({
         endpoint: this.endpoint,
         connectionId,
         message,
-      }),
+      })}`,
     );
     try {
       await api
@@ -97,6 +97,7 @@ export class WebSocketPublisher {
         "statusCode" in err &&
         err.statusCode == 410
       ) {
+        console.log(`Failed to send message: ${connectionId} is gone.`);
         throw new ConnectionGoneError(connectionId);
       } else {
         throw err;

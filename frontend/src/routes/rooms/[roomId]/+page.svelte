@@ -85,8 +85,6 @@
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
-    console.log(event);
-
     loadingStatus = "";
 
     if (webSocket === undefined) {
@@ -96,7 +94,9 @@
     }
     const json = event.data;
     if (json !== undefined) {
+      console.log(`Recieved message: ${json}`);
       const message = JSON.parse(json);
+
       if (message.status !== 200) {
         console.error(message);
         if (message.status === 404) {
