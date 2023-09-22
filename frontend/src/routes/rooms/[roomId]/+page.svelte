@@ -225,23 +225,26 @@
     <section id="resultsChart" class="m-x-auto max-w-xl">
       <ResultsChart {roomData} />
     </section>
-  {:else}
-    <section id="userControls" class="mt-32">
-      {#if currentUser !== undefined && currentUser.username.length > 0}
-        <TgHeadingSub>Your vote:</TgHeadingSub>
-        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
-        <TgParagraph>
-          You are joined as <strong>{currentUser.username}</strong>
-          <TgButton type="danger" class="m-2" on:click={handleLeave}
-            >Leave</TgButton
-          >
-        </TgParagraph>
-      {:else}
-        <TgParagraph
-          >If you'd like to vote, enter a name and join the room:</TgParagraph
-        >
-        <NewUserForm on:submit={handleNewUser} />
-      {/if}
-    </section>
   {/if}
+  <section id="userControls" class="mt-32">
+    {#if currentUser === undefined || currentUser.username.length === 0}
+      <TgParagraph
+        >If you'd like to vote, enter a name and join the room:</TgParagraph
+      >
+      <NewUserForm on:submit={handleNewUser} />
+    {:else}
+      {#if roomData?.isRevealed === true}
+        <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
+      {:else}
+        <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
+        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
+      {/if}
+      <TgParagraph>
+        You are joined as <strong>{currentUser.username}</strong>
+        <TgButton type="danger" class="m-2" on:click={handleLeave}
+          >Leave</TgButton
+        >
+      </TgParagraph>
+    {/if}
+  </section>
 {/if}
