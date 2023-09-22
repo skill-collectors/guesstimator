@@ -97,8 +97,10 @@
         webSocket.close();
         localStorage.clearUserData(roomId);
         window.location.reload();
-      } else {
+      } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
+      } else {
+        console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
     }
   }
