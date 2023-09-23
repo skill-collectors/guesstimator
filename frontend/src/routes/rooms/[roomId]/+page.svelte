@@ -27,7 +27,7 @@
 
   let loadingStatus = "";
 
-  let isJoining = false;
+  let isJoiningOrLeaving = false;
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
 
@@ -43,7 +43,7 @@
     ) {
       console.log("Current user got kicked. Rejoining...");
       webSocket?.join(existingUserData.username);
-      isJoining = true;
+      isJoiningOrLeaving = true;
     } else {
       localStorage.storeUserData(
         roomId,
@@ -109,7 +109,7 @@
         console.log("<< PONG");
       } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
-        isJoining = false;
+        isJoiningOrLeaving = false;
       } else {
         console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
@@ -129,7 +129,7 @@
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
     webSocket?.join(e.detail.username);
-    isJoining = true;
+    isJoiningOrLeaving = true;
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
@@ -144,6 +144,7 @@
       currentUser.username = "";
       localStorage.storeUserData(roomId, currentUser.userKey);
       webSocket?.leave();
+      isJoiningOrLeaving = true;
     }
   }
 
@@ -228,7 +229,7 @@
   {/if}
   <section id="userControls" class="mt-32">
     {#if currentUser === undefined || currentUser.username.length === 0}
-      {#if isJoining === true}
+      {#if isJoiningOrLeaving === true}
         <Loader />
       {:else}
         <TgParagraph
