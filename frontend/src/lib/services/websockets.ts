@@ -142,6 +142,26 @@ export class GuesstimatorWebSocket {
   }
 
   /**
+   * Updates the valid sizes for the room
+   * @param newSizes New sizes as a space-delimited string
+   */
+  setValidSizes(newSizes: string) {
+    if (this.hostKey === undefined) {
+      throw new Error("Cannot update sizes without a hostKey");
+    }
+    this.webSocket.send(
+      JSON.stringify({
+        action: "setValidSizes",
+        data: {
+          roomId: this.roomId,
+          hostKey: this.hostKey,
+          newSizes,
+        },
+      }),
+    );
+  }
+
+  /**
    * Closes the connection. Should only be called when leaving the page.
    */
   close() {

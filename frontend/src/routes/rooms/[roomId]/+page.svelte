@@ -16,6 +16,7 @@
   import ResultsChart from "./ResultsChart.svelte";
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
+  import BottomHostControls from "./BottomHostControls.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -30,6 +31,8 @@
   let isJoiningOrLeaving = false;
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
+  $: isJoined = currentUser === undefined || currentUser.username.length === 0;
+  $: isHost = webSocket?.hostKey !== undefined;
 
   $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
     webSocket.userKey = currentUser.userKey;
@@ -156,16 +159,22 @@
     webSocket?.reset();
   }
 
+  async function handleNewSizes(e: CustomEvent<{ newSizes: string }>) {
+    webSocket?.setValidSizes(e.detail.newSizes);
+  }
+
   async function handleDeleteRoom() {
     if (roomData === null) {
       return;
     }
-    if (webSocket?.hostKey === undefined) {
+    if (!isHost) {
       return;
     }
-    await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
-    localStorage.deleteHostKey(roomData.roomId);
-    window.location.href = "/";
+    if (webSocket && webSocket.hostKey) {
+      await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
+      localStorage.deleteHostKey(roomData.roomId);
+      window.location.href = "/";
+    }
   }
 
   let clearReloadInterval: number;
@@ -204,14 +213,10 @@
   </TgParagraph>
   <TgButton type="primary" on:click={connectWebSocket}>Reconnect</TgButton>
 {:else}
-  <RoomHeader
-    {url}
-    isHost={webSocket?.hostKey !== undefined}
-    on:click-delete={handleDeleteRoom}
-  />
+  <RoomHeader {url} />
   <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    {#if webSocket?.hostKey !== undefined}
+    {#if isHost}
       <HostControls
         {roomData}
         on:reset={handleReset}
@@ -228,7 +233,7 @@
     </section>
   {/if}
   <section id="userControls" class="mt-32">
-    {#if currentUser === undefined || currentUser.username.length === 0}
+    {#if isJoined}
       {#if isJoiningOrLeaving === true}
         <Loader />
       {:else}
@@ -237,7 +242,7 @@
         >
         <NewUserForm on:submit={handleNewUser} />
       {/if}
-    {:else}
+    {:else if currentUser}
       {#if roomData?.isRevealed === true}
         <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
       {:else}
@@ -252,4 +257,11 @@
       </TgParagraph>
     {/if}
   </section>
+  {#if isHost}
+    <BottomHostControls
+      {roomData}
+      on:newSizes={handleNewSizes}
+      on:deleteRoom={handleDeleteRoom}
+    />
+  {/if}
 {/if}

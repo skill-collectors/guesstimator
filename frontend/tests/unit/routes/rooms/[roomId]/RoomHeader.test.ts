@@ -9,7 +9,7 @@ describe("RoomHeader", () => {
     const url = new URL("https://example.com");
 
     // When
-    const { getByRole } = render(RoomHeader, { url, isHost: false });
+    const { getByRole } = render(RoomHeader, { url });
 
     // Then
     console.log(url.hostname);

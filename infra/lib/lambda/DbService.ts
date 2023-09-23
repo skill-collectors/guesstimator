@@ -258,6 +258,27 @@ export class DbService {
     await updateOperation.flush();
   }
 
+  async setValidSizes(roomId: string, validSizes: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = "ROOM";
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, validSizes = :validSizes",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":updatedOn": updatedOn,
+          ":validSizes": validSizes,
+        },
+      })
+      .promise();
+  }
+
   async deleteUser(roomId: string, userKey: string) {
     const output = await this.client
       .delete({
