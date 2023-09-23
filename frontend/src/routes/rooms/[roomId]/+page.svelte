@@ -30,6 +30,8 @@
   let isJoiningOrLeaving = false;
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
+  $: isJoined = currentUser === undefined || currentUser.username.length === 0;
+  $: isHost = webSocket?.hostKey !== undefined;
 
   $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
     webSocket.userKey = currentUser.userKey;
@@ -160,7 +162,7 @@
     if (roomData === null) {
       return;
     }
-    if (webSocket?.hostKey === undefined) {
+    if (!isHost) {
       return;
     }
     await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
@@ -204,14 +206,10 @@
   </TgParagraph>
   <TgButton type="primary" on:click={connectWebSocket}>Reconnect</TgButton>
 {:else}
-  <RoomHeader
-    {url}
-    isHost={webSocket?.hostKey !== undefined}
-    on:click-delete={handleDeleteRoom}
-  />
+  <RoomHeader {url} {isHost} on:click-delete={handleDeleteRoom} />
   <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
-    {#if webSocket?.hostKey !== undefined}
+    {#if isHost}
       <HostControls
         {roomData}
         on:reset={handleReset}
@@ -228,7 +226,7 @@
     </section>
   {/if}
   <section id="userControls" class="mt-32">
-    {#if currentUser === undefined || currentUser.username.length === 0}
+    {#if isJoined}
       {#if isJoiningOrLeaving === true}
         <Loader />
       {:else}
@@ -237,7 +235,7 @@
         >
         <NewUserForm on:submit={handleNewUser} />
       {/if}
-    {:else}
+    {:else if currentUser}
       {#if roomData?.isRevealed === true}
         <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
       {:else}
