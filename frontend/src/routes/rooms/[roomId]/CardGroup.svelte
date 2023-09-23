@@ -8,11 +8,13 @@
     roomData?.users.filter((user) => user.username?.length > 0) ?? [];
 </script>
 
-{#each players as user (user.userId)}
-  <Card
-    username={user.username}
-    isRevealed={roomData.isRevealed}
-    hasValue={user.hasVote}
-    value={user.vote}
-  />
-{/each}
+<div class="flex justify-center flex-wrap">
+  {#each players as user (user.userId)}
+    <Card
+      username={user.username}
+      isRevealed={roomData.isRevealed}
+      hasValue={user.hasVote}
+      value={user.vote}
+    />
+  {/each}
+</div>

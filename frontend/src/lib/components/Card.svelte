@@ -14,7 +14,7 @@
   $: displayValue = value === "" ? "?" : value;
 </script>
 
-<div class="inline-block animate-animated animate-fade-in">
+<div class="animate-animated animate-fade-in">
   {#if isRevealed}
     <div
       class="animate-animated animate-flip-in-y animate-delay-{delay}00 shadow-dark-100 shadow-lg flex flex-col items-center justify-center w-18 h-28 md:w-36 md:h-56 p-2 m-2 overflow-hidden break-all font-bold bg-teal-50 rounded-lg border-4 border-teal-600 text-teal-700"
