@@ -242,6 +242,20 @@ describe("DbService", () => {
       expect(userUpdateRequest?.vote).not.toBe("");
     });
   });
+  describe("setValidSizes", () => {
+    it("Updates the validSizes field on the ROOM item", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.setValidSizes("abc123", "XS S M L XL");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("ROOM");
+      expect(params.UpdateExpression).toContain("validSizes");
+    });
+  });
   describe("deleteUser", () => {
     it("Deletes a USER item from the table", async () => {
       // Given
