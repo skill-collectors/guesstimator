@@ -9,6 +9,17 @@
 
   export let roomData: Room;
 
+  interface SizeTemplate {
+    name: string;
+    sizes: string;
+  }
+
+  const templates: SizeTemplate[] = [
+    { name: "Fibonacci", sizes: "1 2 3 5 8 13 20 ? ∞" },
+    { name: "T-Shirts", sizes: "XS S M L XL ? ∞" },
+    { name: "Emoji", sizes: "🐜 🐁 🐇 🐕 🐻 🐙 🐋 ? ∞" },
+  ];
+
   let isPending = false;
   let isUpdatingSizes = false;
   let newSizes = roomData.validSizes.join(" ");
@@ -20,6 +31,11 @@
   }
 
   function handleSubmitNewSizes() {
+    isUpdatingSizes = false;
+    dispatch("newSizes", { newSizes });
+  }
+
+  function handleTemplateSize(newSizes: string) {
     isUpdatingSizes = false;
     dispatch("newSizes", { newSizes });
   }
@@ -36,9 +52,9 @@
   {:else}
     <TgHeadingMinor>You are the room host</TgHeadingMinor>
     <TgParagraph>Use the controls below to manage the room.</TgParagraph>
-    <TgParagraph>
-      Valid room sizes:
-      {#if isUpdatingSizes}
+    {#if isUpdatingSizes}
+      <TgParagraph
+        >Enter new sizes (separate each size with a space):
         <TgInputText
           name="newSizes"
           testId="newSizesInput"
@@ -51,7 +67,23 @@
           class="m-2 inline"
           on:click={handleSubmitNewSizes}>Save</TgButton
         >
-      {:else}
+      </TgParagraph>
+      <TgParagraph>Or click one of the following presets:</TgParagraph>
+      <ul>
+        {#each templates as template}
+          <li class="m-1">
+            <TgButton
+              type="success"
+              on:click={() => handleTemplateSize(template.sizes)}
+              >{template.name}</TgButton
+            >
+            {template.sizes}
+          </li>
+        {/each}
+      </ul>
+    {:else}
+      <TgParagraph>
+        Valid room sizes:
         {roomData.validSizes}
         <TgButton
           id="editValidSizesButton"
@@ -59,8 +91,8 @@
           class="m-2 inline"
           on:click={handleInitUpdateSizes}>Edit</TgButton
         >
-      {/if}
-    </TgParagraph>
+      </TgParagraph>
+    {/if}
     <TgButton
       id="deleteRoomButton"
       type="danger"
