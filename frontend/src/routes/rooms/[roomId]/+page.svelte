@@ -255,6 +255,6 @@
     {/if}
   </section>
   {#if isHost}
-    <BottomHostControls on:deleteRoom={handleDeleteRoom} />
+    <BottomHostControls {roomData} on:deleteRoom={handleDeleteRoom} />
   {/if}
 {/if}
