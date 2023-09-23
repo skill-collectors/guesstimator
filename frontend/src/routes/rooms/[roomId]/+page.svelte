@@ -17,6 +17,7 @@
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
   import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
+  import BottomHostControls from "./BottomHostControls.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -254,15 +255,6 @@
     {/if}
   </section>
   {#if isHost}
-    <section id="hostControls">
-      <TgHeadingMinor>You are the room host</TgHeadingMinor>
-      <TgParagraph>Use the controls below to manage the room.</TgParagraph>
-      <TgButton
-        id="deleteRoomButton"
-        type="danger"
-        class="m-2 inline"
-        on:click={handleDeleteRoom}>Delete Room</TgButton
-      >
-    </section>
+    <BottomHostControls on:deleteRoom={handleDeleteRoom} />
   {/if}
 {/if}
