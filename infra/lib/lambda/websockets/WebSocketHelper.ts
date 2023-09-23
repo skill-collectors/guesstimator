@@ -1,6 +1,15 @@
 import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 import ApiGatewayManagementApi = require("aws-sdk/clients/apigatewaymanagementapi");
 import { RoomData } from "../DbService";
+import { ConnectionGoneError } from "./ConnectionGoneError";
+
+export class PublishRoomDataResult {
+  goneUserKeys;
+
+  constructor(goneUserKeys: string[]) {
+    this.goneUserKeys = goneUserKeys;
+  }
+}
 
 export class WebSocketPublisher {
   endpoint;
@@ -17,11 +26,14 @@ export class WebSocketPublisher {
     });
   }
 
-  async publishRoomData(roomData: RoomData | null) {
+  async publishRoomData(
+    roomData: RoomData | null,
+  ): Promise<PublishRoomDataResult> {
     if (roomData == null) {
-      return;
+      return new PublishRoomDataResult([]);
     }
     console.log(JSON.stringify(roomData));
+    const goneUserKeys: string[] = [];
     for (const recipient of roomData.users) {
       if (recipient.connectionId !== undefined) {
         // parse/stringify to make a deep copy
@@ -39,12 +51,24 @@ export class WebSocketPublisher {
             }
           }
         }
-        await this.sendMessage(recipient.connectionId, {
-          status: 200,
-          data: recipientData,
-        });
+        try {
+          await this.sendMessage(recipient.connectionId, {
+            status: 200,
+            data: recipientData,
+          });
+        } catch (err) {
+          if (
+            err instanceof ConnectionGoneError &&
+            recipient.userKey !== undefined
+          ) {
+            goneUserKeys.push(recipient.userKey);
+          } else {
+            console.log(`Failed to send room data to ${recipient.userKey}`);
+          }
+        }
       }
     }
+    return new PublishRoomDataResult(goneUserKeys);
   }
 
   async sendMessage(connectionId: string, message: object) {
@@ -52,11 +76,11 @@ export class WebSocketPublisher {
       endpoint: this.endpoint,
     });
     console.log(
-      JSON.stringify({
+      `Sending message: ${JSON.stringify({
         endpoint: this.endpoint,
         connectionId,
         message,
-      }),
+      })}`,
     );
     try {
       await api
@@ -67,6 +91,17 @@ export class WebSocketPublisher {
         .promise();
     } catch (err) {
       console.log(JSON.stringify(err));
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "statusCode" in err &&
+        err.statusCode == 410
+      ) {
+        console.log(`Failed to send message: ${connectionId} is gone.`);
+        throw new ConnectionGoneError(connectionId);
+      } else {
+        throw err;
+      }
     }
   }
 }

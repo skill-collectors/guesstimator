@@ -27,15 +27,30 @@
 
   let loadingStatus = "";
 
+  let isJoiningOrLeaving = false;
+
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
 
   $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
     webSocket.userKey = currentUser.userKey;
-    localStorage.storeUserData(
-      roomId,
-      currentUser.userKey,
-      currentUser.username
-    );
+
+    const existingUserData = localStorage.getUserData(roomId);
+    if (
+      existingUserData !== undefined &&
+      existingUserData.username !== undefined &&
+      existingUserData.username !== "" &&
+      currentUser?.username === ""
+    ) {
+      console.log("Current user got kicked. Rejoining...");
+      webSocket?.join(existingUserData.username);
+      isJoiningOrLeaving = true;
+    } else {
+      localStorage.storeUserData(
+        roomId,
+        currentUser.userKey,
+        currentUser.username
+      );
+    }
   }
 
   onMount(() => {
@@ -73,8 +88,6 @@
   }
 
   function onWebSocketMessage(this: WebSocket, event: MessageEvent) {
-    console.log(event);
-
     loadingStatus = "";
 
     if (webSocket === undefined) {
@@ -83,22 +96,22 @@
       return;
     }
     const json = event.data;
-    if (json !== undefined) {
+    console.log(`Recieved message: ${json}`);
+    if (json !== undefined && typeof json === "string" && json.length > 0) {
       const message = JSON.parse(json);
+
       if (message.status !== 200) {
         console.error(message);
         if (message.status === 404) {
           notFound = true;
         }
-      } else if (
-        message.data.type === "DELETE_USER" &&
-        message.data.result === "SUCCESS"
-      ) {
-        webSocket.close();
-        localStorage.clearUserData(roomId);
-        window.location.reload();
-      } else {
+      } else if (message.data.type === "PONG") {
+        console.log("<< PONG");
+      } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
+        isJoiningOrLeaving = false;
+      } else {
+        console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
     }
   }
@@ -116,6 +129,7 @@
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
     webSocket?.join(e.detail.username);
+    isJoiningOrLeaving = true;
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
@@ -127,7 +141,10 @@
 
   function handleLeave() {
     if (currentUser !== undefined) {
+      currentUser.username = "";
+      localStorage.storeUserData(roomId, currentUser.userKey);
       webSocket?.leave();
+      isJoiningOrLeaving = true;
     }
   }
 
@@ -150,8 +167,28 @@
     localStorage.deleteHostKey(roomData.roomId);
     window.location.href = "/";
   }
+
+  let clearReloadInterval: number;
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      if (clearReloadInterval !== undefined) {
+        window.clearInterval(clearReloadInterval);
+      }
+    } else {
+      if (roomData !== null) {
+        webSocket?.ping();
+      }
+      clearReloadInterval = window.setInterval(() => {
+        webSocket?.ping();
+      }, 300_000); // every 5 minutes
+    }
+  }
+  onMount(() => {
+    handleVisibilityChange();
+  });
 </script>
 
+<svelte:document on:visibilitychange={handleVisibilityChange} />
 <svelte:head>
   <title>Guesstimator - {roomData?.roomId ?? "New"}</title>
   <meta name="description" content={`Page for room ${roomData?.roomId}`} />
@@ -189,23 +226,30 @@
     <section id="resultsChart" class="m-x-auto max-w-xl">
       <ResultsChart {roomData} />
     </section>
-  {:else}
-    <section id="userControls" class="mt-32">
-      {#if currentUser !== undefined && currentUser.username.length > 0}
-        <TgHeadingSub>Your vote:</TgHeadingSub>
-        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
-        <TgParagraph>
-          You are joined as <strong>{currentUser.username}</strong>
-          <TgButton type="danger" class="m-2" on:click={handleLeave}
-            >Leave</TgButton
-          >
-        </TgParagraph>
+  {/if}
+  <section id="userControls" class="mt-32">
+    {#if currentUser === undefined || currentUser.username.length === 0}
+      {#if isJoiningOrLeaving === true}
+        <Loader />
       {:else}
         <TgParagraph
           >If you'd like to vote, enter a name and join the room:</TgParagraph
         >
         <NewUserForm on:submit={handleNewUser} />
       {/if}
-    </section>
-  {/if}
+    {:else}
+      {#if roomData?.isRevealed === true}
+        <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
+      {:else}
+        <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
+        <VoteControls {roomData} {currentUser} on:vote={handleVote} />
+      {/if}
+      <TgParagraph>
+        You are joined as <strong>{currentUser.username}</strong>
+        <TgButton type="danger" class="m-2" on:click={handleLeave}
+          >Leave</TgButton
+        >
+      </TgParagraph>
+    {/if}
+  </section>
 {/if}

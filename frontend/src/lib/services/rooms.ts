@@ -7,6 +7,16 @@ export interface Room {
   isRevealed: boolean;
   users: User[];
 }
+export function isRoom(value: unknown): value is Room {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "roomId" in value &&
+    "validSizes" in value &&
+    "isRevealed" in value &&
+    "users" in value
+  );
+}
 
 export interface User {
   userKey?: string;

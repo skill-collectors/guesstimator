@@ -52,6 +52,7 @@ export class GuesstimatorWebSocket {
     if (this.userKey === undefined) {
       throw new Error("Cannot join without a userKey");
     }
+    console.log(`Joining room as ${username}`);
     this.webSocket.send(
       JSON.stringify({
         action: "join",
@@ -61,12 +62,25 @@ export class GuesstimatorWebSocket {
   }
 
   /**
+   * Sends a "ping" to keep the web socket open
+   */
+  ping() {
+    console.log(">> PING!");
+    this.webSocket.send(
+      JSON.stringify({
+        action: "ping",
+        data: {},
+      }),
+    );
+  }
+  /**
    * Submits a vote for the user. The user must be joined.
    */
   vote(vote: string) {
     if (this.userKey === undefined) {
       throw new Error("Cannot vote without a userKey");
     }
+    console.log(`Sending vote: ${vote}`);
     this.webSocket.send(
       JSON.stringify({
         action: "vote",
@@ -82,6 +96,7 @@ export class GuesstimatorWebSocket {
     if (this.userKey === undefined) {
       throw new Error("Cannot leave without a userKey");
     }
+    console.log("Leaving room");
     this.webSocket.send(
       JSON.stringify({
         action: "leave",

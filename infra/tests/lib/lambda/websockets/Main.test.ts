@@ -23,13 +23,14 @@ describe("WebSocket Main function", () => {
     DbService.prototype.join = vi.fn();
     DbService.prototype.vote = vi.fn();
     DbService.prototype.setCardsRevealed = vi.fn();
-    DbService.prototype.deleteUser = vi.fn();
+    DbService.prototype.kickUser = vi.fn();
     return { DbService };
   });
   vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
     const WebSocketPublisher = vi.fn();
     WebSocketPublisher.prototype.sendError = vi.fn();
     WebSocketPublisher.prototype.publishRoomData = vi.fn();
+    WebSocketPublisher.prototype.sendMessage = vi.fn();
     return { WebSocketPublisher };
   });
 
@@ -163,6 +164,31 @@ describe("WebSocket Main function", () => {
     expect(mockWebSocketPublisher.sendError.mock.calls[0][1]).toBe(400);
   });
 
+  describe("ping", () => {
+    it("Responds with 'pong'", async () => {
+      // Given
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "ping",
+          data: {},
+        }),
+      });
+
+      // When
+      const response = await main(event);
+
+      // Then
+      console.log(response);
+      expect(
+        mockWebSocketPublisher.sendMessage.mock.calls[0][1].data.type,
+      ).toEqual("PONG");
+    });
+  });
+
   describe("subscribe", () => {
     it("Subscribes and publishes update", async () => {
       // Given
@@ -178,6 +204,9 @@ describe("WebSocket Main function", () => {
         }),
       });
       mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
+      mockWebSocketPublisher.publishRoomData.mockResolvedValue({
+        goneUserKeys: [],
+      });
 
       // When
       await main(event);
@@ -370,30 +399,7 @@ describe("WebSocket Main function", () => {
     });
   });
   describe("leave", () => {
-    it("Rejects invalid userKey", async () => {
-      // Given
-      const roomId = "roomId";
-      const userKey = "WRONG";
-      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
-        requestContext: {
-          routeKey: "$default",
-          eventType: "MESSAGE",
-        },
-        body: JSON.stringify({
-          action: "leave",
-          data: { roomId, userKey },
-        }),
-      });
-      mockDbService.getRoomMetadata.mockResolvedValue({ roomId });
-      mockDbService.deleteUser.mockResolvedValue(undefined);
-
-      // When
-      await main(event);
-
-      // Then
-      expect(mockWebSocketPublisher.sendError.mock.calls[0][1]).toBe(403);
-    });
-    it("Deletes the user", async () => {
+    it("Kicks the user", async () => {
       // Given
       const roomId = "roomId";
       const userKey = "userKey";
@@ -413,7 +419,7 @@ describe("WebSocket Main function", () => {
       await main(event);
 
       // Then
-      expect(mockDbService.deleteUser).toHaveBeenCalled();
+      expect(mockDbService.kickUser).toHaveBeenCalled();
     });
   });
 });
