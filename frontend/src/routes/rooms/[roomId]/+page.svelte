@@ -16,6 +16,7 @@
   import ResultsChart from "./ResultsChart.svelte";
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
+  import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -206,7 +207,7 @@
   </TgParagraph>
   <TgButton type="primary" on:click={connectWebSocket}>Reconnect</TgButton>
 {:else}
-  <RoomHeader {url} {isHost} on:click-delete={handleDeleteRoom} />
+  <RoomHeader {url} />
   <section id="currentVotes" class="mt-8">
     <TgHeadingSub>Current votes:</TgHeadingSub>
     {#if isHost}
@@ -250,4 +251,16 @@
       </TgParagraph>
     {/if}
   </section>
+  {#if isHost}
+    <section id="hostControls">
+      <TgHeadingMinor>You are the room host</TgHeadingMinor>
+      <TgParagraph>Use the controls below to manage the room.</TgParagraph>
+      <TgButton
+        id="deleteRoomButton"
+        type="danger"
+        class="m-2 inline"
+        on:click={handleDeleteRoom}>Delete Room</TgButton
+      >
+    </section>
+  {/if}
 {/if}
