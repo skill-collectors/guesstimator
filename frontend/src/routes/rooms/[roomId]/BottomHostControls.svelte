@@ -35,9 +35,10 @@
     dispatch("newSizes", { newSizes });
   }
 
-  function handleTemplateSize(newSizes: string) {
+  function handleTemplateSize(templateSizes: string) {
     isUpdatingSizes = false;
-    dispatch("newSizes", { newSizes });
+    newSizes = templateSizes;
+    dispatch("newSizes", { newSizes: templateSizes });
   }
 
   function handleDeleteRoom() {
