@@ -96,8 +96,8 @@
       return;
     }
     const json = event.data;
-    if (json !== undefined) {
-      console.log(`Recieved message: ${json}`);
+    console.log(`Recieved message: ${json}`);
+    if (json !== undefined && typeof json === "string" && json.length > 0) {
       const message = JSON.parse(json);
 
       if (message.status !== 200) {
