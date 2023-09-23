@@ -256,6 +256,21 @@ describe("DbService", () => {
       expect(params.UpdateExpression).toContain("validSizes");
     });
   });
+  describe("kickUser", () => {
+    it("Kicks a USER by setting 'username' to ''", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.kickUser("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("username");
+      expect(params.ExpressionAttributeValues?.[":username"]).toBe("");
+    });
+  });
   describe("deleteUser", () => {
     it("Deletes a USER item from the table", async () => {
       // Given
