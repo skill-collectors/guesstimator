@@ -166,9 +166,11 @@
     if (!isHost) {
       return;
     }
-    await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
-    localStorage.deleteHostKey(roomData.roomId);
-    window.location.href = "/";
+    if (webSocket && webSocket.hostKey) {
+      await rooms.deleteRoom(roomData.roomId, webSocket.hostKey);
+      localStorage.deleteHostKey(roomData.roomId);
+      window.location.href = "/";
+    }
   }
 
   let clearReloadInterval: number;
