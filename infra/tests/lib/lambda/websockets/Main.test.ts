@@ -23,6 +23,7 @@ describe("WebSocket Main function", () => {
     DbService.prototype.join = vi.fn();
     DbService.prototype.vote = vi.fn();
     DbService.prototype.setCardsRevealed = vi.fn();
+    DbService.prototype.setValidSizes = vi.fn();
     DbService.prototype.kickUser = vi.fn();
     return { DbService };
   });
@@ -291,6 +292,60 @@ describe("WebSocket Main function", () => {
 
       // Then
       expect(mockDbService.vote).toHaveBeenCalled();
+      expect(mockWebSocketPublisher.publishRoomData).toHaveBeenCalled();
+    });
+  });
+  describe("setValidSizes", () => {
+    it("Rejects invalid hostKey", async () => {
+      // Given
+      const roomId = "roomId";
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "setValidSizes",
+          data: { roomId, hostKey: "WRONG" },
+        }),
+      });
+      mockDbService.getRoomMetadata.mockResolvedValue({
+        roomId,
+        hostKey: "hostKey",
+      });
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockDbService.setValidSizes).not.toHaveBeenCalled();
+      expect(mockWebSocketPublisher.publishRoomData).not.toHaveBeenCalled();
+      expect(mockWebSocketPublisher.sendError.mock.calls[0][1]).toBe(403);
+    });
+    it("Updates sizes, resets, and publishes update", async () => {
+      // Given
+      const roomId = "roomId";
+      const hostKey = "hostKey";
+      const validSizes = "XS S M L XL";
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "setValidSizes",
+          data: { roomId, hostKey, validSizes },
+        }),
+      });
+      mockDbService.getRoomMetadata.mockResolvedValue({ roomId, hostKey });
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockDbService.setValidSizes).toHaveBeenCalled();
+      expect(mockDbService.setCardsRevealed).toHaveBeenCalled();
+      expect(mockDbService.setCardsRevealed.mock.calls[0][1]).toBe(false);
       expect(mockWebSocketPublisher.publishRoomData).toHaveBeenCalled();
     });
   });

@@ -153,6 +153,24 @@ export function createMainWebSocketFunction(
               await publishRoomData(roomId);
               break;
             }
+            case "setValidSizes": {
+              const { roomId, hostKey, newSizes } = body.data;
+              if (hostKey !== roomData.hostKey) {
+                await publisher.sendError(
+                  event.requestContext.connectionId,
+                  403,
+                  `Invalid hostKey ${hostKey} for room ${roomId}`,
+                );
+                break;
+              }
+              console.log(
+                `(${event.requestContext.connectionId}) Updating sizes in ${roomId} to ${newSizes}`,
+              );
+              await db.setValidSizes(roomId, newSizes);
+              await db.setCardsRevealed(roomId, false);
+              await publishRoomData(roomId);
+              break;
+            }
             case "leave": {
               const { roomId, userKey } = body.data;
               console.log(
