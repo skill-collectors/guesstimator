@@ -27,9 +27,13 @@ export function createMainWebSocketFunction(
       const publishRoomDataResult = await publisher.publishRoomData(
         await db.getRoom(roomId),
       );
-      for (const userKey of publishRoomDataResult.goneUserKeys) {
-        console.log(`Removing gone user ${userKey} from room ${roomId}`);
-        await db.kickUser(roomId, userKey);
+      if (publishRoomDataResult.goneUserKeys.length > 0) {
+        for (const userKey of publishRoomDataResult.goneUserKeys) {
+          console.log(`Removing gone user ${userKey} from room ${roomId}`);
+          await db.kickUser(roomId, userKey);
+        }
+        // Republish without kicked users
+        await publisher.publishRoomData(await db.getRoom(roomId));
       }
     }
 
