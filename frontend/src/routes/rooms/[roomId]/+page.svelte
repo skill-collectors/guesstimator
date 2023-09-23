@@ -16,7 +16,6 @@
   import ResultsChart from "./ResultsChart.svelte";
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
-  import TgHeadingMinor from "$lib/components/base/TgHeadingMinor.svelte";
   import BottomHostControls from "./BottomHostControls.svelte";
 
   let notFound = false;
@@ -160,6 +159,10 @@
     webSocket?.reset();
   }
 
+  async function handleNewSizes(e: CustomEvent<{ newSizes: string }>) {
+    webSocket?.setValidSizes(e.detail.newSizes);
+  }
+
   async function handleDeleteRoom() {
     if (roomData === null) {
       return;
@@ -255,6 +258,10 @@
     {/if}
   </section>
   {#if isHost}
-    <BottomHostControls {roomData} on:deleteRoom={handleDeleteRoom} />
+    <BottomHostControls
+      {roomData}
+      on:newSizes={handleNewSizes}
+      on:deleteRoom={handleDeleteRoom}
+    />
   {/if}
 {/if}
