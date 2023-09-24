@@ -16,6 +16,7 @@
     navigator.canShare === undefined ? false : navigator.canShare();
 
   let copyConfirmationText: string | null = null;
+  let showingQrCode = false;
 
   function handleShareRoom() {
     if (canShare) {
@@ -38,6 +39,13 @@
       displayCopyMessage("Failed!");
     }
   }
+
+  function handleQrCodeButtonClick() {
+    showingQrCode = true;
+  }
+  function handleQrCodeDisplayClick() {
+    showingQrCode = false;
+  }
 </script>
 
 <header class="mt-8">
@@ -57,8 +65,24 @@
       </div>
     {/if}
   </TgButton>
-  <TgButton id="qrCodeButton" type="secondary" class="relative">
+  <TgButton
+    id="qrCodeButton"
+    type="secondary"
+    on:click={handleQrCodeButtonClick}
+    class="relative"
+  >
     <QrCodeIcon />
+    {#if showingQrCode}
+      <div
+        class="absolute -inset-1/2 z-10 bg-slate-100 border-slate-900 border-2 text-slate-900"
+        on:click|stopPropagation={handleQrCodeDisplayClick}
+        on:keypress={handleQrCodeDisplayClick}
+        role="button"
+        tabindex="0"
+      >
+        QR CODE
+      </div>
+    {/if}
   </TgButton>
   {#if canShare}
     <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
