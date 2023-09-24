@@ -2,6 +2,7 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import CopyIcon from "$lib/components/icons/CopyIcon.svelte";
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
+  import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
 
   export let url: URL;
 
@@ -41,11 +42,6 @@
 
 <header class="mt-8">
   Room URL: <span class="whitespace-nowrap">{url}</span>
-  {#if canShare}
-    <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
-      <ShareIcon />
-    </TgButton>
-  {/if}
   <TgButton
     id="copyUrlButton"
     type="secondary"
@@ -61,4 +57,12 @@
       </div>
     {/if}
   </TgButton>
+  <TgButton id="qrCodeButton" type="secondary" class="relative">
+    <QrCodeIcon />
+  </TgButton>
+  {#if canShare}
+    <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
+      <ShareIcon />
+    </TgButton>
+  {/if}
 </header>
