@@ -4,6 +4,9 @@
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
   import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
   import QrCode from "$lib/components/QrCode.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+  import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 
   export let url: URL;
 
@@ -44,9 +47,6 @@
   function handleQrCodeButtonClick() {
     showingQrCode = true;
   }
-  function handleQrCodeDisplayClick() {
-    showingQrCode = false;
-  }
 </script>
 
 <header class="mt-8">
@@ -73,18 +73,17 @@
     class="relative"
   >
     <QrCodeIcon />
-    {#if showingQrCode}
-      <div
-        class="absolute -inset-1/2 z-10"
-        on:click|stopPropagation={handleQrCodeDisplayClick}
-        on:keypress={handleQrCodeDisplayClick}
-        role="button"
-        tabindex="0"
-      >
-        <QrCode data={url.href} />
-      </div>
-    {/if}
   </TgButton>
+  <Modal bind:showModal={showingQrCode}>
+    <TgHeadingSub>{url.href}</TgHeadingSub>
+    <div class="flex justify-center">
+      <QrCode data={url.href} />
+    </div>
+    <TgParagraph
+      >Scan the QR code above with your phone's camera to join from your mobile
+      device.</TgParagraph
+    >
+  </Modal>
   {#if canShare}
     <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
       <ShareIcon />
