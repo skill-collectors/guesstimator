@@ -6,6 +6,7 @@
   import { createEventDispatcher } from "svelte";
   import type { Room } from "$lib/services/rooms";
   import TgInputText from "$lib/components/base/TgInputText.svelte";
+  import TrashIcon from "$lib/components/icons/TrashIcon.svelte";
 
   export let roomData: Room;
 
@@ -98,7 +99,10 @@
       id="deleteRoomButton"
       type="danger"
       class="m-2 inline"
-      on:click={handleDeleteRoom}>Delete Room</TgButton
+      on:click={handleDeleteRoom}
     >
+      <TrashIcon />
+      Delete Room
+    </TgButton>
   {/if}
 </section>
