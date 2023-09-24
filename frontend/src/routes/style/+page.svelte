@@ -11,7 +11,10 @@
   import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
   import TrashIcon from "$lib/components/icons/TrashIcon.svelte";
+  import Modal from "$lib/components/Modal.svelte";
   import QrCode from "$lib/components/QrCode.svelte";
+
+  let showModal = false;
 </script>
 
 <svelte:head>
@@ -37,6 +40,15 @@
   retrospective meeting (i.e. yesterday)" "what went well and adapt process
   otherwise, the result build in the scrum meetings
 </TgParagraph>
+<section>
+  <TgButton type="success" on:click={() => (showModal = true)}
+    >Show Modal</TgButton
+  >
+  <Modal bind:showModal>
+    <TgHeadingMinor>Sample modal content</TgHeadingMinor>
+    <TgParagraph>This is a modal with a header and some text</TgParagraph>
+  </Modal>
+</section>
 <section>
   <TgHeadingMinor>Icons</TgHeadingMinor>
   <TgButton type="secondary">
