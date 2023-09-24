@@ -7,7 +7,14 @@
   import TgLink from "$lib/components/base/TgLink.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Card from "$lib/components/Card.svelte";
+  import CopyIcon from "$lib/components/icons/CopyIcon.svelte";
+  import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
+  import TrashIcon from "$lib/components/icons/TrashIcon.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+  import QrCode from "$lib/components/QrCode.svelte";
+
+  let showModal = false;
 </script>
 
 <svelte:head>
@@ -34,10 +41,34 @@
   otherwise, the result build in the scrum meetings
 </TgParagraph>
 <section>
+  <TgButton type="success" on:click={() => (showModal = true)}
+    >Show Modal</TgButton
+  >
+  <Modal bind:showModal>
+    <TgHeadingMinor>Sample modal content</TgHeadingMinor>
+    <TgParagraph>This is a modal with a header and some text</TgParagraph>
+  </Modal>
+</section>
+<section>
   <TgHeadingMinor>Icons</TgHeadingMinor>
   <TgButton type="secondary">
     <ShareIcon />
   </TgButton>
+  <TgButton type="secondary">
+    <CopyIcon />
+  </TgButton>
+  <TgButton type="secondary">
+    <QrCodeIcon />
+  </TgButton>
+  <TgButton type="secondary">
+    <TrashIcon />
+  </TgButton>
+</section>
+<section>
+  <TgHeadingMinor>QR Code</TgHeadingMinor>
+  <div class="flex justify-center">
+    <QrCode data="https://example.com" />
+  </div>
 </section>
 <form>
   <fieldset class="flex flex-col">

@@ -2,6 +2,11 @@
   import TgButton from "$lib/components/base/TgButton.svelte";
   import CopyIcon from "$lib/components/icons/CopyIcon.svelte";
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
+  import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
+  import QrCode from "$lib/components/QrCode.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+  import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
+  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 
   export let url: URL;
 
@@ -15,6 +20,7 @@
     navigator.canShare === undefined ? false : navigator.canShare();
 
   let copyConfirmationText: string | null = null;
+  let showingQrCode = false;
 
   function handleShareRoom() {
     if (canShare) {
@@ -37,15 +43,14 @@
       displayCopyMessage("Failed!");
     }
   }
+
+  function handleQrCodeButtonClick() {
+    showingQrCode = true;
+  }
 </script>
 
 <header class="mt-8">
   Room URL: <span class="whitespace-nowrap">{url}</span>
-  {#if canShare}
-    <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
-      <ShareIcon />
-    </TgButton>
-  {/if}
   <TgButton
     id="copyUrlButton"
     type="secondary"
@@ -61,4 +66,27 @@
       </div>
     {/if}
   </TgButton>
+  <TgButton
+    id="qrCodeButton"
+    type="secondary"
+    on:click={handleQrCodeButtonClick}
+    class="relative"
+  >
+    <QrCodeIcon />
+  </TgButton>
+  <Modal bind:showModal={showingQrCode}>
+    <TgHeadingSub>{url.href}</TgHeadingSub>
+    <div class="flex justify-center">
+      <QrCode data={url.href} />
+    </div>
+    <TgParagraph
+      >Scan the QR code above with your phone's camera to join from your mobile
+      device.</TgParagraph
+    >
+  </Modal>
+  {#if canShare}
+    <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
+      <ShareIcon />
+    </TgButton>
+  {/if}
 </header>
