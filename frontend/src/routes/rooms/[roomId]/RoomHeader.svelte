@@ -3,6 +3,7 @@
   import CopyIcon from "$lib/components/icons/CopyIcon.svelte";
   import ShareIcon from "$lib/components/icons/ShareIcon.svelte";
   import QrCodeIcon from "$lib/components/icons/QrCodeIcon.svelte";
+  import QrCode from "$lib/components/QrCode.svelte";
 
   export let url: URL;
 
@@ -74,13 +75,13 @@
     <QrCodeIcon />
     {#if showingQrCode}
       <div
-        class="absolute -inset-1/2 z-10 bg-slate-100 border-slate-900 border-2 text-slate-900"
+        class="absolute -inset-1/2 z-10"
         on:click|stopPropagation={handleQrCodeDisplayClick}
         on:keypress={handleQrCodeDisplayClick}
         role="button"
         tabindex="0"
       >
-        QR CODE
+        <QrCode data={url.href} />
       </div>
     {/if}
   </TgButton>
