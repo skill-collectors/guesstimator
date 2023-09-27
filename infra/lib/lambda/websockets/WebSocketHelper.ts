@@ -34,6 +34,9 @@ export class WebSocketPublisher {
     }
     console.log(`Sending roomData to all users: ${JSON.stringify(roomData)}`);
     const sendMessageResults: Promise<void>[] = [];
+    roomData.users = roomData.users.filter(
+      (user) => user.connectionId !== undefined,
+    );
     for (const recipient of roomData.users) {
       if (recipient.connectionId !== undefined) {
         // parse/stringify to make a deep copy
