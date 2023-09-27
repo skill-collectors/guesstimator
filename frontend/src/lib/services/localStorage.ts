@@ -28,7 +28,7 @@ export function storeUserData(
   console.log(`Saving user data for ${roomId}: ${userKey}`);
   window.localStorage.setItem(
     `${roomKey(roomId)}:userData`,
-    JSON.stringify({ userKey, username }),
+    JSON.stringify({ userKey, username, updatedOn: new Date().toISOString() }),
   );
 }
 
