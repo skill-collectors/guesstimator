@@ -270,6 +270,31 @@ describe("DbService", () => {
       expect(params.UpdateExpression).toContain("username");
       expect(params.ExpressionAttributeValues?.[":username"]).toBe("");
     });
+    it("Clears the user's vote", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.kickUser("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("vote");
+      expect(params.ExpressionAttributeValues?.[":vote"]).toBe("");
+    });
+    it("Removes the connectionId", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.kickUser("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("REMOVE connectionId");
+    });
   });
   describe("deleteUser", () => {
     it("Deletes a USER item from the table", async () => {

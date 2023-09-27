@@ -202,12 +202,14 @@ export class DbService {
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
-        UpdateExpression: "SET updatedOn = :updatedOn, username = :username",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, username = :username, vote = :vote REMOVE connectionId",
         ExpressionAttributeValues: {
           ":pk": pk,
           ":sk": sk,
           ":updatedOn": updatedOn,
           ":username": "",
+          ":vote": "",
         },
       })
       .promise();
