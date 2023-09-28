@@ -189,6 +189,20 @@ describe("DbService", () => {
       expect(service.client.update).toHaveBeenCalled();
     });
   });
+  describe("reconnect", () => {
+    it("Sets the connection Id", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.reconnect("roomId", "userKey", "connectionId");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("connectionId");
+    });
+  });
   describe("vote", () => {
     it("Updates the database", async () => {
       // Given

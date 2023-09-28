@@ -57,6 +57,14 @@ export function createMainWebSocketFunction(
           "Missing body.action",
         );
       } else if (body.action === "ping") {
+        const roomId = body.data.roomId;
+        const roomData = await db.getRoom(roomId);
+        const user = roomData?.users.find(
+          (u) => u.userKey === body.data.userKey,
+        );
+        if (user && user.userKey) {
+          db.reconnect(roomId, user.userKey, event.requestContext.connectionId);
+        }
         await publisher.sendMessage(event.requestContext.connectionId, {
           status: 200,
           data: {

@@ -215,6 +215,29 @@ export class DbService {
       .promise();
     console.log(`Kicked user with key ${userKey} in room ${roomId}`);
   }
+  async reconnect(roomId: string, userKey: string, connectionId: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, username = :username, vote = :vote, connectionId = :connectionId",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":updatedOn": updatedOn,
+          ":username": "",
+          ":vote": "",
+          ":connectionId": connectionId,
+        },
+      })
+      .promise();
+    console.log(`Kicked user with key ${userKey} in room ${roomId}`);
+  }
   async kickUser(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;

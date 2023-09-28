@@ -69,7 +69,10 @@ export class GuesstimatorWebSocket {
     this.webSocket.send(
       JSON.stringify({
         action: "ping",
-        data: {},
+        data: {
+          roomId: this.roomId,
+          userKey: this.userKey,
+        },
       }),
     );
   }
