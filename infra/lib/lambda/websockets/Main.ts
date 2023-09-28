@@ -176,7 +176,7 @@ export function createMainWebSocketFunction(
               console.log(
                 `(${event.requestContext.connectionId}) Leaving room ${roomId}`,
               );
-              await db.kickUser(roomId, userKey);
+              await db.leave(roomId, userKey);
               await publishRoomData(roomId);
               break;
             }

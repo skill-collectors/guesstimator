@@ -256,6 +256,46 @@ describe("DbService", () => {
       expect(params.UpdateExpression).toContain("validSizes");
     });
   });
+  describe("leave", () => {
+    it("Updates a USER by setting 'username' to ''", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.leave("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("username");
+      expect(params.ExpressionAttributeValues?.[":username"]).toBe("");
+    });
+    it("Clears the user's vote", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.leave("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).toContain("vote");
+      expect(params.ExpressionAttributeValues?.[":vote"]).toBe("");
+    });
+    it("Does not remove the connectionId", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.leave("roomId", "userKey");
+
+      // Then
+      const params = vi.mocked(service.client.update).mock.calls[0][0];
+      expect(params.Key.SK).toBe("USER:userKey");
+      expect(params.UpdateExpression).not.toContain("REMOVE connectionId");
+    });
+  });
   describe("kickUser", () => {
     it("Kicks a USER by setting 'username' to ''", async () => {
       // Given

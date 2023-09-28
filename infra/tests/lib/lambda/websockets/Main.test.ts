@@ -25,6 +25,7 @@ describe("WebSocket Main function", () => {
     DbService.prototype.setCardsRevealed = vi.fn();
     DbService.prototype.setValidSizes = vi.fn();
     DbService.prototype.kickUser = vi.fn();
+    DbService.prototype.leave = vi.fn();
     return { DbService };
   });
   vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
@@ -454,7 +455,7 @@ describe("WebSocket Main function", () => {
     });
   });
   describe("leave", () => {
-    it("Kicks the user", async () => {
+    it("Calls leave to remove the user", async () => {
       // Given
       const roomId = "roomId";
       const userKey = "userKey";
@@ -474,7 +475,7 @@ describe("WebSocket Main function", () => {
       await main(event);
 
       // Then
-      expect(mockDbService.kickUser).toHaveBeenCalled();
+      expect(mockDbService.leave).toHaveBeenCalled();
     });
   });
 });
