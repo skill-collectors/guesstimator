@@ -127,12 +127,14 @@
   function onWebSocketError(this: WebSocket, event: Event) {
     console.log("WebSocket error");
     console.error(event);
+    pendingOperation = new PendingOperation(Operation.NOOP);
   }
 
   function onWebSocketClose(this: WebSocket, event: Event) {
     console.log("WebSocket closed");
     console.log(event);
     webSocketNeedsReconnect = true;
+    pendingOperation = new PendingOperation(Operation.NOOP);
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
