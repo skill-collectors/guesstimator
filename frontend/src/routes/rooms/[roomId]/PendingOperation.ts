@@ -68,15 +68,13 @@ export class PendingOperation {
     transformer: (user: User) => void,
   ) {
     if (currentValue === this.pendingValue) {
-      console.log(
-        `Pending ${this.operation.toString()} operation was already applied.`,
-      );
+      // Pending operation was already applied
       this.timeToLive = 0;
     } else {
       console.log(
         `Applying pending ${this.operation.toString()} operation: "${currentValue}" => ${
           this.pendingValue
-        }`,
+        } with TTL ${this.timeToLive}`,
       );
       transformer(user);
       user.username = this.pendingValue;
@@ -85,6 +83,5 @@ export class PendingOperation {
     if (this.timeToLive <= 0) {
       this.reset();
     }
-    console.log(`Pending TTL is now ${this.timeToLive}`);
   }
 }
