@@ -46,12 +46,15 @@
       currentUser?.username === ""
     ) {
       console.log("Current user got kicked. Rejoining...");
-      webSocket?.join(existingUserData.username);
       pendingOperation = new PendingOperation(
         Operation.JOIN,
         "",
         existingUserData.username
       );
+      if (currentUser) {
+        currentUser.username = existingUserData.username;
+      }
+      webSocket?.join(existingUserData.username);
     } else {
       localStorage.storeUserData(
         roomId,
