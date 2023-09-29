@@ -17,6 +17,7 @@
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
   import BottomHostControls from "./BottomHostControls.svelte";
+  import { Operation, PendingOperation } from "./PendingOperation";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -28,7 +29,7 @@
 
   let loadingStatus = "";
 
-  let isJoiningOrLeaving = false;
+  let pendingOperation = new PendingOperation(Operation.NOOP);
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
   $: isJoined = currentUser === undefined || currentUser.username.length === 0;
@@ -46,7 +47,11 @@
     ) {
       console.log("Current user got kicked. Rejoining...");
       webSocket?.join(existingUserData.username);
-      isJoiningOrLeaving = true;
+      pendingOperation = new PendingOperation(
+        Operation.JOIN,
+        "",
+        existingUserData.username
+      );
     } else {
       localStorage.storeUserData(
         roomId,
@@ -112,7 +117,7 @@
         console.log("<< PONG");
       } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
-        isJoiningOrLeaving = false;
+        roomData = pendingOperation.apply(roomData);
       } else {
         console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
@@ -132,11 +137,20 @@
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
     webSocket?.join(e.detail.username);
-    isJoiningOrLeaving = true;
+    pendingOperation = new PendingOperation(
+      Operation.JOIN,
+      "",
+      e.detail.username
+    );
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
     if (currentUser !== undefined) {
+      pendingOperation = new PendingOperation(
+        Operation.VOTE,
+        currentUser.vote,
+        e.detail.vote
+      );
       currentUser.vote = e.detail.vote;
       webSocket?.vote(e.detail.vote);
     }
@@ -144,10 +158,14 @@
 
   function handleLeave() {
     if (currentUser !== undefined) {
+      pendingOperation = new PendingOperation(
+        Operation.LEAVE,
+        currentUser.username,
+        ""
+      );
       currentUser.username = "";
       localStorage.storeUserData(roomId, currentUser.userKey);
       webSocket?.leave();
-      isJoiningOrLeaving = true;
     }
   }
 
@@ -234,7 +252,7 @@
   {/if}
   <section id="userControls" class="mt-32">
     {#if isJoined}
-      {#if isJoiningOrLeaving === true}
+      {#if pendingOperation.operation !== Operation.NOOP}
         <Loader />
       {:else}
         <TgParagraph
