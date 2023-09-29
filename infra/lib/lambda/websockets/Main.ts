@@ -62,13 +62,20 @@ export function createMainWebSocketFunction(
         const user = roomData?.users.find(
           (u) => u.userKey === body.data.userKey,
         );
-        if (user && user.userKey) {
+        let reconnected = false;
+        if (
+          user &&
+          user.userKey &&
+          event.requestContext.connectionId != user.connectionId
+        ) {
           db.reconnect(roomId, user.userKey, event.requestContext.connectionId);
+          reconnected = true;
         }
         await publisher.sendMessage(event.requestContext.connectionId, {
           status: 200,
           data: {
             type: "PONG",
+            reconnected,
           },
         });
       } else if (typeof body.data !== "object") {
