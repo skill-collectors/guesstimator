@@ -136,8 +136,12 @@
   function onWebSocketClose(this: WebSocket, event: Event) {
     console.log("WebSocket closed");
     console.log(event);
-    webSocketNeedsReconnect = true;
     pendingOperation = new PendingOperation(Operation.NOOP);
+    if (document.hidden) {
+      webSocketNeedsReconnect = true;
+    } else {
+      connectWebSocket();
+    }
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
