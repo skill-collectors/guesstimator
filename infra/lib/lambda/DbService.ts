@@ -213,7 +213,7 @@ export class DbService {
         },
       })
       .promise();
-    console.log(`Kicked user with key ${userKey} in room ${roomId}`);
+    console.log(`User with key ${userKey} in room ${roomId} left`);
   }
   async reconnect(roomId: string, userKey: string, connectionId: string) {
     const pk = `ROOM:${roomId}`;
@@ -236,7 +236,7 @@ export class DbService {
         },
       })
       .promise();
-    console.log(`Kicked user with key ${userKey} in room ${roomId}`);
+    console.log(`Reconnected user with key ${userKey} in room ${roomId}`);
   }
   async kickUser(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
