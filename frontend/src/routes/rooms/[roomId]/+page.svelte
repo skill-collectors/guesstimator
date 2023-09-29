@@ -138,12 +138,15 @@
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
-    webSocket?.join(e.detail.username);
     pendingOperation = new PendingOperation(
       Operation.JOIN,
       "",
       e.detail.username
     );
+    if (currentUser) {
+      currentUser.username = e.detail.username;
+    }
+    webSocket?.join(e.detail.username);
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
@@ -254,14 +257,10 @@
   {/if}
   <section id="userControls" class="mt-32">
     {#if isJoined}
-      {#if pendingOperation.operation !== Operation.NOOP}
-        <Loader />
-      {:else}
-        <TgParagraph
-          >If you'd like to vote, enter a name and join the room:</TgParagraph
-        >
-        <NewUserForm on:submit={handleNewUser} />
-      {/if}
+      <TgParagraph
+        >If you'd like to vote, enter a name and join the room:</TgParagraph
+      >
+      <NewUserForm on:submit={handleNewUser} />
     {:else if currentUser}
       {#if roomData?.isRevealed === true}
         <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
