@@ -31,10 +31,14 @@ We use DynamoDB, which is "schemaless" meaning the fields are not formally defin
 ## Operations
 
 - **Create room** generates ID/hostKey and inserts `ROOM:[roomId]` with default sizes (`1 2 3 5 8 13 20 ? ∞`) and `isVoteRevealed=false`.
-- **Update sizes** updates the value of `validSizes` for the given room key
-- **Join room** Generates a `userKey` and creates a USER row with the given `userName`
-- **Vote** Upserts VOTE for the given `userKey`
-- **Reveal cards** Sets `isVoteRevealed` to `true` which allows users to see the value of `currentVote` for all users.
+- **Subscribe** Creates a `USER:[userKey]` item by generating a `userKey` and `userId` for the user and stores them with the `connectionId` from the caller.
+- **Join room** Sets the `username` on the user with the given `userKey`.
+- **Leave room** Clears the `username` on the user with the given `userKey`.
+- **Set valid sizes** updates the value of `validSizes` for the given room key
+- **Reconnect** Resets the `connectionId` for the user with the given `userKey`. Also clears the username and vote.
+- **Kick user** Clears the `username`, `vote`, and `connectionId` for the user with the given `userKey`.
+- **Set cards revealed** Sets `isVoteRevealed` to a given (boolean) value which shows or hides the value of `vote` for all users.
+- **Vote** Sets the `vote` for the user with the given `userKey`
 - **Reset** Sets `isVoteRevealed` to `false` and deletes all VOTES rows
 - **Delete user** Deletes the USER item for the given `userKey`
 - **Delete room** Deletes all rows with the `ROOM[roomId]` prefix
