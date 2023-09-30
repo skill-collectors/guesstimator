@@ -17,6 +17,7 @@
   import VoteControls from "./VoteControls.svelte";
   import NewUserForm from "./NewUserForm.svelte";
   import BottomHostControls from "./BottomHostControls.svelte";
+  import { Operation, PendingOperation } from "./PendingOperation";
 
   let notFound = false;
   const roomId = $page.params.roomId;
@@ -28,7 +29,7 @@
 
   let loadingStatus = "";
 
-  let isJoiningOrLeaving = false;
+  let pendingOperation = new PendingOperation(Operation.NOOP);
 
   $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
   $: isJoined = currentUser === undefined || currentUser.username.length === 0;
@@ -45,8 +46,15 @@
       currentUser?.username === ""
     ) {
       console.log("Current user got kicked. Rejoining...");
+      pendingOperation = new PendingOperation(
+        Operation.JOIN,
+        "",
+        existingUserData.username
+      );
+      if (currentUser) {
+        currentUser.username = existingUserData.username;
+      }
       webSocket?.join(existingUserData.username);
-      isJoiningOrLeaving = true;
     } else {
       localStorage.storeUserData(
         roomId,
@@ -112,7 +120,7 @@
         console.log("<< PONG");
       } else if (rooms.isRoom(message.data)) {
         roomData = message.data;
-        isJoiningOrLeaving = false;
+        roomData = pendingOperation.apply(roomData);
       } else {
         console.log(`Could not handle message: ${JSON.stringify(message)}`);
       }
@@ -122,21 +130,39 @@
   function onWebSocketError(this: WebSocket, event: Event) {
     console.log("WebSocket error");
     console.error(event);
+    pendingOperation = new PendingOperation(Operation.NOOP);
   }
 
   function onWebSocketClose(this: WebSocket, event: Event) {
     console.log("WebSocket closed");
     console.log(event);
-    webSocketNeedsReconnect = true;
+    pendingOperation = new PendingOperation(Operation.NOOP);
+    if (document.hidden) {
+      webSocketNeedsReconnect = true;
+    } else {
+      connectWebSocket();
+    }
   }
 
   function handleNewUser(e: CustomEvent<{ username: string }>) {
+    pendingOperation = new PendingOperation(
+      Operation.JOIN,
+      "",
+      e.detail.username
+    );
+    if (currentUser) {
+      currentUser.username = e.detail.username;
+    }
     webSocket?.join(e.detail.username);
-    isJoiningOrLeaving = true;
   }
 
   function handleVote(e: CustomEvent<{ vote: string }>) {
     if (currentUser !== undefined) {
+      pendingOperation = new PendingOperation(
+        Operation.VOTE,
+        currentUser.vote,
+        e.detail.vote
+      );
       currentUser.vote = e.detail.vote;
       webSocket?.vote(e.detail.vote);
     }
@@ -144,10 +170,14 @@
 
   function handleLeave() {
     if (currentUser !== undefined) {
+      pendingOperation = new PendingOperation(
+        Operation.LEAVE,
+        currentUser.username,
+        ""
+      );
       currentUser.username = "";
       localStorage.storeUserData(roomId, currentUser.userKey);
       webSocket?.leave();
-      isJoiningOrLeaving = true;
     }
   }
 
@@ -234,14 +264,10 @@
   {/if}
   <section id="userControls" class="mt-32">
     {#if isJoined}
-      {#if isJoiningOrLeaving === true}
-        <Loader />
-      {:else}
-        <TgParagraph
-          >If you'd like to vote, enter a name and join the room:</TgParagraph
-        >
-        <NewUserForm on:submit={handleNewUser} />
-      {/if}
+      <TgParagraph
+        >If you'd like to vote, enter a name and join the room:</TgParagraph
+      >
+      <NewUserForm on:submit={handleNewUser} />
     {:else if currentUser}
       {#if roomData?.isRevealed === true}
         <TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>

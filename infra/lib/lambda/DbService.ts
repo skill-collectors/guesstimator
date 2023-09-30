@@ -193,6 +193,51 @@ export class DbService {
     console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return { username };
   }
+  async leave(roomId: string, userKey: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, username = :username, vote = :vote",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":updatedOn": updatedOn,
+          ":username": "",
+          ":vote": "",
+        },
+      })
+      .promise();
+    console.log(`User with key ${userKey} in room ${roomId} left`);
+  }
+  async reconnect(roomId: string, userKey: string, connectionId: string) {
+    const pk = `ROOM:${roomId}`;
+    const sk = `USER:${userKey}`;
+    const updatedOn = new Date().toISOString();
+    await this.client
+      .update({
+        TableName: this.tableName,
+        Key: { PK: pk, SK: sk },
+        ConditionExpression: "PK = :pk AND SK = :sk",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, username = :username, vote = :vote, connectionId = :connectionId",
+        ExpressionAttributeValues: {
+          ":pk": pk,
+          ":sk": sk,
+          ":updatedOn": updatedOn,
+          ":username": "",
+          ":vote": "",
+          ":connectionId": connectionId,
+        },
+      })
+      .promise();
+    console.log(`Reconnected user with key ${userKey} in room ${roomId}`);
+  }
   async kickUser(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
@@ -202,12 +247,14 @@ export class DbService {
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
-        UpdateExpression: "SET updatedOn = :updatedOn, username = :username",
+        UpdateExpression:
+          "SET updatedOn = :updatedOn, username = :username, vote = :vote REMOVE connectionId",
         ExpressionAttributeValues: {
           ":pk": pk,
           ":sk": sk,
           ":updatedOn": updatedOn,
           ":username": "",
+          ":vote": "",
         },
       })
       .promise();

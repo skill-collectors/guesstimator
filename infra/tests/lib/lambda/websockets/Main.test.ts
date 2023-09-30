@@ -25,6 +25,8 @@ describe("WebSocket Main function", () => {
     DbService.prototype.setCardsRevealed = vi.fn();
     DbService.prototype.setValidSizes = vi.fn();
     DbService.prototype.kickUser = vi.fn();
+    DbService.prototype.leave = vi.fn();
+    DbService.prototype.reconnect = vi.fn();
     return { DbService };
   });
   vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
@@ -187,6 +189,35 @@ describe("WebSocket Main function", () => {
       expect(
         mockWebSocketPublisher.sendMessage.mock.calls[0][1].data.type,
       ).toEqual("PONG");
+    });
+    it("Reconnects user if possible", async () => {
+      // Given
+      const userKey = "abc123";
+
+      const event: APIGatewayProxyWebsocketEventV2 = stubWebSocketEvent({
+        requestContext: {
+          routeKey: "$default",
+          eventType: "MESSAGE",
+        },
+        body: JSON.stringify({
+          action: "ping",
+          data: {
+            userKey,
+          },
+        }),
+      });
+      mockDbService.getRoom.mockResolvedValue({
+        roomId: "roomId",
+        validSizes: ["1"],
+        isRevealed: false,
+        users: [{ userKey, userId: "123abc", hasVote: false }],
+      });
+
+      // When
+      await main(event);
+
+      // Then
+      expect(mockDbService.reconnect).toHaveBeenCalled();
     });
   });
 
@@ -454,7 +485,7 @@ describe("WebSocket Main function", () => {
     });
   });
   describe("leave", () => {
-    it("Kicks the user", async () => {
+    it("Calls leave to remove the user", async () => {
       // Given
       const roomId = "roomId";
       const userKey = "userKey";
@@ -474,7 +505,7 @@ describe("WebSocket Main function", () => {
       await main(event);
 
       // Then
-      expect(mockDbService.kickUser).toHaveBeenCalled();
+      expect(mockDbService.leave).toHaveBeenCalled();
     });
   });
 });

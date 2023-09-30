@@ -57,10 +57,25 @@ export function createMainWebSocketFunction(
           "Missing body.action",
         );
       } else if (body.action === "ping") {
+        const roomId = body.data.roomId;
+        const roomData = await db.getRoom(roomId);
+        const user = roomData?.users.find(
+          (u) => u.userKey === body.data.userKey,
+        );
+        let reconnected = false;
+        if (
+          user &&
+          user.userKey &&
+          event.requestContext.connectionId != user.connectionId
+        ) {
+          db.reconnect(roomId, user.userKey, event.requestContext.connectionId);
+          reconnected = true;
+        }
         await publisher.sendMessage(event.requestContext.connectionId, {
           status: 200,
           data: {
             type: "PONG",
+            reconnected,
           },
         });
       } else if (typeof body.data !== "object") {
@@ -176,7 +191,7 @@ export function createMainWebSocketFunction(
               console.log(
                 `(${event.requestContext.connectionId}) Leaving room ${roomId}`,
               );
-              await db.kickUser(roomId, userKey);
+              await db.leave(roomId, userKey);
               await publishRoomData(roomId);
               break;
             }

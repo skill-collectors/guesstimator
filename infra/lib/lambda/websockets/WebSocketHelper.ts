@@ -32,8 +32,11 @@ export class WebSocketPublisher {
     if (roomData == null) {
       return new PublishRoomDataResult([]);
     }
-    console.log(JSON.stringify(roomData));
-    const goneUserKeys: string[] = [];
+    console.log(`Sending roomData to all users: ${JSON.stringify(roomData)}`);
+    const sendMessageResults: Promise<void>[] = [];
+    roomData.users = roomData.users.filter(
+      (user) => user.connectionId !== undefined,
+    );
     for (const recipient of roomData.users) {
       if (recipient.connectionId !== undefined) {
         // parse/stringify to make a deep copy
@@ -51,20 +54,32 @@ export class WebSocketPublisher {
             }
           }
         }
-        try {
-          await this.sendMessage(recipient.connectionId, {
+        sendMessageResults.push(
+          this.sendMessage(recipient.connectionId, {
             status: 200,
             data: recipientData,
-          });
-        } catch (err) {
-          if (
-            err instanceof ConnectionGoneError &&
-            recipient.userKey !== undefined
-          ) {
-            goneUserKeys.push(recipient.userKey);
-          } else {
-            console.log(`Failed to send room data to ${recipient.userKey}`);
+          }),
+        );
+      }
+    }
+    const promiseResults = await Promise.allSettled(sendMessageResults);
+    const goneUserKeys: string[] = [];
+    for (const result of promiseResults) {
+      if (result.status === "rejected") {
+        if (result.reason instanceof ConnectionGoneError) {
+          const goneUser = roomData.users.find(
+            (user) => user.connectionId === result.reason.connectionId,
+          );
+          if (goneUser?.userKey) {
+            goneUserKeys.push(goneUser.userKey);
           }
+        } else {
+          // Hopefully this never happens
+          console.log(
+            `Unknown failure sending message: ${
+              result.reason
+            }: ${JSON.stringify(result.reason)}`,
+          );
         }
       }
     }
