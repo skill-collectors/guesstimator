@@ -33,7 +33,7 @@
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-svelte": "^2.33.2",
-    "happy-dom": "^12.1.5",
+    "happy-dom": "^12.8.0",
     "prettier": "^3.0.0",
     "prettier-plugin-svelte": "^3.0.3",
     "svelte": "^4.2.1",
