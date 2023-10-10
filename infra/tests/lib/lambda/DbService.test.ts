@@ -46,6 +46,8 @@ describe("DbService", () => {
           }),
         ),
     }));
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
     client.prototype.scan = vi.fn(() => ({
       promise: () =>
         new Promise((resolve) =>
@@ -57,6 +59,7 @@ describe("DbService", () => {
                 hostKey: "def",
                 isRevealed: false,
                 validSizes: "1 2 3",
+                updatedOn: oneMonthAgo.toISOString(),
               },
               {
                 PK: "ROOM:abc",
@@ -64,6 +67,7 @@ describe("DbService", () => {
                 userId: "jkl",
                 username: "alice",
                 vote: "1",
+                updatedOn: oneMonthAgo.toISOString(),
               },
             ],
           }),
@@ -373,6 +377,19 @@ describe("DbService", () => {
       // Then
       expect(service.client.query).toHaveBeenCalled();
       expect(service.client.batchWrite).toHaveBeenCalled();
+    });
+  });
+  describe("deleteUsersRooms", () => {
+    it("Deletes users older than a month ago", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.deleteStaleUsers();
+
+      // Then
+      expect(service.client.scan).toHaveBeenCalled();
+      expect(service.client.delete).toHaveBeenCalled();
     });
   });
   describe("deleteStaleRooms", () => {

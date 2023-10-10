@@ -294,12 +294,16 @@ export class DbService {
       if (item.SK === "ROOM") {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
-        updateOperation.push(item);
-      } else if (item.SK.startsWith("USER:") && isRevealed == false) {
+        await updateOperation.push(item);
+      } else if (
+        item.SK.startsWith("USER:") &&
+        item.vote != "" &&
+        isRevealed == false
+      ) {
         // clear votes when hiding cards
         item.vote = "";
         item.updatedOn = updatedOn.toISOString();
-        updateOperation.push(item);
+        await updateOperation.push(item);
       }
     });
     await updateOperation.flush();
@@ -355,18 +359,47 @@ export class DbService {
     await deleteOperation.flush();
   }
 
+  async deleteStaleUsers() {
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - 1);
+    const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
+    console.log(`Scanning for users not updated since ${cutoffDateString}`);
+
+    const queryParams = {
+      TableName: this.tableName,
+      ProjectionExpression: "PK, SK",
+      // ISO dates can be sorted/compared alphanumerically
+      FilterExpression: "begins_with(SK, :sk) AND updatedOn < :cutoffDate",
+      ExpressionAttributeValues: {
+        ":sk": "USER:",
+        ":cutoffDate": cutoffDateString,
+      },
+    };
+
+    let count = 0;
+    await scan(this.client, queryParams, async (item) => {
+      const roomId = item.PK.substring("ROOM:".length);
+      const userKey = item.SK.substring("USER:").length;
+      await this.deleteUser(roomId, userKey);
+      count++;
+    });
+
+    return count;
+  }
+
   async deleteStaleRooms() {
     const cutoffDate = new Date();
     cutoffDate.setMonth(cutoffDate.getMonth() - 1);
     const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
-    console.log(`Scanning for items before ${cutoffDateString}`);
+    console.log(`Scanning for rooms not updated since ${cutoffDateString}`);
 
     const queryParams = {
       TableName: this.tableName,
-      // ISO dates can be sorted/compared alphanumerically
-      FilterExpression: "updatedOn < :cutoffDate",
       ProjectionExpression: "PK",
+      // ISO dates can be sorted/compared alphanumerically
+      FilterExpression: "SK = :sk AND updatedOn < :cutoffDate",
       ExpressionAttributeValues: {
+        ":sk": "ROOM",
         ":cutoffDate": cutoffDateString,
       },
     };
