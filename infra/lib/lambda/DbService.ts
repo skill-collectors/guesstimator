@@ -295,7 +295,11 @@ export class DbService {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
         await updateOperation.push(item);
-      } else if (item.SK.startsWith("USER:") && isRevealed == false) {
+      } else if (
+        item.SK.startsWith("USER:") &&
+        item.vote != "" &&
+        isRevealed == false
+      ) {
         // clear votes when hiding cards
         item.vote = "";
         item.updatedOn = updatedOn.toISOString();
