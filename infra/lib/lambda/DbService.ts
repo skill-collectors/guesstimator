@@ -363,14 +363,15 @@ export class DbService {
     const cutoffDate = new Date();
     cutoffDate.setMonth(cutoffDate.getMonth() - 1);
     const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
-    console.log(`Scanning for items before ${cutoffDateString}`);
+    console.log(`Scanning for rooms not updated since ${cutoffDateString}`);
 
     const queryParams = {
       TableName: this.tableName,
-      // ISO dates can be sorted/compared alphanumerically
-      FilterExpression: "updatedOn < :cutoffDate",
       ProjectionExpression: "PK",
+      // ISO dates can be sorted/compared alphanumerically
+      FilterExpression: "SK = :sk AND updatedOn < :cutoffDate",
       ExpressionAttributeValues: {
+        ":sk": "ROOM",
         ":cutoffDate": cutoffDateString,
       },
     };
