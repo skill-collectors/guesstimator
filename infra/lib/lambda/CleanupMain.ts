@@ -6,9 +6,16 @@ export function createStaleRoomCleanupFunction(
 ) {
   return async function () {
     const tableName = tableNameOutput.get();
-    console.log(`Cleaning up stale rooms in ${tableName}`);
     const db = new DbService(tableName);
-    const count = await db.deleteStaleRooms();
-    console.log(`Cleanup complete. Removed ${count} stale rooms`);
+
+    console.log(`Cleaning up stale rooms in ${tableName}`);
+    const roomCount = await db.deleteStaleRooms();
+    console.log(`Removed ${roomCount} stale rooms`);
+
+    console.log(`Cleaning up stale users in ${tableName}`);
+    const userCount = await db.deleteStaleUsers();
+    console.log(`Removed ${userCount} stale users`);
+
+    console.log("Cleanup complete!");
   };
 }
