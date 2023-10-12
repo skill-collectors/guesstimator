@@ -103,39 +103,41 @@
 
     if (webSocket === undefined) {
       // It would be really weird if this happend.
-      console.log("Got a message, but the websocket is gone.");
+      console.error("Got a message, but the websocket is gone.");
       return;
     }
     const json = event.data;
-    console.log(`Recieved message: ${json}`);
     if (json !== undefined && typeof json === "string" && json.length > 0) {
       const message = JSON.parse(json);
 
-      if (message.status !== 200) {
-        console.error(message);
-        if (message.status === 404) {
-          notFound = true;
-        }
-      } else if (message.data.type === "PONG") {
+      if (message?.data?.type === "PONG") {
         console.log("<< PONG");
-      } else if (rooms.isRoom(message.data)) {
-        roomData = message.data;
-        roomData = pendingOperation.apply(roomData);
       } else {
-        console.log(`Could not handle message: ${JSON.stringify(message)}`);
+        console.debug("Got message: ", message);
+        if (message.status !== 200) {
+          console.error(message);
+          if (message.status === 404) {
+            notFound = true;
+          }
+        } else if (rooms.isRoom(message.data)) {
+          roomData = message.data;
+          roomData = pendingOperation.apply(roomData);
+        } else {
+          console.error("Could not handle message", message);
+        }
       }
+    } else {
+      console.error("Unexpected event", json);
     }
   }
 
   function onWebSocketError(this: WebSocket, event: Event) {
-    console.log("WebSocket error");
-    console.error(event);
+    console.error("WebSocket error", event);
     pendingOperation = new PendingOperation(Operation.NOOP);
   }
 
   function onWebSocketClose(this: WebSocket, event: Event) {
-    console.log("WebSocket closed");
-    console.log(event);
+    console.log("WebSocket closed", event);
     pendingOperation = new PendingOperation(Operation.NOOP);
     if (document.hidden) {
       webSocketNeedsReconnect = true;

@@ -38,8 +38,9 @@ export function getUserData(roomId: string) {
     console.log(`No user data for ${roomId}`);
     return {};
   } else {
-    console.log(`Loaded local user data for ${roomId}: ${result}`);
-    return JSON.parse(result);
+    const parsed = JSON.parse(result);
+    console.log(`Loaded local user data for ${roomId}`, parsed);
+    return parsed;
   }
 }
 
