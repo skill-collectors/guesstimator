@@ -223,16 +223,19 @@
 
   function handleVisibilityChange() {
     if (document.hidden) {
-      if (clearReloadInterval !== undefined) {
-        window.clearInterval(clearReloadInterval);
-      }
+      window.clearTimeout(pingTimeout);
+      window.clearInterval(clearReloadInterval);
     } else {
-      if (roomData !== null) {
-        ping();
+      if (webSocketNeedsReconnect) {
+        connectWebSocket();
+      } else {
+        if (roomData !== null) {
+          ping();
+        }
+        clearReloadInterval = window.setInterval(() => {
+          ping();
+        }, 60_000); // every minute
       }
-      clearReloadInterval = window.setInterval(() => {
-        ping();
-      }, 60_000); // every minute
     }
   }
   onMount(() => {
