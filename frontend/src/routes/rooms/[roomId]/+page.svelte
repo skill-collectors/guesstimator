@@ -23,6 +23,9 @@
   const roomId = $page.params.roomId;
   const url = $page.url;
 
+  let clearReloadInterval: number;
+  let pingTimeout: number | undefined = undefined;
+
   let webSocket: GuesstimatorWebSocket | undefined;
   let webSocketNeedsReconnect = false;
   let roomData: Room | null = null;
@@ -111,6 +114,7 @@
       const message = JSON.parse(json);
 
       if (message?.data?.type === "PONG") {
+        window.clearTimeout(pingTimeout);
         console.log("<< PONG");
       } else {
         console.debug("Got message: ", message);
@@ -209,7 +213,14 @@
     }
   }
 
-  let clearReloadInterval: number;
+  function ping() {
+    webSocket?.ping();
+    pingTimeout = window.setTimeout(() => {
+      console.warn("PING timed out. Reconnecting...");
+      connectWebSocket();
+    }, 3000); // Wait 3 seconds
+  }
+
   function handleVisibilityChange() {
     if (document.hidden) {
       if (clearReloadInterval !== undefined) {
@@ -217,11 +228,11 @@
       }
     } else {
       if (roomData !== null) {
-        webSocket?.ping();
+        ping();
       }
       clearReloadInterval = window.setInterval(() => {
-        webSocket?.ping();
-      }, 300_000); // every 5 minutes
+        ping();
+      }, 60_000); // every minute
     }
   }
   onMount(() => {
