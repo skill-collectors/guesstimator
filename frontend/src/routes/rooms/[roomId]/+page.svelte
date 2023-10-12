@@ -115,7 +115,7 @@
 
       if (message?.data?.type === "PONG") {
         window.clearTimeout(pingTimeout);
-        console.log("<< PONG");
+        console.log("<< PONG!");
       } else {
         console.debug("Got message: ", message);
         if (message.status !== 200) {
