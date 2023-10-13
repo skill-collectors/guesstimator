@@ -131,7 +131,7 @@
         }
       }
     } else {
-      console.error("Unexpected event", json);
+      console.error("Unexpected event", event);
     }
   }
 
