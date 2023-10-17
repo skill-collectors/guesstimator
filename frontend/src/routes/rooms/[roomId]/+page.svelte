@@ -218,7 +218,7 @@
     pingTimeout = window.setTimeout(() => {
       console.warn("PING timed out. Reconnecting...");
       connectWebSocket();
-    }, 3000); // Wait 3 seconds
+    }, 5_000); // Wait 5 seconds before reconnecting
   }
 
   function handleVisibilityChange() {
