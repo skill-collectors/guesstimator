@@ -130,8 +130,8 @@
           console.error("Could not handle message", message);
         }
       }
-    } else {
-      console.error("Unexpected event", event);
+    } else if (json === undefined) {
+      console.error("No data on event", event);
     }
   }
 
