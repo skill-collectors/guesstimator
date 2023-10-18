@@ -23,6 +23,9 @@
   const roomId = $page.params.roomId;
   const url = $page.url;
 
+  let clearReloadInterval: number;
+  let pingTimeout: number | undefined = undefined;
+
   let webSocket: GuesstimatorWebSocket | undefined;
   let webSocketNeedsReconnect = false;
   let roomData: Room | null = null;
@@ -103,39 +106,42 @@
 
     if (webSocket === undefined) {
       // It would be really weird if this happend.
-      console.log("Got a message, but the websocket is gone.");
+      console.error("Got a message, but the websocket is gone.");
       return;
     }
     const json = event.data;
-    console.log(`Recieved message: ${json}`);
     if (json !== undefined && typeof json === "string" && json.length > 0) {
       const message = JSON.parse(json);
 
-      if (message.status !== 200) {
-        console.error(message);
-        if (message.status === 404) {
-          notFound = true;
-        }
-      } else if (message.data.type === "PONG") {
-        console.log("<< PONG");
-      } else if (rooms.isRoom(message.data)) {
-        roomData = message.data;
-        roomData = pendingOperation.apply(roomData);
+      if (message?.data?.type === "PONG") {
+        window.clearTimeout(pingTimeout);
+        console.log("<< PONG!");
       } else {
-        console.log(`Could not handle message: ${JSON.stringify(message)}`);
+        console.debug("Got message: ", message);
+        if (message.status !== 200) {
+          console.error(message);
+          if (message.status === 404) {
+            notFound = true;
+          }
+        } else if (rooms.isRoom(message.data)) {
+          roomData = message.data;
+          roomData = pendingOperation.apply(roomData);
+        } else {
+          console.error("Could not handle message", message);
+        }
       }
+    } else if (json === undefined) {
+      console.error("No data on event", event);
     }
   }
 
   function onWebSocketError(this: WebSocket, event: Event) {
-    console.log("WebSocket error");
-    console.error(event);
+    console.error("WebSocket error", event);
     pendingOperation = new PendingOperation(Operation.NOOP);
   }
 
   function onWebSocketClose(this: WebSocket, event: Event) {
-    console.log("WebSocket closed");
-    console.log(event);
+    console.log("WebSocket closed", event);
     pendingOperation = new PendingOperation(Operation.NOOP);
     if (document.hidden) {
       webSocketNeedsReconnect = true;
@@ -207,19 +213,29 @@
     }
   }
 
-  let clearReloadInterval: number;
+  function ping() {
+    webSocket?.ping();
+    pingTimeout = window.setTimeout(() => {
+      console.warn("PING timed out. Reconnecting...");
+      connectWebSocket();
+    }, 5_000); // Wait 5 seconds before reconnecting
+  }
+
   function handleVisibilityChange() {
     if (document.hidden) {
-      if (clearReloadInterval !== undefined) {
-        window.clearInterval(clearReloadInterval);
-      }
+      window.clearTimeout(pingTimeout);
+      window.clearInterval(clearReloadInterval);
     } else {
-      if (roomData !== null) {
-        webSocket?.ping();
+      if (webSocketNeedsReconnect) {
+        connectWebSocket();
+      } else {
+        if (roomData !== null) {
+          ping();
+        }
+        clearReloadInterval = window.setInterval(() => {
+          ping();
+        }, 60_000); // every minute
       }
-      clearReloadInterval = window.setInterval(() => {
-        webSocket?.ping();
-      }, 300_000); // every 5 minutes
     }
   }
   onMount(() => {
