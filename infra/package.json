@@ -1,7 +1,8 @@
 {
   "name": "guesstimator-infra",
   "scripts": {
-    "check-all": "npm run lint &&  npm run test",
+    "check-all": "npm run check-types && npm run lint &&  npm run test",
+    "check-types": "tsc --noEmit",
     "format": "prettier --ignore-path .gitignore --write .",
     "lint": "prettier --ignore-path .gitignore --check . && eslint --ignore-path .gitignore .",
     "test": "vitest run",
