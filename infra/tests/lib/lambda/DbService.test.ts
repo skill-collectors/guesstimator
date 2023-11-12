@@ -4,7 +4,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { DbService } from "../../../lib/lambda/DbService";
 
 describe("DbService", () => {
-  vi.mock("@pulumi/aws", () => {
+  vi.mock("aws-sdk/clients/dynamodb", () => {
     const client = vi.fn();
     client.prototype.put = vi.fn(() => ({
       promise: () => new Promise((resolve) => resolve(1)),
@@ -83,11 +83,7 @@ describe("DbService", () => {
       promise: () => new Promise((resolve) => resolve(true)),
     }));
     return {
-      sdk: {
-        DynamoDB: {
-          DocumentClient: client,
-        },
-      },
+      DocumentClient: client,
     };
   });
   const tableName = "TableName";

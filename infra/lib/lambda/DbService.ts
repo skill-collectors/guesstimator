@@ -1,6 +1,5 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { generateId } from "../utils/KeyGenerator";
-import * as aws from "@pulumi/aws";
 import {
   deleteBatchOperation,
   updateBatchOperation,
@@ -37,7 +36,7 @@ export class DbService {
   tableName: string;
 
   constructor(tableName: string) {
-    this.client = new aws.sdk.DynamoDB.DocumentClient();
+    this.client = new DocumentClient();
 
     this.tableName = tableName;
   }
