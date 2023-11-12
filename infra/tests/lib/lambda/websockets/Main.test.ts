@@ -13,6 +13,7 @@ import { DbService } from "../../../../lib/lambda/DbService";
 import { createMainWebSocketFunction } from "../../../../lib/lambda/websockets/Main";
 import { WebSocketPublisher } from "../../../../lib/lambda/websockets/WebSocketHelper";
 import { stubWebSocketEvent } from "../Stubs";
+import { fail } from "assert";
 
 describe("WebSocket Main function", () => {
   vi.mock("../../../../lib/lambda/DbService", () => {
@@ -186,9 +187,12 @@ describe("WebSocket Main function", () => {
 
       // Then
       console.log(response);
-      expect(
-        mockWebSocketPublisher.sendMessage.mock.calls[0][1].data.type,
-      ).toEqual("PONG");
+      const message = mockWebSocketPublisher.sendMessage.mock.calls[0][1];
+      if (message.data !== undefined && "type" in message.data) {
+        expect(message.data.type).toEqual("PONG");
+      } else {
+        fail("Missing 'message.data.type' in PONG response");
+      }
     });
     it("Reconnects user if possible", async () => {
       // Given

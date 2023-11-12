@@ -3,6 +3,16 @@ import ApiGatewayManagementApi = require("aws-sdk/clients/apigatewaymanagementap
 import { RoomData } from "../DbService";
 import { ConnectionGoneError } from "./ConnectionGoneError";
 
+export interface PongWebSocketData {
+  type: "PONG";
+  reconnected: boolean;
+}
+export interface WebSocketMessage {
+  status: number;
+  error?: string;
+  data?: RoomData | PongWebSocketData;
+}
+
 export class PublishRoomDataResult {
   goneUserKeys;
 
@@ -86,7 +96,7 @@ export class WebSocketPublisher {
     return new PublishRoomDataResult(goneUserKeys);
   }
 
-  async sendMessage(connectionId: string, message: object) {
+  async sendMessage(connectionId: string, message: WebSocketMessage) {
     const api = new ApiGatewayManagementApi({
       endpoint: this.endpoint,
     });

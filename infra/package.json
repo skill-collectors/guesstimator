@@ -1,7 +1,8 @@
 {
   "name": "guesstimator-infra",
   "scripts": {
-    "check-all": "npm run lint &&  npm run test",
+    "check-all": "npm run check-types && npm run lint &&  npm run test",
+    "check-types": "tsc --noEmit",
     "format": "prettier --ignore-path .gitignore --write .",
     "lint": "prettier --ignore-path .gitignore --check . && eslint --ignore-path .gitignore .",
     "test": "vitest run",
@@ -9,7 +10,7 @@
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.114",
+    "@types/aws-lambda": "^8.10.126",
     "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.7.4",
@@ -23,6 +24,6 @@
     "@aws-sdk/client-dynamodb": "^3.382.0",
     "@pulumi/aws": "^5.35.0",
     "@pulumi/aws-apigateway": "^1.0.0",
-    "@pulumi/pulumi": "^3.86.0"
+    "@pulumi/pulumi": "^3.92.0"
   }
 }
