@@ -1,10 +1,22 @@
-import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  GetCommand,
+  UpdateCommand,
+  DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { generateId } from "../utils/KeyGenerator";
 import {
   deleteBatchOperation,
   updateBatchOperation,
   query,
   scan,
+  isRoomItem,
+  isUserItem,
+  RoomItem,
+  UserItem,
+  DbItem,
 } from "./DynamoUtils";
 
 const ROOM_ID_LENGTH = 6;
@@ -32,11 +44,12 @@ export interface RoomData extends Room {
 }
 
 export class DbService {
-  client: DocumentClient;
+  client: DynamoDBDocumentClient;
   tableName: string;
 
   constructor(tableName: string) {
-    this.client = new DocumentClient();
+    const baseClient = new DynamoDBClient({});
+    this.client = DynamoDBDocumentClient.from(baseClient);
 
     this.tableName = tableName;
   }
@@ -47,8 +60,8 @@ export class DbService {
     const validSizes = "1 2 3 5 8 13 20 ? ∞";
     const createdOn = new Date().toISOString();
     const isRevealed = false;
-    await this.client
-      .put({
+    await this.client.send(
+      new PutCommand({
         TableName: this.tableName,
         Item: {
           PK: `ROOM:${roomId}`,
@@ -59,8 +72,8 @@ export class DbService {
           createdOn,
           updatedOn: createdOn,
         },
-      })
-      .promise();
+      }),
+    );
     console.log(`Created room ${roomId}`);
     return {
       roomId,
@@ -78,15 +91,16 @@ export class DbService {
     };
     let roomData: Room | undefined;
     const users: User[] = [];
-    await query(this.client, queryParams, async (item) => {
-      if (item.SK === "ROOM") {
+    // TODO define "RoomItem" and "UserItem" types
+    await query(this.client, queryParams, async (item: RoomItem | UserItem) => {
+      if (isRoomItem(item)) {
         roomData = {
           roomId: item.PK.substring("ROOM:".length),
           validSizes: item.validSizes.split(" "),
           isRevealed: item.isRevealed,
           hostKey: item.hostKey,
         };
-      } else if (item.SK.startsWith("USER:")) {
+      } else if (isUserItem(item)) {
         const userKey = item.SK.substring("USER:".length);
         users.push({
           userKey: userKey,
@@ -111,12 +125,12 @@ export class DbService {
     };
   }
   async getRoomMetadata(roomId: string) {
-    const output = await this.client
-      .get({
+    const output = await this.client.send(
+      new GetCommand({
         TableName: this.tableName,
         Key: { PK: `ROOM:${roomId}`, SK: "ROOM" },
-      })
-      .promise();
+      }),
+    );
     return output.Item;
   }
   async subscribe(
@@ -128,8 +142,8 @@ export class DbService {
       const userKey = generateId(USER_KEY_LENGTH);
       const userId = generateId(USER_KEY_LENGTH);
       const createdOn = new Date().toISOString();
-      await this.client
-        .put({
+      await this.client.send(
+        new PutCommand({
           TableName: this.tableName,
           Item: {
             PK: `ROOM:${roomId}`,
@@ -141,8 +155,8 @@ export class DbService {
             createdOn,
             updatedOn: createdOn,
           },
-        })
-        .promise();
+        }),
+      );
       console.log(
         `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`,
       );
@@ -150,8 +164,8 @@ export class DbService {
       const pk = `ROOM:${roomId}`;
       const sk = `USER:${userKey}`;
       const updatedOn = new Date().toISOString();
-      await this.client
-        .update({
+      await this.client.send(
+        new UpdateCommand({
           TableName: this.tableName,
           Key: { PK: pk, SK: sk },
           ConditionExpression: "PK = :pk AND SK = :sk",
@@ -163,8 +177,8 @@ export class DbService {
             ":connectionId": connectionId,
             ":updatedOn": updatedOn,
           },
-        })
-        .promise();
+        }),
+      );
       console.log(
         `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`,
       );
@@ -175,8 +189,8 @@ export class DbService {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -187,8 +201,8 @@ export class DbService {
           ":username": username,
           ":updatedOn": updatedOn,
         },
-      })
-      .promise();
+      }),
+    );
     console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
     return { username };
   }
@@ -196,8 +210,8 @@ export class DbService {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -210,16 +224,16 @@ export class DbService {
           ":username": "",
           ":vote": "",
         },
-      })
-      .promise();
+      }),
+    );
     console.log(`User with key ${userKey} in room ${roomId} left`);
   }
   async reconnect(roomId: string, userKey: string, connectionId: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -233,16 +247,16 @@ export class DbService {
           ":vote": "",
           ":connectionId": connectionId,
         },
-      })
-      .promise();
+      }),
+    );
     console.log(`Reconnected user with key ${userKey} in room ${roomId}`);
   }
   async kickUser(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -255,16 +269,16 @@ export class DbService {
           ":username": "",
           ":vote": "",
         },
-      })
-      .promise();
+      }),
+    );
     console.log(`Kicked user with key ${userKey} in room ${roomId}`);
   }
   async vote(roomId: string, userKey: string, vote: string) {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -275,8 +289,8 @@ export class DbService {
           ":vote": vote,
           ":updatedOn": updatedOn,
         },
-      })
-      .promise();
+      }),
+    );
   }
   async setCardsRevealed(roomId: string, isRevealed: boolean) {
     const updatedOn = new Date();
@@ -290,15 +304,11 @@ export class DbService {
     };
     const updateOperation = updateBatchOperation(this.client, this.tableName);
     await query(this.client, queryParams, async (item) => {
-      if (item.SK === "ROOM") {
+      if (isRoomItem(item)) {
         item.isRevealed = isRevealed;
         item.updatedOn = updatedOn.toISOString();
         await updateOperation.push(item);
-      } else if (
-        item.SK.startsWith("USER:") &&
-        item.vote != "" &&
-        isRevealed == false
-      ) {
+      } else if (isUserItem(item) && item.vote != "" && isRevealed == false) {
         // clear votes when hiding cards
         item.vote = "";
         item.updatedOn = updatedOn.toISOString();
@@ -312,8 +322,8 @@ export class DbService {
     const pk = `ROOM:${roomId}`;
     const sk = "ROOM";
     const updatedOn = new Date().toISOString();
-    await this.client
-      .update({
+    await this.client.send(
+      new UpdateCommand({
         TableName: this.tableName,
         Key: { PK: pk, SK: sk },
         ConditionExpression: "PK = :pk AND SK = :sk",
@@ -325,21 +335,21 @@ export class DbService {
           ":updatedOn": updatedOn,
           ":validSizes": validSizes,
         },
-      })
-      .promise();
+      }),
+    );
   }
 
   async deleteUser(roomId: string, userKey: string) {
-    const output = await this.client
-      .delete({
+    const output = await this.client.send(
+      new DeleteCommand({
         TableName: this.tableName,
         Key: {
           PK: `ROOM:${roomId}`,
           SK: `USER:${userKey}`,
         },
         ReturnValues: "ALL_OLD",
-      })
-      .promise();
+      }),
+    );
     return output.Attributes;
   }
 
@@ -352,7 +362,7 @@ export class DbService {
       },
     };
     const deleteOperation = deleteBatchOperation(this.client, this.tableName);
-    await query(this.client, queryParams, async (item) => {
+    await query<RoomItem>(this.client, queryParams, async (item) => {
       await deleteOperation.push(item);
     });
     await deleteOperation.flush();
@@ -376,9 +386,9 @@ export class DbService {
     };
 
     let count = 0;
-    await scan(this.client, queryParams, async (item) => {
+    await scan<DbItem>(this.client, queryParams, async (item) => {
       const roomId = item.PK.substring("ROOM:".length);
-      const userKey = item.SK.substring("USER:").length;
+      const userKey = item.SK.substring("USER:".length);
       await this.deleteUser(roomId, userKey);
       count++;
     });
@@ -404,7 +414,7 @@ export class DbService {
     };
 
     let count = 0;
-    await scan(this.client, queryParams, async (item) => {
+    await scan<RoomItem>(this.client, queryParams, async (item) => {
       const roomId = item.PK.substring("ROOM:".length);
       await this.deleteRoom(roomId);
       count++;
