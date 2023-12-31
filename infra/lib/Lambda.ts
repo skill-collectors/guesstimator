@@ -1,7 +1,10 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import { Callback } from "@pulumi/aws/lambda";
+import { Callback, Runtime } from "@pulumi/aws/lambda";
 import { Policy } from "@pulumi/aws/iam";
+
+const config = new pulumi.Config();
+const runtime = config.require("lambdaRuntime") as Runtime;
 
 export function buildCallbackFunction<E, R>(
   name: string,
@@ -40,6 +43,7 @@ export function buildCallbackFunction<E, R>(
 
   const callbackFunction = new aws.lambda.CallbackFunction(`${name}-Function`, {
     role: lambdaRole,
+    runtime,
     callback: handler,
   });
   return callbackFunction;
