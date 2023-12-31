@@ -1,3 +1,5 @@
 name: guesstimator
 runtime: nodejs
 description: IaC for Guesstimator backend
+config:
+  aws:region: us-east-1

@@ -4,6 +4,10 @@ import { describe, it, expect, beforeAll, vi } from "vitest";
 import Api from "../../lib/RestApi";
 import Database from "../../lib/Database";
 
+process.env.PULUMI_CONFIG = JSON.stringify({
+  "aws:region": "us-east-1",
+  "guesstimator:lambdaRuntime": "nodejs18.x",
+});
 pulumi.runtime.setMocks({
   newResource: function (args: pulumi.runtime.MockResourceArgs): {
     id: string;

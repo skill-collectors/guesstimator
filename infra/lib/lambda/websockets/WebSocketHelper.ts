@@ -1,7 +1,7 @@
 import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
-import ApiGatewayManagementApi = require("aws-sdk/clients/apigatewaymanagementapi");
 import { RoomData } from "../DbService";
 import { ConnectionGoneError } from "./ConnectionGoneError";
+import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi";
 
 export interface PongWebSocketData {
   type: "PONG";
@@ -108,12 +108,10 @@ export class WebSocketPublisher {
       })}`,
     );
     try {
-      await api
-        .postToConnection({
-          ConnectionId: connectionId,
-          Data: JSON.stringify(message),
-        })
-        .promise();
+      await api.postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify(message),
+      });
     } catch (err) {
       console.log(JSON.stringify(err));
       if (
