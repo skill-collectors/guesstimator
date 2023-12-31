@@ -3,4 +3,3 @@ runtime: nodejs
 description: IaC for Guesstimator backend
 config:
   aws:region: us-east-1
-  guesstimator:lambdaRuntime: nodejs18.x

@@ -3,8 +3,10 @@ import * as pulumi from "@pulumi/pulumi";
 import { Callback, Runtime } from "@pulumi/aws/lambda";
 import { Policy } from "@pulumi/aws/iam";
 
-const config = new pulumi.Config();
-const runtime = config.require("lambdaRuntime") as Runtime;
+// If we put this in Pulumi.yaml it can't be read by unit tests.
+// This is a known limitation in the Pulumi API that you can't
+// mock config values :-(
+const runtime: Runtime = "nodejs18.x";
 
 export function buildCallbackFunction<E, R>(
   name: string,
