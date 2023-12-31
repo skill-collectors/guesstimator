@@ -31,6 +31,7 @@
       "source.fixAll.eslint": "explicit"
     },
     "svelte.enable-ts-plugin": true,
-    "eslint.validate": ["javascript", "typescript", "svelte"]
+    "eslint.validate": ["javascript", "typescript", "svelte"],
+    "vitest.commandLine": "npx vitest --"
   }
 }
