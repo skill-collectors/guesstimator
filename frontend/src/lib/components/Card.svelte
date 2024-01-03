@@ -64,7 +64,7 @@
       overflow-hidden break-all
       font-bold
       bg-teal-700 text-teal-50
-      rounded-lg border-5 border-teal-900
+      rounded-lg border-4 border-teal-900
       "
     >
       <div class="text-3xl sm:text-6xl text-teal-200">!</div>
@@ -80,7 +80,7 @@
       overflow-hidden break-all
       font-bold
       bg-teal-700 text-teal-50
-      rounded-lg border-5 border-teal-900
+      rounded-lg border-4 border-teal-900
       "
     >
       <div class="text-3xl sm:text-6xl text-teal-200">&nbsp;</div>
