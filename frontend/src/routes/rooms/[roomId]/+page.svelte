@@ -52,7 +52,7 @@
       pendingOperation = new PendingOperation(
         Operation.JOIN,
         "",
-        existingUserData.username
+        existingUserData.username,
       );
       if (currentUser) {
         currentUser.username = existingUserData.username;
@@ -62,7 +62,7 @@
       localStorage.storeUserData(
         roomId,
         currentUser.userKey,
-        currentUser.username
+        currentUser.username,
       );
     }
   }
@@ -92,7 +92,7 @@
       onWebSocketOpen,
       onWebSocketClose,
       userKey,
-      hostKey
+      hostKey,
     );
   }
 
@@ -154,7 +154,7 @@
     pendingOperation = new PendingOperation(
       Operation.JOIN,
       "",
-      e.detail.username
+      e.detail.username,
     );
     if (currentUser) {
       currentUser.username = e.detail.username;
@@ -167,7 +167,7 @@
       pendingOperation = new PendingOperation(
         Operation.VOTE,
         currentUser.vote,
-        e.detail.vote
+        e.detail.vote,
       );
       currentUser.vote = e.detail.vote;
       webSocket?.vote(e.detail.vote);
@@ -179,7 +179,7 @@
       pendingOperation = new PendingOperation(
         Operation.LEAVE,
         currentUser.username,
-        ""
+        "",
       );
       currentUser.username = "";
       localStorage.storeUserData(roomId, currentUser.userKey);
