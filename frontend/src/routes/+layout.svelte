@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "../app.css";
   import PageMain from "$lib/components/PageMain.svelte";
   import PageFooter from "$lib/components/PageFooter.svelte";
   import { onMount } from "svelte";
