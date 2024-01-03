@@ -1,7 +1,7 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import { defineConfig } from "vitest/config";
 
-/** @type {import('vite').UserConfig} */
-const config = {
+export default defineConfig({
   plugins: [sveltekit()],
   preview: {
     host: "localhost",
@@ -12,6 +12,4 @@ const config = {
     environment: "happy-dom",
     include: ["tests/unit/**/*.test.ts"],
   },
-};
-
-export default config;
+});
