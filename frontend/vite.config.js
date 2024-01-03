@@ -1,9 +1,8 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import WindiCSS from "vite-plugin-windicss";
 
 /** @type {import('vite').UserConfig} */
 const config = {
-  plugins: [sveltekit(), WindiCSS()],
+  plugins: [sveltekit()],
   preview: {
     host: "localhost",
     port: 3001, // Don't conflict with dev server, if running
