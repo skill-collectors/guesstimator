@@ -274,7 +274,7 @@
     </div>
   </section>
   {#if roomData?.isRevealed}
-    <section id="resultsChart" class="m-x-auto max-w-xl">
+    <section id="resultsChart" class="mx-auto max-w-xl">
       <ResultsChart {roomData} />
     </section>
   {/if}
