@@ -60,7 +60,9 @@
     <CopyIcon />
     {#if copyConfirmationText !== null}
       <div
-        class="absolute -left-2 top-1.5 z-10 animate-fade-out-up animate-duration-2000 bg-slate-100 border-slate-900 border-2 text-slate-900"
+        class="absolute -left-2 -top-4 z-10
+        animate-fade-up animate-duration-1000
+        bg-slate-100 border-slate-900 border-2 text-slate-900"
       >
         {copyConfirmationText}
       </div>
