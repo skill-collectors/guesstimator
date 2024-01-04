@@ -12,13 +12,9 @@ permalink: /context/why-tech-stack
 
 [SvelteKit](https://kit.svelte.dev/) provides an easy way to get up and running with a full application (routing, etc.).
 
-#### Windi CSS
+#### Tailwind CSS
 
-The idea of a "utility-first" CSS framwork [is compelling](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/). [Tailwind CSS](https://tailwindcss.com/) is a very popular utility-first framework. [Windi CSS](https://windicss.org/) is fully compatible with Tailwind (so all the tutorials and cheat sheets still apply), but is faster.
-
-> Instead of generating all the combinations of utilities that you rarely used to purge later, Windi CSS only generates those actually presented in your codebase. This fits perfectly well with Vite’s on-demanded philosophy, and theoretically, it should be way much faster than Tailwind.
-
-([Anthony Fu - Reimagine Atomic CSS](https://antfu.me/posts/reimagine-atomic-css))
+The idea of a "utility-first" CSS framwork [is compelling](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/). [Tailwind CSS](https://tailwindcss.com/) is a very popular utility-first framework. We used to use [Windi CSS](https://windicss.org/), but it has been [sunsetted](https://windicss.org/posts/sunsetting.html).
 
 ## Backend
 

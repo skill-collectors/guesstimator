@@ -53,7 +53,7 @@ VSCode will offer to install the following recommended extensions:
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=editorconfig.editorconfig)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-- [WindiCSS Intellisense](https://marketplace.visualstudio.com/items?itemName=voorjaar.windicss-intellisense)
+- [Tailwind CSS Intellisense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 - [Vitest Runner](https://marketplace.visualstudio.com/items?itemName=kingwl.vscode-vitest-runner)
 - [Playwright](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 

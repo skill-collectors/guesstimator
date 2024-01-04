@@ -28,10 +28,9 @@ lib/components
 
 **NOTE:** All components in the site should follow our [colorscheme](../context/frontend/colors.md).
 
-This project uses [Windi CSS](https://windicss.org/) for styling. Windi CSS is
-a [utility-first](https://utilitycss.com/) CSS framework. It is compatible with
-[Tailwinds](https://tailwindcss.com/) which means you can use [this
-cheatsheet](https://tailwindcomponents.com/cheatsheet/).
+This project uses [Tailwind CSS](https://tailwindcss.com/) for styling. Tailwind CSS is
+a [utility-first](https://utilitycss.com/) CSS framework. [This
+cheatsheet](https://tailwindcomponents.com/cheatsheet/) is a very handy reference.
 
 Basically, instead of this:
 
@@ -56,14 +55,14 @@ You do this:
 </button>
 ```
 
-[Why would we do this?]({{ site.baseurl }}/context/why-tech-stack#windi-css)
+[Why would we do this?]({{ site.baseurl }}/context/why-tech-stack#tailwind-css)
 
 Because of this you will generally not create a `<style>` section in your component.
 
 ### Base components
 
-Windi applies a CSS "reset" (see [Preflight](https://tailwindcss.com/docs/preflight)) so by default elements like `<h1>` or `<a>` _do not_ have any styles applied. This gives us a blank canvas to start from and avoids problems when different browsers have different default styles.
+Tailwind applies a CSS "reset" (see [Preflight](https://tailwindcss.com/docs/preflight)) so by default elements like `<h1>` or `<a>` _do not_ have any styles applied. This gives us a blank canvas to start from and avoids problems when different browsers have different default styles.
 
-We want the site to have a consistent look and feel, and we don't want to have to duplicate the same set of attributes on e.g. every single `<button>` tag. One solution is to use [WindiCSS shortcuts](https://windicss.org/features/shortcuts.html), but it's hard to remember exactly what they are ("btn primary" or "btn-primary"?) and there's no typeahead. Instead, we have a set of "base components" (in `frontend/src/lib/components/base/`) that simply wrap basic HTML elements with consistent styling.
+We want the site to have a consistent look and feel, and we don't want to have to duplicate the same set of attributes on e.g. every single `<button>` tag. Instead, we have a set of "base components" (in `frontend/src/lib/components/base/`) that simply wrap basic HTML elements with consistent styling.
 
 As a matter of course, the "base components" should be used, but if there is a specific reason for an element to look different in a specific context, it's okay to use e.g. a raw `<button>` in that case.
