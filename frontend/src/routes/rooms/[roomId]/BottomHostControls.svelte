@@ -18,7 +18,7 @@
   const templates: SizeTemplate[] = [
     { name: "Fibonacci", sizes: "1 2 3 5 8 13 20 ? ∞" },
     { name: "T-Shirts", sizes: "XS S M L XL ? ∞" },
-    { name: "Emoji", sizes: "🐜 🐁 🐇 🐕 🐻 🐙 🐋 ? ∞" },
+    { name: "Emoji", sizes: "🐜 🐁 🐇 🐕 🐻 🐘 🐋 ? ∞" },
   ];
 
   let isPending = false;

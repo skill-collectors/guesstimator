@@ -1,9 +1,8 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import WindiCSS from "vite-plugin-windicss";
+import { defineConfig } from "vitest/config";
 
-/** @type {import('vite').UserConfig} */
-const config = {
-  plugins: [sveltekit(), WindiCSS()],
+export default defineConfig({
+  plugins: [sveltekit()],
   preview: {
     host: "localhost",
     port: 3001, // Don't conflict with dev server, if running
@@ -13,6 +12,4 @@ const config = {
     environment: "happy-dom",
     include: ["tests/unit/**/*.test.ts"],
   },
-};
-
-export default config;
+});
