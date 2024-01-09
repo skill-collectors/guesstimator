@@ -45,7 +45,7 @@ jobs:
 
       - name: Install Pulumi CLI
         if: env.HAVE_SECRETS == 'true'
-        uses: pulumi/setup-pulumi@v2
+        uses: pulumi/actions@v4
 
       - name: Install pulumi aws plugin
         if: env.HAVE_SECRETS == 'true'
