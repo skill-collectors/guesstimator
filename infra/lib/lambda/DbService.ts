@@ -1,4 +1,7 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  ConditionalCheckFailedException,
+  DynamoDBClient,
+} from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -138,51 +141,63 @@ export class DbService {
     connectionId: string,
     userKey: string | undefined = undefined,
   ) {
-    if (userKey === undefined) {
-      const userKey = generateId(USER_KEY_LENGTH);
-      const userId = generateId(USER_KEY_LENGTH);
-      const createdOn = new Date().toISOString();
-      await this.client.send(
-        new PutCommand({
-          TableName: this.tableName,
-          Item: {
-            PK: `ROOM:${roomId}`,
-            SK: `USER:${userKey}`,
-            userId,
-            connectionId,
-            username: "",
-            vote: "",
-            createdOn,
-            updatedOn: createdOn,
-          },
-        }),
-      );
-      console.log(
-        `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`,
-      );
-    } else {
+    if (userKey !== undefined) {
       const pk = `ROOM:${roomId}`;
       const sk = `USER:${userKey}`;
       const updatedOn = new Date().toISOString();
-      await this.client.send(
-        new UpdateCommand({
-          TableName: this.tableName,
-          Key: { PK: pk, SK: sk },
-          ConditionExpression: "PK = :pk AND SK = :sk",
-          UpdateExpression:
-            "set connectionId = :connectionId, updatedOn = :updatedOn",
-          ExpressionAttributeValues: {
-            ":pk": pk,
-            ":sk": sk,
-            ":connectionId": connectionId,
-            ":updatedOn": updatedOn,
-          },
-        }),
-      );
-      console.log(
-        `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`,
-      );
+      try {
+        await this.client.send(
+          new UpdateCommand({
+            TableName: this.tableName,
+            Key: { PK: pk, SK: sk },
+            ConditionExpression: "PK = :pk AND SK = :sk",
+            UpdateExpression:
+              "set connectionId = :connectionId, updatedOn = :updatedOn",
+            ExpressionAttributeValues: {
+              ":pk": pk,
+              ":sk": sk,
+              ":connectionId": connectionId,
+              ":updatedOn": updatedOn,
+            },
+          }),
+        );
+        console.log(
+          `Subscribed connection ${connectionId} for existing userKey ${userKey} to room ${roomId}`,
+        );
+        return { userKey };
+      } catch (e) {
+        if (e instanceof ConditionalCheckFailedException) {
+          console.log(
+            `Got an unknown (probably stale) user key: ${userKey} for room ${roomId}. This user will be recreated.`,
+          );
+          // end if (userKey !== undefined)
+        } else {
+          console.log("Unhandled exception in DbService.subscribe", e);
+          throw e;
+        }
+      }
     }
+    userKey ||= generateId(USER_KEY_LENGTH);
+    const userId = generateId(USER_KEY_LENGTH);
+    const createdOn = new Date().toISOString();
+    await this.client.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: {
+          PK: `ROOM:${roomId}`,
+          SK: `USER:${userKey}`,
+          userId,
+          connectionId,
+          username: "",
+          vote: "",
+          createdOn,
+          updatedOn: createdOn,
+        },
+      }),
+    );
+    console.log(
+      `Subscribed connection ${connectionId} for new userKey ${userKey} to room ${roomId}`,
+    );
     return { userKey };
   }
   async join(roomId: string, userKey: string, username: string) {
