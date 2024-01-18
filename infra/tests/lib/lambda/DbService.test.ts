@@ -274,8 +274,8 @@ describe("DbService", () => {
       const batchWriteCommand = vi.mocked(service.client.send).mock.calls[1][0];
       const userUpdateRequest = (
         batchWriteCommand.input as BatchWriteCommandInput
-      ).RequestItems?.[tableName]?.find(
-        (requestItem) => requestItem?.PutRequest?.Item?.SK?.startsWith("USER:"),
+      ).RequestItems?.[tableName]?.find((requestItem) =>
+        requestItem?.PutRequest?.Item?.SK?.startsWith("USER:"),
       );
       expect(userUpdateRequest?.PutRequest?.Item?.vote).toBe("");
     });
@@ -290,8 +290,8 @@ describe("DbService", () => {
       const batchWriteCommand = vi.mocked(service.client.send).mock.calls[0][0];
       const userUpdateRequest = (
         batchWriteCommand.input as BatchWriteCommandInput
-      ).RequestItems?.[tableName]?.find(
-        (requestItem) => requestItem?.PutRequest?.Item?.SK?.startsWith("USER:"),
+      ).RequestItems?.[tableName]?.find((requestItem) =>
+        requestItem?.PutRequest?.Item?.SK?.startsWith("USER:"),
       );
       expect(userUpdateRequest?.PutRequest?.Item?.vote).not.toBe("");
     });
