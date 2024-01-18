@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
-  "include": ["*.ts", "lib/**/*.ts", "tests/**/*.ts"]
+  "include": ["*.ts", "lib/**/*.ts", "tests/**/*.ts"],
 }
