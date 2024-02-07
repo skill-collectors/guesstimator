@@ -13,10 +13,13 @@ import { WebSocketPublisher } from "./WebSocketHelper";
 export function createMainWebSocketFunction(
   tableNameOutput: pulumi.Output<string>,
 ) {
+  let db: DbService | undefined = undefined;
   return async function (
     event: APIGatewayProxyWebsocketEventV2,
   ): Promise<APIGatewayProxyStructuredResultV2> {
-    const db = new DbService(tableNameOutput.get());
+    if (!db) {
+      db = new DbService(tableNameOutput.get());
+    }
     const publisher = new WebSocketPublisher(event);
 
     /**
@@ -24,6 +27,9 @@ export function createMainWebSocketFunction(
      * way every time and includes a step to kick inactive users.
      */
     async function publishRoomData(roomId: string) {
+      if (!db) {
+        throw new Error("DB initialization failed");
+      }
       const publishRoomDataResult = await publisher.publishRoomData(
         await db.getRoom(roomId),
       );
