@@ -1,7 +1,10 @@
 import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 import { RoomData } from "../DbService";
 import { ConnectionGoneError } from "./ConnectionGoneError";
-import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi";
+import {
+  ApiGatewayManagementApi,
+  GoneException,
+} from "@aws-sdk/client-apigatewaymanagementapi";
 
 export interface PongWebSocketData {
   type: "PONG";
@@ -114,12 +117,7 @@ export class WebSocketPublisher {
       });
     } catch (err) {
       console.log(JSON.stringify(err));
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "statusCode" in err &&
-        err.statusCode == 410
-      ) {
+      if (err instanceof GoneException) {
         console.log(`Failed to send message: ${connectionId} is gone.`);
         throw new ConnectionGoneError(connectionId);
       } else {
