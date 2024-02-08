@@ -13,9 +13,9 @@
     isPending = false;
   }
 
-  $: isEveryoneReady = roomData.users
-    .filter((user) => user.username.length > 0)
-    .every((user) => user.hasVote);
+  $: joinedUsers = roomData.users.filter((user) => user.username.length > 0);
+
+  $: isEveryoneReady = joinedUsers.every((user) => user.hasVote);
 
   const dispatch = createEventDispatcher();
 
@@ -37,6 +37,8 @@
     <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
       >Reset</TgButton
     >
+  {:else if joinedUsers.length === 0}
+    <TgParagraph>Waiting for people to join...</TgParagraph>
   {:else if isEveryoneReady}
     <TgButton id="showCardsButton" type="success" on:click={handleReveal}
       >Reveal cards</TgButton

@@ -4,7 +4,7 @@ import HostControls from "$routes/rooms/[roomId]/HostControls.svelte";
 import userEvent from "@testing-library/user-event";
 import type { Room } from "$lib/services/rooms";
 
-function stubRoom(isRevealed = false, users = [{ username: "" }]): Room {
+function stubRoom(isRevealed = false, users = [{ username: "host" }]): Room {
   return {
     isRevealed,
     users,
