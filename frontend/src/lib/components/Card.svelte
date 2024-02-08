@@ -46,13 +46,14 @@
       flex flex-col items-center justify-center
       w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
-      overflow-hidden break-all
       font-bold
       bg-teal-50 rounded-lg border-4 border-teal-600 text-teal-700
       "
     >
       <div class="text-3xl sm:text-6xl">{displayValue}</div>
-      <div>{username}</div>
+      <div class="overflow-hidden break-words [word-break:break-word]">
+        {username}
+      </div>
     </div>
   {:else if hasValue}
     <div
@@ -62,14 +63,15 @@
       flex flex-col items-center justify-center
       w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
-      overflow-hidden break-all
       font-bold
       bg-teal-700 text-teal-50
       rounded-lg border-4 border-teal-900
       "
     >
       <div class="text-3xl sm:text-6xl text-teal-200">!</div>
-      <div>{username}</div>
+      <div class="overflow-hidden break-words [word-break:break-word]">
+        {username}
+      </div>
     </div>
   {:else}
     <div
@@ -78,14 +80,15 @@
       flex flex-col items-center justify-center
       w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
-      overflow-hidden break-all
       font-bold
       bg-teal-700 text-teal-50
       rounded-lg border-4 border-teal-900
       "
     >
       <div class="text-3xl sm:text-6xl text-teal-200">&nbsp;</div>
-      <div>{username}</div>
+      <div class="overflow-hidden break-words [word-break:break-word]">
+        {username}
+      </div>
     </div>
   {/if}
 </div>
