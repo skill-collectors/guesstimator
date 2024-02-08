@@ -36,6 +36,7 @@
   $: displayValue = value === "" ? "?" : value;
 </script>
 
+<!-- Playing cards are 2.5 x 3.5 inches, or 1.4x taller than wide -->
 <div class="animate-fade-up">
   {#if isRevealed}
     <div
@@ -43,7 +44,7 @@
       animate-rotate-y {animationDelayClassName}
       shadow-dark-100 shadow-lg
       flex flex-col items-center justify-center
-      w-18 h-28 sm:w-36 sm:h-56
+      w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
       overflow-hidden break-all
       font-bold
@@ -59,7 +60,7 @@
       animate-animated animate-infinite animate-pulse
       shadow-dark-100 shadow-lg
       flex flex-col items-center justify-center
-      w-18 h-28 sm:w-36 sm:h-56
+      w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
       overflow-hidden break-all
       font-bold
@@ -75,7 +76,7 @@
       class="
       shadow-dark-100 shadow-lg
       flex flex-col items-center justify-center
-      w-18 h-28 sm:w-36 sm:h-56
+      w-28 h-40 sm:w-36 sm:h-52
       p-2 m-2
       overflow-hidden break-all
       font-bold
