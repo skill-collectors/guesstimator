@@ -58,7 +58,6 @@
   {:else if hasValue}
     <div
       class="
-      animate-animated animate-infinite animate-pulse
       shadow-dark-100 shadow-lg
       flex flex-col items-center justify-center
       w-28 h-40 sm:w-36 sm:h-52

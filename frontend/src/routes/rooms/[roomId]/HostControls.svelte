@@ -13,6 +13,10 @@
     isPending = false;
   }
 
+  $: isEveryoneReady = roomData.users
+    .filter((user) => user.username.length > 0)
+    .every((user) => user.hasVote);
+
   const dispatch = createEventDispatcher();
 
   function handleReveal() {
@@ -32,6 +36,10 @@
   {:else if roomData.isRevealed}
     <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
       >Reset</TgButton
+    >
+  {:else if isEveryoneReady}
+    <TgButton id="showCardsButton" type="success" on:click={handleReveal}
+      >Reveal cards</TgButton
     >
   {:else}
     <TgButton id="showCardsButton" type="secondary" on:click={handleReveal}
