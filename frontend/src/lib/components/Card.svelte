@@ -50,7 +50,7 @@
       bg-teal-50 rounded-lg border-4 border-teal-600 text-teal-700
       "
     >
-      <div class="text-3xl sm:text-6xl">{displayValue}</div>
+      <div class="text-5xl sm:text-6xl">{displayValue}</div>
       <div class="overflow-hidden break-words [word-break:break-word]">
         {username}
       </div>
