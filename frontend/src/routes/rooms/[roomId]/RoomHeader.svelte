@@ -51,31 +51,33 @@
 
 <header class="mt-8">
   Room URL: <span class="whitespace-nowrap">{url}</span>
-  <TgButton
-    id="copyUrlButton"
-    type="secondary"
-    on:click={handleCopyClick}
-    class="relative"
-  >
-    <CopyIcon />
-    {#if copyConfirmationText !== null}
-      <div
-        class="absolute -left-2 -top-4 z-10
+  <span class="whitespace-nowrap">
+    <TgButton
+      id="copyUrlButton"
+      type="secondary"
+      on:click={handleCopyClick}
+      class="relative"
+    >
+      <CopyIcon />
+      {#if copyConfirmationText !== null}
+        <div
+          class="absolute -left-2 -top-4 z-10
         animate-fade-up animate-duration-1000
         bg-slate-100 border-slate-900 border-2 text-slate-900"
-      >
-        {copyConfirmationText}
-      </div>
-    {/if}
-  </TgButton>
-  <TgButton
-    id="qrCodeButton"
-    type="secondary"
-    on:click={handleQrCodeButtonClick}
-    class="relative"
-  >
-    <QrCodeIcon />
-  </TgButton>
+        >
+          {copyConfirmationText}
+        </div>
+      {/if}
+    </TgButton>
+    <TgButton
+      id="qrCodeButton"
+      type="secondary"
+      on:click={handleQrCodeButtonClick}
+      class="relative"
+    >
+      <QrCodeIcon />
+    </TgButton>
+  </span>
   <Modal bind:showModal={showingQrCode}>
     <TgHeadingSub>{url.href}</TgHeadingSub>
     <div class="flex justify-center">

@@ -278,7 +278,7 @@
       <ResultsChart {roomData} />
     </section>
   {/if}
-  <section id="userControls" class="mt-32">
+  <section id="userControls" class="sm:mt-32">
     {#if isJoined}
       <TgParagraph
         >If you'd like to vote, enter a name and join the room:</TgParagraph

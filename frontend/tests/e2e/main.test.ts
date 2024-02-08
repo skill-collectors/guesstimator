@@ -13,6 +13,10 @@ test("Host workflow", async ({ page }) => {
   expect(await page.title()).toBe("Guesstimator - Home");
   await page.click("#createRoomButton");
 
+  await page.getByRole("textbox").fill("test username");
+  await page.getByText("Join room").click();
+  await page.waitForSelector("#showCardsButton");
+
   await page.click("#showCardsButton");
   await page.click("#hideCardsButton");
 
