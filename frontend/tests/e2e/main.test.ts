@@ -16,22 +16,30 @@ test("Host workflow", async ({ page, browser }) => {
   await page.waitForSelector("#hostControls");
   expect(await page.title()).toMatch(/Guesstimator - [A-Z0-9]{6}/);
 
-  await page.getByRole("textbox").fill("host");
-  await page.getByText("Join room").click();
-  await page.locator("#userControls").getByText("5").click();
-  await page.waitForSelector("#userControls");
-
   // User join
   const userPages = await Promise.all(
     ["user1", "user2", "user3", "user4"].map((username) =>
       joinAs(browser, page.url(), username),
     ),
   );
-  userPages.forEach((user) => addVote(user, "8"));
+  await Promise.allSettled(
+    userPages.map((user) => {
+      const possibleVotes = ["1", "2", "3", "5", "8", "13", "20"];
+      const randomIndex = Math.floor(Math.random() * possibleVotes.length);
+      const vote = possibleVotes[randomIndex];
+      return addVote(user, vote);
+    }),
+  );
+
+  await page.getByRole("textbox").fill("host");
+  await page.getByText("Join room").click();
+  await page.locator("#userControls").getByText("5").click();
 
   await page.click("#showCardsButton");
   await page.waitForSelector("#resultsChart");
   await page.click("#hideCardsButton");
+
+  await Promise.allSettled(userPages.map((user) => addVote(user, "8")));
 
   userPages.forEach((user) => user.context().close());
 
