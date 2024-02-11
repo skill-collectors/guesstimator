@@ -1,4 +1,10 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import {
+  expect,
+  test,
+  type Browser,
+  type Page,
+  type Locator,
+} from "@playwright/test";
 
 test("index page has expected h1", async ({ page }) => {
   await page.goto("/");
@@ -39,8 +45,11 @@ test("Basic workflow", async ({ page, browser }) => {
   await page.locator("#userControls").getByText("5").click();
   await page.getByTestId("host-card").getByText("!").waitFor();
 
+  // Host reveals cards
   await page.click("#showCardsButton");
   await page.waitForSelector("#resultsChart");
+
+  // Host resets the cards
   await page.click("#hideCardsButton");
 
   users.forEach(async (user) => await user.page.context().close());
@@ -59,12 +68,18 @@ async function addUser(browser: Browser, roomUrl: string, username: string) {
   await page.goto(roomUrl);
   await page.getByRole("textbox").fill(username);
   await page.getByText("Join room").click();
-  await page.getByTestId(`${username}-card`).waitFor();
+  const cardLocator = page.getByTestId(`${username}-card`);
+  cardLocator.waitFor();
+  expect(cardLocator).toHaveCount(1);
   console.log(`${username} joined the room`);
-  return { page, username };
+  return { page, username, cardLocator };
 }
 
-async function addVote(user: { page: Page; username: string }, vote: string) {
+async function addVote(
+  user: { page: Page; username: string; cardLocator: Locator },
+  vote: string,
+) {
   await user.page.locator("#userControls").getByText(vote).click();
-  await user.page.getByTestId(`${user.username}-card`).getByText("!").waitFor();
+  await user.cardLocator.getByText("!").waitFor();
+  console.log(`${user.username} voted for ${vote}`);
 }
