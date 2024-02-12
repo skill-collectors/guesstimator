@@ -124,8 +124,19 @@
             notFound = true;
           }
         } else if (rooms.isRoom(message.data)) {
-          roomData = message.data;
-          roomData = pendingOperation.apply(roomData);
+          if (
+            !roomData ||
+            !roomData.timestamp ||
+            !message.data.timestamp ||
+            message.data.timestamp > roomData.timestamp
+          ) {
+            roomData = message.data;
+            roomData = pendingOperation.apply(roomData);
+          } else {
+            console.log(
+              `Ignoring old room data: ${message.data.timestamp} < ${roomData.timestamp}`,
+            );
+          }
         } else {
           console.error("Could not handle message", message);
         }
