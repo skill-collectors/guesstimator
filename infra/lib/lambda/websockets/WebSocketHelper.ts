@@ -113,7 +113,10 @@ export class WebSocketPublisher {
     try {
       await api.postToConnection({
         ConnectionId: connectionId,
-        Data: JSON.stringify(message),
+        Data: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          ...message,
+        }),
       });
     } catch (err) {
       console.log(JSON.stringify(err));

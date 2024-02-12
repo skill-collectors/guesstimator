@@ -10,6 +10,7 @@ describe("CardGroup", () => {
       hostKey: undefined,
       validSizes: ["1", "2", "3"],
       isRevealed: false,
+      timestamp: new Date().toISOString(),
       users: [
         {
           userId: "userId",
@@ -30,6 +31,7 @@ describe("CardGroup", () => {
       hostKey: undefined,
       validSizes: ["1", "2", "3"],
       isRevealed: false,
+      timestamp: new Date().toISOString(),
       users: [
         {
           userId: "userId",
