@@ -12,9 +12,9 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.133",
     "@types/node": "^20",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.20.0",
-    "eslint": "^8.37.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.0.0",
     "vitest": "^1.1.1"
@@ -25,6 +25,7 @@
     "@aws-sdk/lib-dynamodb": "^3.518.0",
     "@pulumi/aws": "^6.20.1",
     "@pulumi/aws-apigateway": "^2.1.0",
-    "@pulumi/pulumi": "^3.104.0"
+    "@pulumi/pulumi": "^3.104.0",
+    "typescript": "^5.3.3"
   }
 }
