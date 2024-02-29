@@ -17,10 +17,10 @@
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@playwright/test": "^1.41.2",
+    "@playwright/test": "^1.42.0",
     "@sveltejs/adapter-auto": "^3.0.1",
     "@sveltejs/adapter-static": "^3.0.1",
-    "@sveltejs/kit": "^2.4.3",
+    "@sveltejs/kit": "^2.5.2",
     "@testing-library/jest-dom": "^6.1.1",
     "@testing-library/svelte": "^4.0.5",
     "@testing-library/user-event": "^14.4.3",
@@ -31,7 +31,7 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-svelte": "^2.33.2",
-    "happy-dom": "^13.5.0",
+    "happy-dom": "^13.6.2",
     "postcss": "^8.4.35",
     "prettier": "^3.0.0",
     "prettier-plugin-svelte": "^3.2.1",
