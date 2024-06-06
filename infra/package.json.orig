@@ -23,12 +23,13 @@
     "@aws-sdk/client-apigatewaymanagementapi": "^3.540.0",
 <<<<<<< HEAD
     "@aws-sdk/client-dynamodb": "^3.590.0",
-    "@aws-sdk/lib-dynamodb": "^3.538.0",
+    "@aws-sdk/lib-dynamodb": "^3.590.0",
+    "@pulumi/aws": "^6.31.0",
 =======
     "@aws-sdk/client-dynamodb": "^3.556.0",
-    "@aws-sdk/lib-dynamodb": "^3.590.0",
->>>>>>> 3a46b3b (Bump @aws-sdk/lib-dynamodb from 3.588.0 to 3.590.0)
-    "@pulumi/aws": "^6.31.0",
+    "@aws-sdk/lib-dynamodb": "^3.538.0",
+    "@pulumi/aws": "^6.38.1",
+>>>>>>> 8339d73 (Bump @pulumi/aws from 6.38.0 to 6.38.1)
     "@pulumi/aws-apigateway": "^2.1.0",
     "@pulumi/pulumi": "^3.113.0",
     "typescript": "^5.4.2"
