@@ -93,7 +93,7 @@ async function addVote(
   await user.page.locator("#userControls").waitFor({ state: "visible" });
   await user.page
     .locator("#userControls")
-    .getByText(vote)
+    .getByText(vote, { exact: true })
     .click();
   console.log(`${user.username} is waiting for vote to register`);
   await user.cardLocator.getByText("!").waitFor();
