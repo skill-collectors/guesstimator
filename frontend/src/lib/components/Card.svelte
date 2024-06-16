@@ -37,7 +37,7 @@
 </script>
 
 <!-- Playing cards are 2.5 x 3.5 inches, or 1.4x taller than wide -->
-<div class="animate-fade-up">
+<div class="animate-fade-up" data-testid="{username}-card">
   {#if isRevealed}
     <div
       class="

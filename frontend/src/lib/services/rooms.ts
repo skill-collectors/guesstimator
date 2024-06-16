@@ -6,6 +6,7 @@ export interface Room {
   validSizes: string[];
   isRevealed: boolean;
   users: User[];
+  timestamp: string;
 }
 export function isRoom(value: unknown): value is Room {
   return (
