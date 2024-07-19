@@ -17,13 +17,13 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.3.2",
-    "vitest": "^1.1.1"
+    "vitest": "^2.0.3"
   },
   "dependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.540.0",
     "@aws-sdk/client-dynamodb": "^3.590.0",
     "@aws-sdk/lib-dynamodb": "^3.590.0",
-    "@pulumi/aws": "^6.44.0",
+    "@pulumi/aws": "^6.45.0",
     "@pulumi/aws-apigateway": "^2.1.0",
     "@pulumi/pulumi": "^3.119.0",
     "typescript": "^5.4.2"
