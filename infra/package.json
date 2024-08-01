@@ -26,6 +26,6 @@
     "@pulumi/aws": "^6.46.0",
     "@pulumi/aws-apigateway": "^2.1.0",
     "@pulumi/pulumi": "^3.119.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.5.4"
   }
 }
