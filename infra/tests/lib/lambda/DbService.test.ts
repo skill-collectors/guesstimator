@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach, SpyInstance } from "vitest";
+import { describe, it, expect, vi, afterEach, MockInstance } from "vitest";
 import { DbService } from "../../../lib/lambda/DbService";
 import {
   BatchWriteCommand,
@@ -157,7 +157,7 @@ describe("DbService", () => {
       vi.mocked(
         // We have to cast this because 'send' is overloaded and TypeScript keeps thinking
         // it's the version that returns 'void'
-        service.client.send as unknown as SpyInstance,
+        service.client.send as unknown as MockInstance,
       ).mockResolvedValueOnce({
         Items: undefined,
       });

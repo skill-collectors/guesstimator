@@ -11,13 +11,13 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.142",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.17.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.3.2",
-    "vitest": "^2.0.3"
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.540.0",
@@ -26,6 +26,6 @@
     "@pulumi/aws": "^6.46.0",
     "@pulumi/aws-apigateway": "^2.1.0",
     "@pulumi/pulumi": "^3.119.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.5.4"
   }
 }
