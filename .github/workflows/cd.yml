@@ -118,6 +118,14 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Cache pulumi
+        id: pulumi-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pulumi
+          key: pulumi-${{ hashFiles('package-lock.json') }}
+
       - name: Install Pulumi CLI
         if: env.HAVE_SECRETS == 'true'
         uses: pulumi/actions@v5
