@@ -21,16 +21,10 @@ function ensureInstalled() {
 # If you update this list, also update getting-started.md
 ensureInstalled npm "to manage project dependencies and run tests. NPM is part of Node." "https://nodejs.org/en/download/"
 ensureInstalled pulumi "to deploy the infrastructure (even locally)." "https://www.pulumi.com/docs/get-started/install/"
-ensureInstalled gem "to preview the documentation locally. This is important because many contributions will require documentation updates and you will need to verify that your changes are formatted correctly. Gem is part of the Ruby installation." "https://www.ruby-lang.org/en/downloads/"
 
 cd ${rootDir}
 
 npm install --workspaces
-
-gem install bundler jekyll
-cd ${rootDir}/docs
-bundle install
-cd ${rootDir}
 
 cd ${rootDir}/frontend
 npx playwright install
