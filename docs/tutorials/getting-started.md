@@ -1,5 +1,4 @@
 ---
-layout: page
 title: Getting started
 permalink: /tutorials/getting-started
 ---
@@ -12,7 +11,6 @@ You will need to install the following software to work on this project.
 
 1. [Node](https://nodejs.org/en/download/). This project currently uses v18 (LTS).
 1. [Pulumi](https://www.pulumi.com/docs/get-started/install/).
-1. [Ruby](https://www.ruby-lang.org/en/downloads/).
 
 ## Required accounts
 
@@ -100,4 +98,6 @@ cd frontend
 npm run dev
 ```
 
-Browse to http://localhost:5173
+<!-- This has to be an <a> tag so vitepress doesn't see it as a dead link -->
+
+Browse to <a href="http://localhost:5173">localhost:5173</a>

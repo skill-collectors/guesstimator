@@ -1,5 +1,4 @@
 ---
-layout: page
 title: Deploy Pipeline
 permalink: /reference/build
 ---

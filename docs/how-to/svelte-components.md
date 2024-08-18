@@ -1,5 +1,4 @@
 ---
-layout: page
 title: How to create Svelte components
 permalink: /how-to/svelte-components
 ---
@@ -55,7 +54,7 @@ You do this:
 </button>
 ```
 
-[Why would we do this?]({{ site.baseurl }}/context/why-tech-stack#tailwind-css)
+[Why would we do this?](/context/why-tech-stack#tailwind-css)
 
 Because of this you will generally not create a `<style>` section in your component.
 

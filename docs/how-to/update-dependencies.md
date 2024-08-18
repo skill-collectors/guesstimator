@@ -1,5 +1,4 @@
 ---
-layout: page
 title: How to update dependencies
 permalink: /how-to/update-dependencies
 ---
@@ -100,16 +99,6 @@ If your tests pass, run `git bisect good`, otherwise run `git bisect bad`.
 Git will do a [binary search](https://en.wikipedia.org/w/index.php?title=Binary_search_algorithm&oldid=1170087932) to efficiently identify the bad commit. Once it's been found, Git will print the commit message for the commit that broke the build. If it's a dependabot commit, then the message should include release notes and changelog links. Click those to start figuring out the problem.
 
 See also: [git-bisect documentation](https://git-scm.com/docs/git-bisect)
-
-## Update GitHub Pages dependencies
-
-From the `docs` directory, run:
-
-```sh
-bundle update
-```
-
-[Check the page locally]({{ site.baseurl }}/how-to/edit-docs) and commit the updated `Gemfile.lock` if everything looks good.
 
 ## Conclusion
 

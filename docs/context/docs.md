@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: About the documentation
 permalink: /context/docs
 ---
