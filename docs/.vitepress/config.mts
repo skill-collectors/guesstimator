@@ -22,6 +22,9 @@ export default defineConfig({
         "reference",
       ],
     }),
+    search: {
+      provider: "local",
+    },
     socialLinks: [
       {
         icon: "github",
