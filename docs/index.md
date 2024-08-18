@@ -1,10 +1,6 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
 ---
-
 Welcome to the developer documentation for the Guesstimator app! The documentation is divided into different sections depending on what kind of information you are looking for.
 
 If you're new to the project, start with our [Getting Started](/tutorials/getting-started.md) tutorial.
