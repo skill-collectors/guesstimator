@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: How to call the API
 permalink: /how-to/call-the-api
 ---

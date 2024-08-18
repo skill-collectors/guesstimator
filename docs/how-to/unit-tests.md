@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: How to write unit tests
 permalink: /how-to/unit-tests
 ---

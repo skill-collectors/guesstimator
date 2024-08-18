@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Room cleanup
 permalink: /context/infra/room-cleanup
 ---

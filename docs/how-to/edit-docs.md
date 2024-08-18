@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: How to edit this documentation
 permalink: /how-to/edit-docs
 ---

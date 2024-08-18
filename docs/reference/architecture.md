@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Architecture Diagram
 permalink: /reference/architecture
 ---

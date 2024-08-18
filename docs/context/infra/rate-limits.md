@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: API Rate Limiting
 permalink: /context/infra/rate-limits
 ---

@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Frontend deploy
 permalink: /context/frontend/deploy
 ---

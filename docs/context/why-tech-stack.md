@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: How did we choose our tech stack?
 permalink: /context/why-tech-stack
 ---

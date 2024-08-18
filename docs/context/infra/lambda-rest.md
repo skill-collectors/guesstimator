@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Lambda REST architecture
 permalink: /context/infra/lambda-rest
 ---

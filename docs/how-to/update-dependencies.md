@@ -1,5 +1,4 @@
 ---
-layout: page
 title: How to update dependencies
 permalink: /how-to/update-dependencies
 ---
@@ -109,7 +108,7 @@ From the `docs` directory, run:
 bundle update
 ```
 
-[Check the page locally]({{ site.baseurl }}/how-to/edit-docs) and commit the updated `Gemfile.lock` if everything looks good.
+[Check the page locally](/how-to/edit-docs.md) and commit the updated `Gemfile.lock` if everything looks good.
 
 ## Conclusion
 

@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Getting started
 permalink: /tutorials/getting-started
 ---

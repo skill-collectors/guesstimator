@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: Database schema
 permalink: /reference/database-schema
 ---
