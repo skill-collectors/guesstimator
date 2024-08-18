@@ -17,33 +17,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
 
       - name: "Install dependencies"
         run: npm ci
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
-
-      - name: Cache playwright binaries
-        uses: actions/cache@v3
-        id: playwright-cache
-        with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
   build-docs:
     runs-on: ubuntu-latest
@@ -51,11 +32,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          node-version: 20
+          cache: "npm"
+
       - name: "Build docs"
         run: npm run docs:build
 
@@ -65,11 +48,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          node-version: 20
+          cache: "npm"
+
       - name: "Lint frontend"
         run: npm run lint --workspace=frontend
 
@@ -85,13 +70,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          node-version: 20
+          cache: "npm"
+
       - name: "Lint infra"
         run: npm run lint --workspace=infra
+
       - name: "Unit test infrastructure"
         run: npm run test --workspace=infra
 
@@ -103,11 +91,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          node-version: 20
+          cache: "npm"
+
       - name: Configure AWS Credentials
         if: env.HAVE_SECRETS == 'true'
         uses: aws-actions/configure-aws-credentials@v4
@@ -172,17 +162,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v3
+
+      - uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          node-version: 20
+          cache: "npm"
 
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
 
-      - name: Restore playwright modules from cache
+      - name: Cache playwright modules
         uses: actions/cache@v3
         with:
           path: |
