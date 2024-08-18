@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "The Guesstimator",
   description: "Project documentation",
+  base: '/guesstimator',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
