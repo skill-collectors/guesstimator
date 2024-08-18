@@ -8,7 +8,7 @@ permalink: /context/why-tech-stack
 
 #### SvelteKit
 
-[Svelte](svelte.dev/) seems to be [making a splash](https://2021.stateofjs.com/en-US/libraries/front-end-frameworks) on the front-end framework scene, so we wanted to see what all the fuss is about.
+[Svelte](https://svelte.dev/) seems to be [making a splash](https://2021.stateofjs.com/en-US/libraries/front-end-frameworks) on the front-end framework scene, so we wanted to see what all the fuss is about.
 
 [SvelteKit](https://kit.svelte.dev/) provides an easy way to get up and running with a full application (routing, etc.).
 

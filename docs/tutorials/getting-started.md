@@ -100,4 +100,5 @@ cd frontend
 npm run dev
 ```
 
-Browse to http://localhost:5173
+<!-- This has to be an <a> tag so vitepress doesn't see it as a dead link -->
+Browse to <a href="http://localhost:5173">localhost:5173</a>
