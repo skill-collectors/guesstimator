@@ -195,7 +195,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+          key: playwright-${{ env.PLAYWRIGHT_VERSION }}
 
       - name: Install playwright
         if: steps.playwright-cache.outputs.cache-hit != 'true' && env.HAVE_SECRETS == 'true' && github.ref != 'refs/heads/main' && github.repository == 'skill-collectors/guesstimator'
