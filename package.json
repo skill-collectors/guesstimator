@@ -15,7 +15,7 @@
   "scripts": {
     "check-frontend": "cd frontend && npm run check-all",
     "check-infra": "cd infra && npm run check-all",
-    "check-all": "npm run check-frontend && npm run check-infra",
+    "check-all": "npm run check-frontend && npm run check-infra && npm run docs:build",
     "test:frontend": "cd frontend && npm run test",
     "test:infra": "cd infra && npm run test",
     "test": "npm run test:frontend && npm run test:infra",
