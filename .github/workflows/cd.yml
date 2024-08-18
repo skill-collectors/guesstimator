@@ -49,6 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Restore Node.js modules from cache
         uses: actions/cache@v3
         with:
@@ -61,6 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Restore Node.js modules from cache
         uses: actions/cache@v3
         with:
@@ -79,6 +83,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Restore Node.js modules from cache
         uses: actions/cache@v3
         with:
@@ -95,6 +101,8 @@ jobs:
     env:
       HAVE_SECRETS: ${{ secrets.PULUMI_ACCESS_TOKEN != '' && secrets.AWS_REGION != '' && secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Restore Node.js modules from cache
         uses: actions/cache@v3
         with:
@@ -162,6 +170,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-deploy
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Restore Node.js modules from cache
         uses: actions/cache@v3
         with:
