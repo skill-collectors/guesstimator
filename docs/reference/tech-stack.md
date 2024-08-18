@@ -1,5 +1,4 @@
 ---
-
 title: Tech Stack
 permalink: /reference/tech-stack
 ---
@@ -14,6 +13,7 @@ These are links to documentation about our tech stack.
 - [Tabler Icons](https://tablericons.com/) is where our icons come from.
 - [Vite](https://vitejs.dev/guide/) is what builds the frontend
 - [Vitest](https://vitest.dev/guide/) is what we use to write unit tests
+- [VitePress](https://vitepress.dev/) is what we use to write our docs
 - [Playwright](https://playwright.dev/docs/intro) is what we use for end-to-end (e2e) testing.
 - [Pulumi](https://www.pulumi.com/docs/) is what deploys our backend cloud resources
 - [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html) is how we build our web API

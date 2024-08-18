@@ -100,16 +100,6 @@ Git will do a [binary search](https://en.wikipedia.org/w/index.php?title=Binary_
 
 See also: [git-bisect documentation](https://git-scm.com/docs/git-bisect)
 
-## Update GitHub Pages dependencies
-
-From the `docs` directory, run:
-
-```sh
-bundle update
-```
-
-[Check the page locally](/how-to/edit-docs.md) and commit the updated `Gemfile.lock` if everything looks good.
-
 ## Conclusion
 
 When you are finished and the `check-all` task succeeds, push your branch and open a PR for review. If any of the GitHub actions checks fail, please investigate and resolve the issue.

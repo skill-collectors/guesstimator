@@ -1,5 +1,4 @@
 ---
-
 title: How to edit this documentation
 permalink: /how-to/edit-docs
 ---
@@ -10,14 +9,7 @@ All of the pages on this site are just markdown files inside the ['docs' directo
 
 ### Viewing the documentation locally
 
-Follow [GitHub's documentation](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll) to preview your changes locally.
-
-Briefly, the steps are:
-
-1. Install Ruby
-1. Install Bundler
-1. Run `bundle install` from the `docs` directory.
-1. Run `bundle exec jekyll serve` from the `docs` directory.
+Our docs are built by [VitePress](https://vitepress.dev/). You can view them locally with `npm run docs:dev`.
 
 ### How these docs are organized
 
