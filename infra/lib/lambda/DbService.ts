@@ -437,4 +437,32 @@ export class DbService {
 
     return count;
   }
+
+  async resetInactiveRooms() {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 1);
+    const cutoffDateString = cutoffDate.toISOString().substring(0, 10);
+    console.log(`Scanning for cards revealed since ${cutoffDateString}`);
+
+    const queryParams = {
+      TableName: this.tableName,
+      ProjectionExpression: "PK",
+      // ISO dates can be sorted/compared alphanumerically
+      FilterExpression:
+        "SK = :sk AND updatedOn < :cutoffDate AND isRevealed = true",
+      ExpressionAttributeValues: {
+        ":sk": "ROOM",
+        ":cutoffDate": cutoffDateString,
+      },
+    };
+
+    let count = 0;
+    await scan<RoomItem>(this.client, queryParams, async (item) => {
+      const roomId = item.PK.substring("ROOM:".length);
+      await this.setCardsRevealed(roomId, false);
+      count++;
+    });
+
+    return count;
+  }
 }

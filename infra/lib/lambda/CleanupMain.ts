@@ -16,6 +16,10 @@ export function createStaleRoomCleanupFunction(
     const userCount = await db.deleteStaleUsers();
     console.log(`Removed ${userCount} stale users`);
 
+    console.log(`Resetting inactive rooms in ${tableName}`);
+    const resetCount = await db.resetInactiveRooms();
+    console.log(`Reset ${resetCount} inactive rooms`);
+
     console.log("Cleanup complete!");
   };
 }
