@@ -449,10 +449,11 @@ export class DbService {
       ProjectionExpression: "PK",
       // ISO dates can be sorted/compared alphanumerically
       FilterExpression:
-        "SK = :sk AND updatedOn < :cutoffDate AND isRevealed = true",
+        "SK = :sk AND updatedOn < :cutoffDate AND isRevealed = :isRevealed",
       ExpressionAttributeValues: {
         ":sk": "ROOM",
         ":cutoffDate": cutoffDateString,
+        ":isRevealed": true,
       },
     };
 
