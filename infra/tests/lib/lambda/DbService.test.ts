@@ -461,4 +461,18 @@ describe("DbService", () => {
       );
     });
   });
+  describe("resetInactiveRooms", () => {
+    it("Reset rooms updated more than a day ago", async () => {
+      // Given
+      const service = new DbService(tableName);
+
+      // When
+      await service.resetInactiveRooms();
+
+      // Then
+      expect(vi.mocked(service.client.send).mock.calls[2][0]).toBeInstanceOf(
+        BatchWriteCommand,
+      );
+    });
+  });
 });
