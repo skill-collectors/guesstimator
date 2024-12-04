@@ -29,7 +29,7 @@
     "infra"
   ],
   "devDependencies": {
-    "vitepress": "^1.3.3",
-    "vitepress-sidebar": "^1.24.2"
+    "vitepress": "^1.5.0",
+    "vitepress-sidebar": "^1.29.0"
   }
 }
