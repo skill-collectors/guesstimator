@@ -1,17 +1,19 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-      day: "thursday"
-    ignore:
-      - dependency-name: "@types/node"
-        # Ignore 18.x for now since it's not LTS.
-        # this will need to be updated manually every so often.
-        versions: ["17.x", "18.x", "19.x"]
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 10
+  ignore:
+    - dependency-name: "@types/node"
+      # Even numbers are LTS.
+      # This will need to be updated manually every so often.
+      versions: ["23.x", "25.x", "27.x", "29.x"]
+  # Major versions should each get their own PR
+  groups:
+      # Group non-major updates into a single PR
+      non-major:
+        patterns:
+          - "*" # Match all dependencies
+        update-types: ["minor", "patch"]
