@@ -1,10 +1,20 @@
 <script lang="ts">
-  export let href: string;
-  export let target: "_self" | "_blank" | "_parent" | "_top" = "_self";
-  let additionalClasses = "";
-  export { additionalClasses as class };
+  interface Props {
+    href: string;
+    target?: "_self" | "_blank" | "_parent" | "_top";
+    class?: string;
+    children?: import('svelte').Snippet;
+  }
+
+  let {
+    href,
+    target = "_self",
+    class: additionalClasses = "",
+    children
+  }: Props = $props();
+  
 </script>
 
 <a {href} {target} class={`text-blue-800 font-medium ${additionalClasses}`}
-  ><slot /></a
+  >{@render children?.()}</a
 >

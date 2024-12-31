@@ -1,21 +1,29 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Loader from "$lib/components/icons/Loader.svelte";
   import type { Room } from "$lib/services/rooms";
   import { createEventDispatcher } from "svelte";
 
-  export let roomData: Room;
-
-  let isPending = false;
-  // Reset isPending whenever isRevealed changes
-  $: if (roomData.isRevealed !== undefined) {
-    isPending = false;
+  interface Props {
+    roomData: Room;
   }
 
-  $: joinedUsers = roomData.users.filter((user) => user.username.length > 0);
+  let { roomData }: Props = $props();
 
-  $: isEveryoneReady = joinedUsers.every((user) => user.hasVote);
+  let isPending = $state(false);
+  // Reset isPending whenever isRevealed changes
+  run(() => {
+    if (roomData.isRevealed !== undefined) {
+      isPending = false;
+    }
+  });
+
+  let joinedUsers = $derived(roomData.users.filter((user) => user.username.length > 0));
+
+  let isEveryoneReady = $derived(joinedUsers.every((user) => user.hasVote));
 
   const dispatch = createEventDispatcher();
 

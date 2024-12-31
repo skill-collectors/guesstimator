@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { page } from "$app/stores";
   import TgButton from "$lib/components/base/TgButton.svelte";
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
@@ -19,53 +21,55 @@
   import BottomHostControls from "./BottomHostControls.svelte";
   import { Operation, PendingOperation } from "./PendingOperation";
 
-  let notFound = false;
+  let notFound = $state(false);
   const roomId = $page.params.roomId;
   const url = $page.url;
 
   let clearReloadInterval: number;
   let pingTimeout: number | undefined = undefined;
 
-  let webSocket: GuesstimatorWebSocket | undefined;
-  let webSocketNeedsReconnect = false;
-  let roomData: Room | null = null;
+  let webSocket: GuesstimatorWebSocket | undefined = $state();
+  let webSocketNeedsReconnect = $state(false);
+  let roomData: Room | null = $state(null);
 
-  let loadingStatus = "";
+  let loadingStatus = $state("");
 
-  let pendingOperation = new PendingOperation(Operation.NOOP);
+  let pendingOperation = $state(new PendingOperation(Operation.NOOP));
 
-  $: currentUser = roomData?.users.find((user) => user.userKey !== undefined);
-  $: isJoined = currentUser === undefined || currentUser.username.length === 0;
-  $: isHost = webSocket?.hostKey !== undefined;
+  let currentUser = $derived(roomData?.users.find((user) => user.userKey !== undefined));
+  let isJoined = $derived(currentUser === undefined || currentUser.username.length === 0);
+  let isHost = $derived(webSocket?.hostKey !== undefined);
 
-  $: if (currentUser?.userKey !== undefined && webSocket !== undefined) {
-    webSocket.userKey = currentUser.userKey;
+  run(() => {
+    if (currentUser?.userKey !== undefined && webSocket !== undefined) {
+      webSocket.userKey = currentUser.userKey;
 
-    const existingUserData = localStorage.getUserData(roomId);
-    if (
-      existingUserData !== undefined &&
-      existingUserData.username !== undefined &&
-      existingUserData.username !== "" &&
-      currentUser?.username === ""
-    ) {
-      console.log("Current user got kicked. Rejoining...");
-      pendingOperation = new PendingOperation(
-        Operation.JOIN,
-        "",
-        existingUserData.username,
-      );
-      if (currentUser) {
-        currentUser.username = existingUserData.username;
+      const existingUserData = localStorage.getUserData(roomId);
+      if (
+        existingUserData !== undefined &&
+        existingUserData.username !== undefined &&
+        existingUserData.username !== "" &&
+        currentUser?.username === ""
+      ) {
+        console.log("Current user got kicked. Rejoining...");
+        pendingOperation = new PendingOperation(
+          Operation.JOIN,
+          "",
+          existingUserData.username,
+        );
+        if (currentUser) {
+          currentUser.username = existingUserData.username;
+        }
+        webSocket?.join(existingUserData.username);
+      } else {
+        localStorage.storeUserData(
+          roomId,
+          currentUser.userKey,
+          currentUser.username,
+        );
       }
-      webSocket?.join(existingUserData.username);
-    } else {
-      localStorage.storeUserData(
-        roomId,
-        currentUser.userKey,
-        currentUser.username,
-      );
     }
-  }
+  });
 
   onMount(() => {
     connectWebSocket();
@@ -254,7 +258,7 @@
   });
 </script>
 
-<svelte:document on:visibilitychange={handleVisibilityChange} />
+<svelte:document onvisibilitychange={handleVisibilityChange} />
 <svelte:head>
   <title>Guesstimator - {roomData?.roomId ?? "New"}</title>
   <meta name="description" content={`Page for room ${roomData?.roomId}`} />

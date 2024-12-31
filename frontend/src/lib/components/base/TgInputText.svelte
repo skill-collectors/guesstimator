@@ -1,10 +1,20 @@
 <script lang="ts">
-  export let name: string | null | undefined = undefined;
-  export let value = "";
-  export let maxlength: number | null | undefined = undefined;
-  export let testId: string | null | undefined = undefined;
-  let additionalClasses = "";
-  export { additionalClasses as class };
+  interface Props {
+    name?: string | null | undefined;
+    value?: string;
+    maxlength?: number | null | undefined;
+    testId?: string | null | undefined;
+    class?: string;
+  }
+
+  let {
+    name = undefined,
+    value = $bindable(""),
+    maxlength = undefined,
+    testId = undefined,
+    class: additionalClasses = ""
+  }: Props = $props();
+  
 </script>
 
 <input

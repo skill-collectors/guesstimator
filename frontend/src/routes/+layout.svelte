@@ -4,6 +4,11 @@
   import PageFooter from "$lib/components/PageFooter.svelte";
   import { onMount } from "svelte";
   import { redirectToErrorPage } from "$lib/services/errorHandler";
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   onMount(() => {
     window.onunhandledrejection = (e) => {
@@ -14,7 +19,7 @@
 </script>
 
 <div class="h-full flex flex-col text-center">
-  <PageMain class="flex-grow"><slot /></PageMain>
+  <PageMain class="flex-grow">{@render children?.()}</PageMain>
   <PageFooter />
 </div>
 

@@ -1,12 +1,23 @@
-<script>
-  export let username = "";
-  export let isRevealed = false;
-  export let hasValue = false;
-  export let value = "";
+<script lang="ts">
+  import { run } from 'svelte/legacy';
 
-  let delay = 0;
-  let animationDelayClassName = "";
-  $: {
+  interface Props {
+    username?: string;
+    isRevealed?: boolean;
+    hasValue?: boolean;
+    value?: string;
+  }
+
+  let {
+    username = "",
+    isRevealed = false,
+    hasValue = false,
+    value = ""
+  }: Props = $props();
+
+  let delay = $state(0);
+  let animationDelayClassName = $state("");
+  run(() => {
     if (isRevealed === true) {
       // Set a random delay for each reveal
       // This makes it feel more natural vs all cards flipping in perfect synchrony.
@@ -31,9 +42,9 @@
           break;
       }
     }
-  }
+  });
 
-  $: displayValue = value === "" ? "?" : value;
+  let displayValue = $derived(value === "" ? "?" : value);
 </script>
 
 <!-- Playing cards are 2.5 x 3.5 inches, or 1.4x taller than wide -->

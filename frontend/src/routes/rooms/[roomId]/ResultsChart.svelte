@@ -1,14 +1,20 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import Chart from "$lib/components/Chart.svelte";
   import type { Room } from "$lib/services/rooms";
   import UnanimousVoteCelebration from "./UnanimousVoteCelebration.svelte";
 
-  export let roomData: Room;
+  interface Props {
+    roomData: Room;
+  }
 
-  let chartLabels: string[] = [];
-  let chartDataSeries: number[] = [];
+  let { roomData }: Props = $props();
 
-  $: {
+  let chartLabels: string[] = $state([]);
+  let chartDataSeries: number[] = $state([]);
+
+  run(() => {
     chartLabels = roomData?.validSizes ?? [];
     const currentVotes =
       roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ??
@@ -20,7 +26,7 @@
     chartDataSeries = chartLabels.map(
       (vote) => valueFrequencies.get(vote) ?? 0
     );
-  }
+  });
 </script>
 
 <UnanimousVoteCelebration {roomData} />

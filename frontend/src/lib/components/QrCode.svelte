@@ -2,9 +2,13 @@
   import QRCode from "qrcode";
   import { onMount } from "svelte";
 
-  export let data = "";
+  interface Props {
+    data?: string;
+  }
 
-  let canvas: HTMLCanvasElement;
+  let { data = "" }: Props = $props();
+
+  let canvas: HTMLCanvasElement = $state();
 
   onMount(() => {
     QRCode.toCanvas(canvas, data, (error) => {
@@ -15,4 +19,4 @@
   });
 </script>
 
-<canvas bind:this={canvas} />
+<canvas bind:this={canvas}></canvas>

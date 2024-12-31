@@ -3,12 +3,16 @@
   import TgConfetti from "$lib/components/base/TgConfetti.svelte";
   import type { Room } from "$lib/services/rooms";
 
-  export let roomData: Room;
+  interface Props {
+    roomData: Room;
+  }
+
+  let { roomData }: Props = $props();
 
   /**
    * True if all votes are the same, and false otherwise.
    */
-  $: celebrate = (function unanimousVote() {
+  let celebrate = $derived((function unanimousVote() {
     const votes = roomData?.users
       .filter((user) => user.username.length > 0) // Users who haven't joined don't count
       .map((user) => user.vote);
@@ -31,7 +35,7 @@
     }
 
     return true;
-  })();
+  })());
 </script>
 
 {#if celebrate}

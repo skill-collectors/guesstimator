@@ -3,8 +3,12 @@
   import type { Room, User } from "$lib/services/rooms";
   import { createEventDispatcher } from "svelte";
 
-  export let roomData: Room;
-  export let currentUser: User;
+  interface Props {
+    roomData: Room;
+    currentUser: User;
+  }
+
+  let { roomData, currentUser }: Props = $props();
 
   const dispatch = createEventDispatcher();
 

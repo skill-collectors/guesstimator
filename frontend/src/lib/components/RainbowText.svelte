@@ -1,5 +1,13 @@
+<script lang="ts">
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
+</script>
+
 <div class="text-6xl small-caps">
-  <span class="rainbow-text"><slot /></span>
+  <span class="rainbow-text">{@render children?.()}</span>
 </div>
 
 <style>

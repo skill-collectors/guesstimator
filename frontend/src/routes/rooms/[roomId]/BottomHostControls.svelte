@@ -8,7 +8,11 @@
   import TgInputText from "$lib/components/base/TgInputText.svelte";
   import TrashIcon from "$lib/components/icons/TrashIcon.svelte";
 
-  export let roomData: Room;
+  interface Props {
+    roomData: Room;
+  }
+
+  let { roomData }: Props = $props();
 
   interface SizeTemplate {
     name: string;
@@ -21,9 +25,9 @@
     { name: "Emoji", sizes: "🐜 🐁 🐇 🐕 🐻 🐘 🐋 ? ∞" },
   ];
 
-  let isPending = false;
-  let isUpdatingSizes = false;
-  let newSizes = roomData.validSizes.join(" ");
+  let isPending = $state(false);
+  let isUpdatingSizes = $state(false);
+  let newSizes = $state(roomData.validSizes.join(" "));
 
   const dispatch = createEventDispatcher();
 

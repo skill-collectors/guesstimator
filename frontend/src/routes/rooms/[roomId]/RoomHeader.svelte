@@ -8,7 +8,11 @@
   import TgHeadingSub from "$lib/components/base/TgHeadingSub.svelte";
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
 
-  export let url: URL;
+  interface Props {
+    url: URL;
+  }
+
+  let { url }: Props = $props();
 
   const shareData = {
     title: "Join my Guesstimator room",
@@ -19,8 +23,8 @@
   const canShare =
     navigator.canShare === undefined ? false : navigator.canShare();
 
-  let copyConfirmationText: string | null = null;
-  let showingQrCode = false;
+  let copyConfirmationText: string | null = $state(null);
+  let showingQrCode = $state(false);
 
   function handleShareRoom() {
     if (canShare) {

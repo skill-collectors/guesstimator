@@ -14,7 +14,7 @@
   import Modal from "$lib/components/Modal.svelte";
   import QrCode from "$lib/components/QrCode.svelte";
 
-  let showModal = false;
+  let showModal = $state(false);
 </script>
 
 <svelte:head>

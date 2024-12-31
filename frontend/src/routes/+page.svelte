@@ -7,7 +7,7 @@
   import { get } from "$lib/services/rest";
   import { onMount } from "svelte";
 
-  let isApiAvailable = true;
+  let isApiAvailable = $state(true);
 
   onMount(async () => {
     try {
