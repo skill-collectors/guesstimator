@@ -7,7 +7,7 @@
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import * as localStorage from "$lib/services/localStorage";
   import { GuesstimatorWebSocket } from "$lib/services/websockets";
-  import type { Room } from "$lib/services/rooms";
+  import type { Room, User } from "$lib/services/rooms";
   import * as rooms from "$lib/services/rooms";
   import InvalidRoom from "./InvalidRoom.svelte";
   import { onDestroy, onMount } from "svelte";
@@ -30,13 +30,13 @@
 
   let webSocket: GuesstimatorWebSocket | undefined = $state();
   let webSocketNeedsReconnect = $state(false);
-  let roomData: Room | null = $state(null);
+  let roomData = $state<Room | null>(null);
 
   let loadingStatus = $state("");
 
   let pendingOperation = $state(new PendingOperation(Operation.NOOP));
 
-  let currentUser = $derived(roomData?.users.find((user) => user.userKey !== undefined));
+  let currentUser = $derived(roomData?.users?.find((user: User) => user.userKey !== undefined));
   let isJoined = $derived(currentUser === undefined || currentUser.username.length === 0);
   let isHost = $derived(webSocket?.hostKey !== undefined);
 

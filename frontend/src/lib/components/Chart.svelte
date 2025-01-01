@@ -10,7 +10,12 @@
     AllSeriesTypes,
   } from "chartist";
 
-  
+  let {
+    labels = [],
+    series = [],
+    class: className = "",
+    options = {}
+  }: Props = $props();
 
   const data: BarChartData = {
     labels,
@@ -24,14 +29,7 @@
     options?: BarChartOptions;
   }
 
-  let {
-    labels = [],
-    series = [],
-    class: className = "",
-    options = {}
-  }: Props = $props();
-
-  let chartContainer: HTMLElement = $state();
+  let chartContainer = $state<HTMLElement | undefined>(undefined);
 
   run(() => {
     if (chartContainer !== undefined) {

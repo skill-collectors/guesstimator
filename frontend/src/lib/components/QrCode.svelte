@@ -8,7 +8,7 @@
 
   let { data = "" }: Props = $props();
 
-  let canvas: HTMLCanvasElement = $state();
+  let canvas = $state<HTMLCanvasElement | undefined>(undefined);
 
   onMount(() => {
     QRCode.toCanvas(canvas, data, (error) => {

@@ -6,7 +6,7 @@
   import TgParagraph from "$lib/components/base/TgParagraph.svelte";
   import Loader from "$lib/components/icons/Loader.svelte";
 
-  let roomData: Room = $state();
+  let roomData = $state<Room | undefined>(undefined);
   onMount(async () => {
     roomData = await createRoom();
     if (roomData.hostKey === undefined) {
