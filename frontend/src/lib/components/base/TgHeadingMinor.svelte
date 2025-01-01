@@ -1,11 +1,10 @@
 <script lang="ts">
-  interface Props {
-    class?: string;
-    children?: import('svelte').Snippet;
-  }
+	interface Props {
+		class?: string;
+		children?: import('svelte').Snippet;
+	}
 
-  let { class: additionalClasses = "", children }: Props = $props();
-  
+	let { class: additionalClasses = '', children }: Props = $props();
 </script>
 
-<h4 class={`font-bold font-sans mb-2 ${additionalClasses}`}>{@render children?.()}</h4>
+<h4 class={`mb-2 font-sans font-bold ${additionalClasses}`}>{@render children?.()}</h4>

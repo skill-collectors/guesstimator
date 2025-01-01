@@ -1,19 +1,19 @@
 <script>
-  import TgHeadingMain from "$lib/components/base/TgHeadingMain.svelte";
-  import TgLink from "$lib/components/base/TgLink.svelte";
-  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
+	import TgHeadingMain from '$lib/components/base/TgHeadingMain.svelte';
+	import TgLink from '$lib/components/base/TgLink.svelte';
+	import TgParagraph from '$lib/components/base/TgParagraph.svelte';
 </script>
 
 <svelte:head>
-  <title>Guesstimator - Not found</title>
-  <meta name="description" content="404 Not Found" />
+	<title>Guesstimator - Not found</title>
+	<meta name="description" content="404 Not Found" />
 </svelte:head>
 <TgHeadingMain>Couldn't find the requested data</TgHeadingMain>
 <TgParagraph>
-  The application requested some data that couldn't be found. Please try again,
-  or if the issue keeps happening you can
-  <TgLink
-    href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
-    >create a bug report.
-  </TgLink>
+	The application requested some data that couldn't be found. Please try again, or if the issue keeps happening you
+	can
+	<TgLink
+		href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+		>create a bug report.
+	</TgLink>
 </TgParagraph>

@@ -1,63 +1,56 @@
-import * as rest from "$lib/services/rest";
+import * as rest from '$lib/services/rest';
 
 export interface Room {
-  roomId: string;
-  hostKey: string | undefined;
-  validSizes: string[];
-  isRevealed: boolean;
-  users: User[];
-  timestamp: string;
+	roomId: string;
+	hostKey: string | undefined;
+	validSizes: string[];
+	isRevealed: boolean;
+	users: User[];
+	timestamp: string;
 }
 export function isRoom(value: unknown): value is Room {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "roomId" in value &&
-    "validSizes" in value &&
-    "isRevealed" in value &&
-    "users" in value
-  );
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'roomId' in value &&
+		'validSizes' in value &&
+		'isRevealed' in value &&
+		'users' in value
+	);
 }
 
 export interface User {
-  userKey?: string;
-  userId: string;
-  username: string;
-  hasVote: boolean;
-  vote: string;
+	userKey?: string;
+	userId: string;
+	username: string;
+	hasVote: boolean;
+	vote: string;
 }
 
 export async function createRoom(): Promise<Room> {
-  return await rest.post("/rooms");
+	return await rest.post('/rooms');
 }
 
-export async function getRoom(
-  roomId: string,
-  userKey: string | null = null,
-): Promise<Room> {
-  if (userKey === null) {
-    return await rest.get(`/rooms/${roomId}`);
-  } else {
-    return await rest.get(`/rooms/${roomId}?userKey=${userKey}`);
-  }
+export async function getRoom(roomId: string, userKey: string | null = null): Promise<Room> {
+	if (userKey === null) {
+		return await rest.get(`/rooms/${roomId}`);
+	} else {
+		return await rest.get(`/rooms/${roomId}?userKey=${userKey}`);
+	}
 }
 
 export async function joinRoom(roomId: string, name: string) {
-  return await rest.post(`/rooms/${roomId}/users`, { name });
+	return await rest.post(`/rooms/${roomId}/users`, { name });
 }
 
 export async function deleteRoom(roomId: string, hostKey: string) {
-  await rest.del(`/rooms/${roomId}`, { hostKey });
+	await rest.del(`/rooms/${roomId}`, { hostKey });
 }
 
-export async function setIsRevealed(
-  roomId: string,
-  value: boolean,
-  hostKey: string,
-) {
-  await rest.put(`/rooms/${roomId}/isRevealed`, { value, hostKey });
+export async function setIsRevealed(roomId: string, value: boolean, hostKey: string) {
+	await rest.put(`/rooms/${roomId}/isRevealed`, { value, hostKey });
 }
 
 export async function vote(roomId: string, userKey: string, vote: string) {
-  await rest.post(`/rooms/${roomId}/votes`, { userKey, vote });
+	await rest.post(`/rooms/${roomId}/votes`, { userKey, vote });
 }

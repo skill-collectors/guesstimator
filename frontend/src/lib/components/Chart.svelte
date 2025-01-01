@@ -1,41 +1,31 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
+	import { run } from 'svelte/legacy';
 
-  import "chartist/dist/index.css";
-  import { BarChart } from "chartist";
-  import type {
-    BarChartData,
-    BarChartOptions,
-    Label,
-    AllSeriesTypes,
-  } from "chartist";
+	import 'chartist/dist/index.css';
+	import { BarChart } from 'chartist';
+	import type { BarChartData, BarChartOptions, Label, AllSeriesTypes } from 'chartist';
 
-  let {
-    labels = [],
-    series = [],
-    class: className = "",
-    options = {}
-  }: Props = $props();
+	let { labels = [], series = [], class: className = '', options = {} }: Props = $props();
 
-  const data: BarChartData = {
-    labels,
-    series,
-  };
+	const data: BarChartData = {
+		labels,
+		series,
+	};
 
-  interface Props {
-    labels?: Label[];
-    series?: AllSeriesTypes;
-    class?: string;
-    options?: BarChartOptions;
-  }
+	interface Props {
+		labels?: Label[];
+		series?: AllSeriesTypes;
+		class?: string;
+		options?: BarChartOptions;
+	}
 
-  let chartContainer = $state<HTMLElement | undefined>(undefined);
+	let chartContainer = $state<HTMLElement | undefined>(undefined);
 
-  run(() => {
-    if (chartContainer !== undefined) {
-      new BarChart(chartContainer, data, options);
-    }
-  });
+	run(() => {
+		if (chartContainer !== undefined) {
+			new BarChart(chartContainer, data, options);
+		}
+	});
 </script>
 
 <div class={className} bind:this={chartContainer}></div>

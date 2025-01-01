@@ -1,44 +1,46 @@
 <script lang="ts">
-  import RainbowText from "$lib/components/RainbowText.svelte";
-  import TgConfetti from "$lib/components/base/TgConfetti.svelte";
-  import type { Room } from "$lib/services/rooms";
+	import RainbowText from '$lib/components/RainbowText.svelte';
+	import TgConfetti from '$lib/components/base/TgConfetti.svelte';
+	import type { Room } from '$lib/services/rooms';
 
-  interface Props {
-    roomData: Room;
-  }
+	interface Props {
+		roomData: Room;
+	}
 
-  let { roomData }: Props = $props();
+	let { roomData }: Props = $props();
 
-  /**
-   * True if all votes are the same, and false otherwise.
-   */
-  let celebrate = $derived((function unanimousVote() {
-    const votes = roomData?.users
-      .filter((user) => user.username.length > 0) // Users who haven't joined don't count
-      .map((user) => user.vote);
-    console.log(votes);
-    if (votes.includes("") || votes.includes("?") || votes.includes("∞")) {
-      // If anyone is uncertain, that's no cause for celebration
-      return false;
-    }
-    if (votes === undefined || votes.length === 0) {
-      // If nobody voted, then nobody agrees
-      return false;
-    }
+	/**
+	 * True if all votes are the same, and false otherwise.
+	 */
+	let celebrate = $derived(
+		(function unanimousVote() {
+			const votes = roomData?.users
+				.filter((user) => user.username.length > 0) // Users who haven't joined don't count
+				.map((user) => user.vote);
+			console.log(votes);
+			if (votes.includes('') || votes.includes('?') || votes.includes('∞')) {
+				// If anyone is uncertain, that's no cause for celebration
+				return false;
+			}
+			if (votes === undefined || votes.length === 0) {
+				// If nobody voted, then nobody agrees
+				return false;
+			}
 
-    const firstVote = votes[0];
+			const firstVote = votes[0];
 
-    for (const vote of votes) {
-      if (vote !== firstVote) {
-        return false;
-      }
-    }
+			for (const vote of votes) {
+				if (vote !== firstVote) {
+					return false;
+				}
+			}
 
-    return true;
-  })());
+			return true;
+		})(),
+	);
 </script>
 
 {#if celebrate}
-  <RainbowText>Everyone agrees!</RainbowText>
-  <TgConfetti />
+	<RainbowText>Everyone agrees!</RainbowText>
+	<TgConfetti />
 {/if}

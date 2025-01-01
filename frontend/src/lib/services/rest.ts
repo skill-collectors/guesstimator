@@ -18,13 +18,9 @@
  * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
  * @throws {ApiUnknownError} If the server returns something unexpected.
  */
-export async function get(
-  path: string,
-  options: RequestInit = {},
-  headers = new Headers(),
-) {
-  const body = null; // GET requests can't contain a body.
-  return doFetch("GET", path, body, options, headers);
+export async function get(path: string, options: RequestInit = {}, headers = new Headers()) {
+	const body = null; // GET requests can't contain a body.
+	return doFetch('GET', path, body, options, headers);
 }
 
 /**
@@ -39,13 +35,8 @@ export async function get(
  * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
  * @throws {ApiUnknownError} If the server returns something unexpected.
  */
-export async function post(
-  path: string,
-  body: object = {},
-  options: RequestInit = {},
-  headers = new Headers(),
-) {
-  return doFetch("POST", path, body, options, headers);
+export async function post(path: string, body: object = {}, options: RequestInit = {}, headers = new Headers()) {
+	return doFetch('POST', path, body, options, headers);
 }
 
 /**
@@ -60,13 +51,8 @@ export async function post(
  * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
  * @throws {ApiUnknownError} If the server returns something unexpected.
  */
-export async function put(
-  path: string,
-  body: object = {},
-  options: RequestInit = {},
-  headers = new Headers(),
-) {
-  return doFetch("PUT", path, body, options, headers);
+export async function put(path: string, body: object = {}, options: RequestInit = {}, headers = new Headers()) {
+	return doFetch('PUT', path, body, options, headers);
 }
 
 /**
@@ -81,13 +67,8 @@ export async function put(
  * @throws {ApiErrorWithId} If the server returns 500 with an 'errorId' on the response JSON.
  * @throws {ApiUnknownError} If the server returns something unexpected.
  */
-export async function del(
-  path: string,
-  body: object = {},
-  options: RequestInit = {},
-  headers = new Headers(),
-) {
-  return doFetch("DELETE", path, body, options, headers);
+export async function del(path: string, body: object = {}, options: RequestInit = {}, headers = new Headers()) {
+	return doFetch('DELETE', path, body, options, headers);
 }
 
 /**
@@ -100,27 +81,21 @@ export async function del(
  * @param headers Any headers to add to the request. This method automatically includes the correct 'x-api-key'.
  * @returns The result of the fetch call.
  */
-async function doFetch(
-  method: string,
-  path: string,
-  body: object | null,
-  options: RequestInit,
-  headers: Headers,
-) {
-  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-  const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
+async function doFetch(method: string, path: string, body: object | null, options: RequestInit, headers: Headers) {
+	const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+	const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
 
-  headers.append("x-api-key", apiKey);
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers,
-    body: body === null ? null : JSON.stringify(body),
-    method,
-    mode: "cors",
-  });
-  await throwIfNotOk(method, path, response);
-  const json = await response.json();
-  return json;
+	headers.append('x-api-key', apiKey);
+	const response = await fetch(`${baseUrl}${path}`, {
+		...options,
+		headers,
+		body: body === null ? null : JSON.stringify(body),
+		method,
+		mode: 'cors',
+	});
+	await throwIfNotOk(method, path, response);
+	const json = await response.json();
+	return json;
 }
 
 /**
@@ -138,26 +113,26 @@ async function doFetch(
  * @throws {ApiUnknownError} If the server returns something unexpected.
  */
 async function throwIfNotOk(method: string, path: string, response: Response) {
-  if (!response.ok) {
-    if (response.status === 429) {
-      throw new ApiOverloadedError();
-    } else if (response.status === 404) {
-      throw new ApiEndpointNotFoundError(method, path, await response.text());
-    } else {
-      let json;
-      try {
-        json = await response.json();
-      } catch (err) {
-        // In case of errors parsing JSON on the response
-        throw new ApiUnknownError(method, path, await response.text());
-      }
-      if ("errorId" in json) {
-        const { errorId, timestamp } = json;
-        throw new ApiErrorWithId(method, path, errorId, timestamp);
-      }
-    }
-    throw new ApiUnknownError(method, path, await response.text());
-  }
+	if (!response.ok) {
+		if (response.status === 429) {
+			throw new ApiOverloadedError();
+		} else if (response.status === 404) {
+			throw new ApiEndpointNotFoundError(method, path, await response.text());
+		} else {
+			let json;
+			try {
+				json = await response.json();
+			} catch (err) {
+				// In case of errors parsing JSON on the response
+				throw new ApiUnknownError(method, path, await response.text());
+			}
+			if ('errorId' in json) {
+				const { errorId, timestamp } = json;
+				throw new ApiErrorWithId(method, path, errorId, timestamp);
+			}
+		}
+		throw new ApiUnknownError(method, path, await response.text());
+	}
 }
 
 /* ******************************************************************
@@ -169,12 +144,12 @@ async function throwIfNotOk(method: string, path: string, response: Response) {
  * Thrown if the gateway response with 429 because the usage plan was exceeded.
  */
 export class ApiOverloadedError extends Error {
-  constructor() {
-    super("The API rate limit is exceeded or the quota has been reached.");
+	constructor() {
+		super('The API rate limit is exceeded or the quota has been reached.');
 
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
+		// Set the prototype explicitly.
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
 }
 
 /**
@@ -182,12 +157,12 @@ export class ApiOverloadedError extends Error {
  * something like request a room that no longer exists.
  */
 export class ApiEndpointNotFoundError extends Error {
-  constructor(method: string, path: string, responseText: string) {
-    super(`${method} ${path} => 404 (NOT FOUND): ${responseText}`);
+	constructor(method: string, path: string, responseText: string) {
+		super(`${method} ${path} => 404 (NOT FOUND): ${responseText}`);
 
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
+		// Set the prototype explicitly.
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
 }
 
 /**
@@ -196,24 +171,17 @@ export class ApiEndpointNotFoundError extends Error {
  * they create an issue in GitHub.
  */
 export class ApiErrorWithId extends Error {
-  errorId;
-  timestamp;
+	errorId;
+	timestamp;
 
-  constructor(
-    method: string,
-    path: string,
-    errorId: string,
-    timestamp: string,
-  ) {
-    super(
-      `${timestamp}: ${method} ${path} => 500 (Internal Server Error): ${errorId}`,
-    );
-    this.errorId = errorId;
-    this.timestamp = timestamp;
+	constructor(method: string, path: string, errorId: string, timestamp: string) {
+		super(`${timestamp}: ${method} ${path} => 500 (Internal Server Error): ${errorId}`);
+		this.errorId = errorId;
+		this.timestamp = timestamp;
 
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
+		// Set the prototype explicitly.
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
 }
 
 /**
@@ -221,10 +189,10 @@ export class ApiErrorWithId extends Error {
  * should never happen normally and probably represents a programming error.
  */
 export class ApiUnknownError extends Error {
-  constructor(method: string, path: string, responseText: string) {
-    super(`${method} ${path} => 500 (Internal Server Error): ${responseText}`);
+	constructor(method: string, path: string, responseText: string) {
+		super(`${method} ${path} => 500 (Internal Server Error): ${responseText}`);
 
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
+		// Set the prototype explicitly.
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
 }
