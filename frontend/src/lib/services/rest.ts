@@ -122,7 +122,7 @@ async function throwIfNotOk(method: string, path: string, response: Response) {
 			let json;
 			try {
 				json = await response.json();
-			} catch (err) {
+			} catch {
 				// In case of errors parsing JSON on the response
 				throw new ApiUnknownError(method, path, await response.text());
 			}

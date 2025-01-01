@@ -42,7 +42,7 @@
 		try {
 			await navigator.clipboard.writeText(url.href);
 			displayCopyMessage('Copied!');
-		} catch (err) {
+		} catch {
 			displayCopyMessage('Failed!');
 		}
 	}
