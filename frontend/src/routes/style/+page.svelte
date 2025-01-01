@@ -41,7 +41,7 @@
   otherwise, the result build in the scrum meetings
 </TgParagraph>
 <section>
-  <TgButton type="success" on:click={() => (showModal = true)}
+  <TgButton type="success" onclick={() => (showModal = true)}
     >Show Modal</TgButton
   >
   <Modal bind:showModal>

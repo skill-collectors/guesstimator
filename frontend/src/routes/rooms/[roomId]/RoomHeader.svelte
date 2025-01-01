@@ -59,7 +59,7 @@
     <TgButton
       id="copyUrlButton"
       type="secondary"
-      on:click={handleCopyClick}
+      onclick={handleCopyClick}
       class="relative"
     >
       <CopyIcon />
@@ -76,7 +76,7 @@
     <TgButton
       id="qrCodeButton"
       type="secondary"
-      on:click={handleQrCodeButtonClick}
+      onclick={handleQrCodeButtonClick}
       class="relative"
     >
       <QrCodeIcon />
@@ -93,7 +93,7 @@
     >
   </Modal>
   {#if canShare}
-    <TgButton id="shareRoomButton" type="secondary" on:click={handleShareRoom}>
+    <TgButton id="shareRoomButton" type="secondary" onclick={handleShareRoom}>
       <ShareIcon />
     </TgButton>
   {/if}

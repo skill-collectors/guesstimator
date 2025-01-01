@@ -42,17 +42,17 @@
   {#if isPending === true}
     <Loader />
   {:else if roomData.isRevealed}
-    <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
+    <TgButton id="hideCardsButton" type="secondary" onclick={handleReset}
       >Reset</TgButton
     >
   {:else if joinedUsers.length === 0}
     <TgParagraph>Waiting for people to join...</TgParagraph>
   {:else if isEveryoneReady}
-    <TgButton id="showCardsButton" type="success" on:click={handleReveal}
+    <TgButton id="showCardsButton" type="success" onclick={handleReveal}
       >Reveal cards</TgButton
     >
   {:else}
-    <TgButton id="showCardsButton" type="secondary" on:click={handleReveal}
+    <TgButton id="showCardsButton" type="secondary" onclick={handleReveal}
       >Reveal cards</TgButton
     >
   {/if}

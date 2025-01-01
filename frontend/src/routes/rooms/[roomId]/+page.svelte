@@ -272,7 +272,7 @@
   <TgParagraph>
     You have been disconnected due to inactivity. To keep using the room you can
   </TgParagraph>
-  <TgButton type="primary" on:click={connectWebSocket}>Reconnect</TgButton>
+  <TgButton type="primary" onclick={connectWebSocket}>Reconnect</TgButton>
 {:else}
   <RoomHeader {url} />
   <section id="currentVotes" class="mt-8">
@@ -308,7 +308,7 @@
       {/if}
       <TgParagraph>
         You are joined as <strong>{currentUser.username}</strong>
-        <TgButton type="danger" class="m-2" on:click={handleLeave}
+        <TgButton type="danger" class="m-2" onclick={handleLeave}
           >Leave</TgButton
         >
       </TgParagraph>

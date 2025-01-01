@@ -71,7 +71,7 @@
           id="editValidSizesButton"
           type="success"
           class="m-2 inline"
-          on:click={handleSubmitNewSizes}>Save</TgButton
+          onclick={handleSubmitNewSizes}>Save</TgButton
         >
       </TgParagraph>
       <TgParagraph>Or click one of the following presets:</TgParagraph>
@@ -80,7 +80,7 @@
           <li class="m-1">
             <TgButton
               type="success"
-              on:click={() => handleTemplateSize(template.sizes)}
+              onclick={() => handleTemplateSize(template.sizes)}
               >{template.name}</TgButton
             >
             {template.sizes}
@@ -95,7 +95,7 @@
           id="editValidSizesButton"
           type="secondary"
           class="m-2 inline"
-          on:click={handleInitUpdateSizes}>Edit</TgButton
+          onclick={handleInitUpdateSizes}>Edit</TgButton
         >
       </TgParagraph>
     {/if}
@@ -103,7 +103,7 @@
       id="deleteRoomButton"
       type="danger"
       class="m-2 inline"
-      on:click={handleDeleteRoom}
+      onclick={handleDeleteRoom}
     >
       <TrashIcon />
       Delete Room

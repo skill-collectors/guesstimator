@@ -19,15 +19,15 @@
 
 {#each roomData.validSizes as vote}
   {#if vote === currentUser.vote}
-    <TgButton type="primary" class="m-2" on:click={() => handleVote()}
+    <TgButton type="primary" class="m-2" onclick={() => handleVote()}
       >{vote}</TgButton
     >
   {:else}
-    <TgButton type="secondary" class="m-2" on:click={() => handleVote(vote)}
+    <TgButton type="secondary" class="m-2" onclick={() => handleVote(vote)}
       >{vote}</TgButton
     >
   {/if}
 {/each}
-<TgButton type="danger" class="m-2" on:click={() => handleVote()}
+<TgButton type="danger" class="m-2" onclick={() => handleVote()}
   >Clear</TgButton
 >

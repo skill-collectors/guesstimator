@@ -8,6 +8,7 @@
     id?: string | undefined;
     class?: string;
     children?: import('svelte').Snippet;
+    onclick?: (event: MouseEvent) => void;
   }
 
   let {
@@ -15,9 +16,10 @@
     href = undefined,
     id = undefined,
     class: additionalClasses = "",
-    children
+    children,
+    onclick
   }: Props = $props();
-  
+
 </script>
 
 {#if href === undefined}
@@ -25,28 +27,28 @@
     <button
       {id}
       class={`rounded font-semibold p-2 bg-blue-900 text-blue-50 ${additionalClasses}`}
-      onclick={bubble('click')}>{@render children?.()}</button
+      {onclick}>{@render children?.()}</button
     >
   {/if}
   {#if type === "secondary"}
     <button
       {id}
       class={`rounded font-semibold p-2 bg-slate-800 text-slate-50 ${additionalClasses}`}
-      onclick={bubble('click')}>{@render children?.()}</button
+      {onclick}>{@render children?.()}</button
     >
   {/if}
   {#if type === "danger"}
     <button
       {id}
       class={`rounded font-semibold p-2 bg-orange-800 text-orange-50 ${additionalClasses}`}
-      onclick={bubble('click')}>{@render children?.()}</button
+      {onclick}>{@render children?.()}</button
     >
   {/if}
   {#if type === "success"}
     <button
       {id}
       class={`rounded font-semibold p-2 bg-lime-800 text-lime-50 ${additionalClasses}`}
-      onclick={bubble('click')}>{@render children?.()}</button
+      {onclick}>{@render children?.()}</button
     >
   {/if}
 {:else}
