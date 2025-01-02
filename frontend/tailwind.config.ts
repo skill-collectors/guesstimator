@@ -1,3 +1,4 @@
+import type { Config } from 'tailwindcss';
 import tailwindcssAnimated from 'tailwindcss-animated';
 
 /** @type {import('tailwindcss').Config} */
@@ -7,4 +8,4 @@ export default {
 		extend: {},
 	},
 	plugins: [tailwindcssAnimated],
-};
+} satisfies Config;
