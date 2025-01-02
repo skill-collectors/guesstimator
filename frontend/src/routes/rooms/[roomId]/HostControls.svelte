@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import TgButton from '$lib/components/base/TgButton.svelte';
 	import TgParagraph from '$lib/components/base/TgParagraph.svelte';
 	import Loader from '$lib/components/icons/Loader.svelte';
 	import type { Room } from '$lib/services/rooms';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
 		roomData: Room;
+		reveal: () => void;
+		reset: () => void;
 	}
 
-	let { roomData }: Props = $props();
+	let { roomData, reveal, reset }: Props = $props();
 
 	let isPending = $state(false);
 	// Reset isPending whenever isRevealed changes
-	run(() => {
+	$effect(() => {
 		if (roomData.isRevealed !== undefined) {
 			isPending = false;
 		}
@@ -25,16 +24,14 @@
 
 	let isEveryoneReady = $derived(joinedUsers.every((user) => user.hasVote));
 
-	const dispatch = createEventDispatcher();
-
 	function handleReveal() {
 		isPending = true;
-		dispatch('reveal');
+		reveal();
 	}
 
 	function handleReset() {
 		isPending = true;
-		dispatch('reset');
+		reset();
 	}
 </script>
 

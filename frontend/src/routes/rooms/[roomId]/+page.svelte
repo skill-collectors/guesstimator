@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { page } from '$app/stores';
 	import TgButton from '$lib/components/base/TgButton.svelte';
 	import TgHeadingSub from '$lib/components/base/TgHeadingSub.svelte';
@@ -40,7 +38,7 @@
 	let isJoined = $derived(currentUser === undefined || currentUser.username.length === 0);
 	let isHost = $derived(webSocket?.hostKey !== undefined);
 
-	run(() => {
+	$effect(() => {
 		if (currentUser?.userKey !== undefined && webSocket !== undefined) {
 			webSocket.userKey = currentUser.userKey;
 
@@ -254,7 +252,7 @@
 	<section id="currentVotes" class="mt-8">
 		<TgHeadingSub>Current votes:</TgHeadingSub>
 		{#if isHost}
-			<HostControls {roomData} on:reset={handleReset} on:reveal={handleReveal} />
+			<HostControls {roomData} reset={handleReset} reveal={handleReveal} />
 		{/if}
 		<div class="mb-6">
 			<CardGroup {roomData} />

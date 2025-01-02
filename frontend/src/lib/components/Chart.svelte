@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import 'chartist/dist/index.css';
 	import { BarChart } from 'chartist';
 	import type { BarChartData, BarChartOptions, Label, AllSeriesTypes } from 'chartist';
@@ -21,7 +19,7 @@
 
 	let chartContainer = $state<HTMLElement | undefined>(undefined);
 
-	run(() => {
+	$effect(() => {
 		if (chartContainer !== undefined) {
 			new BarChart(chartContainer, data, options);
 		}

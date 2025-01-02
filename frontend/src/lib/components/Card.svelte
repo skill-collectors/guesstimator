@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	interface Props {
 		username?: string;
 		isRevealed?: boolean;
@@ -12,7 +10,7 @@
 
 	let delay = $state(0);
 	let animationDelayClassName = $state('');
-	run(() => {
+	$effect(() => {
 		if (isRevealed === true) {
 			// Set a random delay for each reveal
 			// This makes it feel more natural vs all cards flipping in perfect synchrony.

@@ -11,30 +11,32 @@ function stubRoom(isRevealed = false, users = [{ username: 'host' }]): Room {
 	} as Room;
 }
 describe('HostControls', () => {
+	const reveal = () => undefined;
+	const reset = () => undefined;
 	it("Renders 'reveal' button if cards are not revealed", () => {
 		const roomData = stubRoom();
-		const { getByText } = render(HostControls, { roomData });
+		const { getByText } = render(HostControls, { roomData, reveal, reset });
 
 		expect(() => getByText('Reveal cards')).not.toThrow();
 	});
 	it('Hides button when reveal clicked', async () => {
 		const user = userEvent.setup();
 		const roomData = stubRoom();
-		const { getByText } = render(HostControls, { roomData });
+		const { getByText } = render(HostControls, { roomData, reveal, reset });
 
 		await user.click(getByText('Reveal cards'));
 		expect(() => getByText('Reveal cards')).toThrow();
 	});
 	it("Renders 'reset' button if cards are not revealed", () => {
 		const roomData = stubRoom(true);
-		const { getByText } = render(HostControls, { roomData });
+		const { getByText } = render(HostControls, { roomData, reveal, reset });
 
 		expect(() => getByText('Reset')).not.toThrow();
 	});
 	it('Hides button when reset clicked', async () => {
 		const user = userEvent.setup();
 		const roomData = stubRoom(true);
-		const { getByText } = render(HostControls, { roomData });
+		const { getByText } = render(HostControls, { roomData, reveal, reset });
 
 		await user.click(getByText('Reset'));
 		expect(() => getByText('Reset')).toThrow();
