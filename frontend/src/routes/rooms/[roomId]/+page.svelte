@@ -155,19 +155,19 @@
 		}
 	}
 
-	function handleNewUser(e: CustomEvent<{ username: string }>) {
-		pendingOperation = new PendingOperation(Operation.JOIN, '', e.detail.username);
+	function handleNewUser(e: { username: string }) {
+		pendingOperation = new PendingOperation(Operation.JOIN, '', e.username);
 		if (currentUser) {
-			currentUser.username = e.detail.username;
+			currentUser.username = e.username;
 		}
-		webSocket?.join(e.detail.username);
+		webSocket?.join(e.username);
 	}
 
-	function handleVote(e: CustomEvent<{ vote: string }>) {
+	function handleVote(e: { vote: string }) {
 		if (currentUser !== undefined) {
-			pendingOperation = new PendingOperation(Operation.VOTE, currentUser.vote, e.detail.vote);
-			currentUser.vote = e.detail.vote;
-			webSocket?.vote(e.detail.vote);
+			pendingOperation = new PendingOperation(Operation.VOTE, currentUser.vote, e.vote);
+			currentUser.vote = e.vote;
+			webSocket?.vote(e.vote);
 		}
 	}
 
@@ -268,13 +268,13 @@
 	<section id="userControls" class="sm:mt-32">
 		{#if isJoined}
 			<TgParagraph>If you'd like to vote, enter a name and join the room:</TgParagraph>
-			<NewUserForm on:submit={handleNewUser} />
+			<NewUserForm submit={handleNewUser} />
 		{:else if currentUser}
 			{#if roomData?.isRevealed === true}
 				<TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
 			{:else}
 				<TgHeadingSub>Your vote: {currentUser.vote}</TgHeadingSub>
-				<VoteControls {roomData} {currentUser} on:vote={handleVote} />
+				<VoteControls {roomData} {currentUser} vote={handleVote} />
 			{/if}
 			<TgParagraph>
 				You are joined as <strong>{currentUser.username}</strong>

@@ -1,19 +1,17 @@
 <script lang="ts">
 	import TgButton from '$lib/components/base/TgButton.svelte';
 	import type { Room, User } from '$lib/services/rooms';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
 		roomData: Room;
 		currentUser: User;
+		vote: (args: { vote: string }) => void;
 	}
 
-	let { roomData, currentUser }: Props = $props();
+	let { roomData, currentUser, vote }: Props = $props();
 
-	const dispatch = createEventDispatcher();
-
-	function handleVote(vote = '') {
-		dispatch('vote', { vote });
+	function handleVote(voteValue = '') {
+		vote({ vote: voteValue });
 	}
 </script>
 
