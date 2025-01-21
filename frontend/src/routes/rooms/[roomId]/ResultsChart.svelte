@@ -9,17 +9,14 @@
 
 	let { roomData }: Props = $props();
 
-	let chartLabels: string[] = $state([]);
-	let chartDataSeries: number[] = $state([]);
-
-	$effect(() => {
-		chartLabels = roomData?.validSizes ?? [];
+	let chartLabels: string[] = $derived(roomData?.validSizes ?? []);
+	let chartDataSeries: number[] = $derived.by(() => {
 		const currentVotes = roomData?.users.filter((user) => user.hasVote).map((user) => user.vote) ?? [];
 		const valueFrequencies = currentVotes?.reduce((map, vote) => {
 			map.set(vote, (map.get(vote) ?? 0) + 1);
 			return map;
 		}, new Map<string, number>());
-		chartDataSeries = chartLabels.map((vote) => valueFrequencies.get(vote) ?? 0);
+		return chartLabels.map((vote) => valueFrequencies.get(vote) ?? 0);
 	});
 </script>
 
