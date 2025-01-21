@@ -1,18 +1,22 @@
 <script lang="ts">
-  import QRCode from "qrcode";
-  import { onMount } from "svelte";
+	import QRCode from 'qrcode';
+	import { onMount } from 'svelte';
 
-  export let data = "";
+	interface Props {
+		data?: string;
+	}
 
-  let canvas: HTMLCanvasElement;
+	let { data = '' }: Props = $props();
 
-  onMount(() => {
-    QRCode.toCanvas(canvas, data, (error) => {
-      if (error) {
-        console.log(error);
-      }
-    });
-  });
+	let canvas = $state<HTMLCanvasElement | undefined>(undefined);
+
+	onMount(() => {
+		QRCode.toCanvas(canvas, data, (error) => {
+			if (error) {
+				console.log(error);
+			}
+		});
+	});
 </script>
 
-<canvas bind:this={canvas} />
+<canvas bind:this={canvas}></canvas>

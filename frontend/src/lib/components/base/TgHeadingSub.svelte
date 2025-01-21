@@ -1,10 +1,12 @@
 <script lang="ts">
-  let additionalClasses = "";
-  export { additionalClasses as class };
+	interface Props {
+		class?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let { class: additionalClasses = '', children }: Props = $props();
 </script>
 
-<h3
-  class={`font-bold font-sans mb-2 text-2xl text-slate-700 ${additionalClasses}`}
->
-  <slot />
+<h3 class={`mb-2 font-sans text-2xl font-bold text-slate-700 ${additionalClasses}`}>
+	{@render children?.()}
 </h3>

@@ -1,20 +1,32 @@
 <script lang="ts">
-  export let showModal: boolean;
+	interface Props {
+		showModal: boolean;
+		children?: import('svelte').Snippet;
+		onclick?: (event: MouseEvent) => void;
+	}
 
-  let dialog: HTMLDialogElement;
+	let { showModal = $bindable(), children }: Props = $props();
 
-  $: if (dialog && showModal) dialog.showModal();
+	let dialog = $state<HTMLDialogElement | undefined>(undefined);
+
+	$effect(() => {
+		if (dialog && showModal) dialog.showModal();
+	});
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog
-  bind:this={dialog}
-  class="bg-slate-100 text-slate-900 border-4 rounded-xl border-slate-600"
-  on:close={() => (showModal = false)}
-  on:click|self={() => dialog.close()}
+	bind:this={dialog}
+	class="rounded-xl border-4 border-slate-600 bg-slate-100 text-slate-900"
+	onclose={() => (showModal = false)}
+	onclick={(e) => {
+		if (e.target === dialog) dialog?.close();
+	}}
+	onkeypress={(e) => {
+		if (e.key === 'Escape') dialog?.close();
+	}}
 >
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="p-4" on:click|stopPropagation>
-    <slot />
-  </div>
+	<div class="p-4">
+		{@render children?.()}
+	</div>
 </dialog>

@@ -1,51 +1,50 @@
 <script lang="ts">
-  import TgButton from "$lib/components/base/TgButton.svelte";
-  import TgParagraph from "$lib/components/base/TgParagraph.svelte";
-  import Loader from "$lib/components/icons/Loader.svelte";
-  import type { Room } from "$lib/services/rooms";
-  import { createEventDispatcher } from "svelte";
+	import TgButton from '$lib/components/base/TgButton.svelte';
+	import TgParagraph from '$lib/components/base/TgParagraph.svelte';
+	import Loader from '$lib/components/icons/Loader.svelte';
+	import type { Room } from '$lib/services/rooms';
 
-  export let roomData: Room;
+	interface Props {
+		roomData: Room;
+		reveal: () => void;
+		reset: () => void;
+	}
 
-  let isPending = false;
-  // Reset isPending whenever isRevealed changes
-  $: if (roomData.isRevealed !== undefined) {
-    isPending = false;
-  }
+	let { roomData, reveal, reset }: Props = $props();
 
-  $: joinedUsers = roomData.users.filter((user) => user.username.length > 0);
+	let isPending = $state(false);
+	// Reset isPending whenever isRevealed changes
+	$effect(() => {
+		if (roomData.isRevealed !== undefined) {
+			isPending = false;
+		}
+	});
 
-  $: isEveryoneReady = joinedUsers.every((user) => user.hasVote);
+	let joinedUsers = $derived(roomData.users.filter((user) => user.username.length > 0));
 
-  const dispatch = createEventDispatcher();
+	let isEveryoneReady = $derived(joinedUsers.every((user) => user.hasVote));
 
-  function handleReveal() {
-    isPending = true;
-    dispatch("reveal");
-  }
+	function handleReveal() {
+		isPending = true;
+		reveal();
+	}
 
-  function handleReset() {
-    isPending = true;
-    dispatch("reset");
-  }
+	function handleReset() {
+		isPending = true;
+		reset();
+	}
 </script>
 
 <TgParagraph>
-  {#if isPending === true}
-    <Loader />
-  {:else if roomData.isRevealed}
-    <TgButton id="hideCardsButton" type="secondary" on:click={handleReset}
-      >Reset</TgButton
-    >
-  {:else if joinedUsers.length === 0}
-    <TgParagraph>Waiting for people to join...</TgParagraph>
-  {:else if isEveryoneReady}
-    <TgButton id="showCardsButton" type="success" on:click={handleReveal}
-      >Reveal cards</TgButton
-    >
-  {:else}
-    <TgButton id="showCardsButton" type="secondary" on:click={handleReveal}
-      >Reveal cards</TgButton
-    >
-  {/if}
+	{#if isPending === true}
+		<Loader />
+	{:else if roomData.isRevealed}
+		<TgButton id="hideCardsButton" type="secondary" onclick={handleReset}>Reset</TgButton>
+	{:else if joinedUsers.length === 0}
+		<TgParagraph>Waiting for people to join...</TgParagraph>
+	{:else if isEveryoneReady}
+		<TgButton id="showCardsButton" type="success" onclick={handleReveal}>Reveal cards</TgButton>
+	{:else}
+		<TgButton id="showCardsButton" type="secondary" onclick={handleReveal}>Reveal cards</TgButton>
+	{/if}
 </TgParagraph>

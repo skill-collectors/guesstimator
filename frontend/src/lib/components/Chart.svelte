@@ -1,32 +1,29 @@
 <script lang="ts">
-  import "chartist/dist/index.css";
-  import { BarChart } from "chartist";
-  import type {
-    BarChartData,
-    BarChartOptions,
-    Label,
-    AllSeriesTypes,
-  } from "chartist";
+	import 'chartist/dist/index.css';
+	import { BarChart } from 'chartist';
+	import type { BarChartData, BarChartOptions, Label, AllSeriesTypes } from 'chartist';
 
-  export let labels: Label[] = [];
-  export let series: AllSeriesTypes = [];
-  let className = "";
-  export { className as class };
+	let { labels = [], series = [], class: className = '', options = {} }: Props = $props();
 
-  const data: BarChartData = {
-    labels,
-    series,
-  };
+	const data: BarChartData = {
+		labels,
+		series,
+	};
 
-  export let options: BarChartOptions = {};
+	interface Props {
+		labels?: Label[];
+		series?: AllSeriesTypes;
+		class?: string;
+		options?: BarChartOptions;
+	}
 
-  let chartContainer: HTMLElement;
+	let chartContainer = $state<HTMLElement | undefined>(undefined);
 
-  $: {
-    if (chartContainer !== undefined) {
-      new BarChart(chartContainer, data, options);
-    }
-  }
+	$effect(() => {
+		if (chartContainer !== undefined) {
+			new BarChart(chartContainer, data, options);
+		}
+	});
 </script>
 
-<div class={className} bind:this={chartContainer} />
+<div class={className} bind:this={chartContainer}></div>
