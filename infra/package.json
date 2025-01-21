@@ -1,10 +1,11 @@
 {
   "name": "guesstimator-infra",
+  "type": "module",
   "scripts": {
     "check-all": "npm run check-types && npm run lint &&  npm run test",
     "check-types": "tsc --noEmit",
     "format": "prettier --ignore-path .gitignore --write .",
-    "lint": "prettier --ignore-path .gitignore --check . && eslint --ignore-path .gitignore .",
+    "lint": "prettier --ignore-path .gitignore --check . && eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
@@ -12,10 +13,10 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.146",
     "@types/node": "^22",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.17.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.4.1",
     "vitest": "^2.1.8"
   },
