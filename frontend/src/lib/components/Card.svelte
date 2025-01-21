@@ -8,31 +8,24 @@
 
 	let { username = '', isRevealed = false, hasValue = false, value = '' }: Props = $props();
 
-	let delay = $state(0);
-	let animationDelayClassName = $state('');
-	$effect(() => {
+	let animationDelayClassName = $derived.by(() => {
 		if (isRevealed === true) {
 			// Set a random delay for each reveal
 			// This makes it feel more natural vs all cards flipping in perfect synchrony.
-			delay = Math.floor(Math.random() * 5) + 1;
+			const delay = Math.floor(Math.random() * 5) + 1;
 			switch (delay) {
 				// Tailwind CSS will only include classes that are fully specified (without variable interpolation),
 				// so we have to return the full class name here.
 				case 1:
-					animationDelayClassName = 'animate-delay-100';
-					break;
+					return 'animate-delay-100';
 				case 2:
-					animationDelayClassName = 'animate-delay-200';
-					break;
+					return 'animate-delay-200';
 				case 3:
-					animationDelayClassName = 'animate-delay-300';
-					break;
+					return 'animate-delay-300';
 				case 4:
-					animationDelayClassName = 'animate-delay-400';
-					break;
+					return 'animate-delay-400';
 				case 5:
-					animationDelayClassName = 'animate-delay-500';
-					break;
+					return 'animate-delay-500';
 			}
 		}
 	});
