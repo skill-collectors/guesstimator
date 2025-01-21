@@ -27,6 +27,7 @@ test('Basic workflow', async ({ page, browser }) => {
 		const possibleVotes = ['1', '2', '3', '5', '8', '13', '20'];
 		const randomIndex = Math.floor(Math.random() * possibleVotes.length);
 		const vote = possibleVotes[randomIndex];
+		page.waitForTimeout(500);
 		await addVote(user, vote);
 	}
 
