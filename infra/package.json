@@ -20,12 +20,12 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.699.0",
-    "@aws-sdk/client-dynamodb": "^3.705.0",
-    "@aws-sdk/lib-dynamodb": "^3.705.0",
-    "@pulumi/aws": "^6.62.2",
-    "@pulumi/aws-apigateway": "^2.6.1",
-    "@pulumi/pulumi": "^3.119.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.738.0",
+    "@aws-sdk/client-dynamodb": "^3.738.0",
+    "@aws-sdk/lib-dynamodb": "^3.738.0",
+    "@pulumi/aws": "^6.67.0",
+    "@pulumi/aws-apigateway": "^2.6.2",
+    "@pulumi/pulumi": "^3.148.0",
     "typescript": "^5.7.2"
   }
 }
