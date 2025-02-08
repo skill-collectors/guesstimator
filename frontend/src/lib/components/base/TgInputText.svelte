@@ -22,5 +22,5 @@
 	{maxlength}
 	data-testid={testId}
 	bind:value
-	class={`rounded border border-gray-400 pl-1 ${additionalClasses}`}
+	class={`rounded-sm border border-gray-400 pl-1 ${additionalClasses}`}
 />

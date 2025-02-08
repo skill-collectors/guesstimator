@@ -78,7 +78,7 @@
 			<input
 				name="number"
 				type="numeric"
-				class="rounded border border-gray-400 pl-1"
+				class="rounded-sm border border-gray-400 pl-1"
 				min="0"
 				max="10"
 				step="1"

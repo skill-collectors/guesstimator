@@ -1,6 +1,6 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
-	class="animate-slow mx-auto mb-4 mt-4 animate-spin"
+	class="animate-slow mx-auto mt-4 mb-4 animate-spin"
 	width="44"
 	height="44"
 	viewBox="0 0 24 24"

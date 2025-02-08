@@ -17,7 +17,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog
 	bind:this={dialog}
-	class="rounded-xl border-4 border-slate-600 bg-slate-100 text-slate-900"
+	class="mx-auto mt-30 rounded-xl border-4 border-slate-600 bg-slate-100 text-slate-900"
 	onclose={() => (showModal = false)}
 	onclick={(e) => {
 		if (e.target === dialog) dialog?.close();

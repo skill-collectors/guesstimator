@@ -19,7 +19,7 @@
 </script>
 
 <div class="flex h-full flex-col text-center">
-	<PageMain class="flex-grow">{@render children?.()}</PageMain>
+	<PageMain class="grow">{@render children?.()}</PageMain>
 	<PageFooter />
 </div>
 

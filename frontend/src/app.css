@@ -1,3 +1,52 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animated';
+
+@theme {
+	--animate-rainbow: rainbow-animation 4s infinite;
+
+	@keyframes rainbow-animation {
+		0% {
+			color: red;
+		}
+		14% {
+			color: orange;
+		}
+		28% {
+			color: yellow;
+		}
+		42% {
+			color: green;
+		}
+		57% {
+			color: blue;
+		}
+		71% {
+			color: indigo;
+		}
+		85% {
+			color: violet;
+		}
+		100% {
+			color: red;
+		}
+	}
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+}
