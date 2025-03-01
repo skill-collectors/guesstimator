@@ -14,18 +14,18 @@
     "@types/node": "^22",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.18.0",
-    "eslint-config-prettier": "^10.0.1",
-    "prettier": "^3.4.1",
-    "vitest": "^3.0.5"
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.2",
+    "prettier": "^3.5.2",
+    "vitest": "^3.0.7"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.738.0",
-    "@aws-sdk/client-dynamodb": "^3.738.0",
-    "@aws-sdk/lib-dynamodb": "^3.738.0",
-    "@pulumi/aws": "^6.67.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.758.0",
+    "@aws-sdk/client-dynamodb": "^3.758.0",
+    "@aws-sdk/lib-dynamodb": "^3.758.0",
+    "@pulumi/aws": "^6.70.0",
     "@pulumi/aws-apigateway": "^2.6.2",
-    "@pulumi/pulumi": "^3.148.0",
-    "typescript": "^5.7.2"
+    "@pulumi/pulumi": "^3.153.0",
+    "typescript": "^5.8.2"
   }
 }
