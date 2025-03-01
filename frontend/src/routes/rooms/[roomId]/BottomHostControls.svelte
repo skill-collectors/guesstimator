@@ -68,7 +68,7 @@
 			</TgParagraph>
 			<TgParagraph>Or click one of the following presets:</TgParagraph>
 			<ul>
-				{#each templates as template}
+				{#each templates as template (template)}
 					<li class="m-1">
 						<TgButton type="success" onclick={() => handleTemplateSize(template.sizes)}>{template.name}</TgButton>
 						{template.sizes}
