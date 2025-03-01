@@ -10,9 +10,6 @@ updates:
       # Even numbers are LTS.
       # This will need to be updated manually every so often.
       versions: ["23.x", "25.x", "27.x", "29.x"]
-    - dependency-name: "svelte-confetti"
-      # 2.x is for Svelte 5.x
-      versions: ["2.x"]
   # Major versions should each get their own PR
   groups:
       # Group non-major updates into a single PR
