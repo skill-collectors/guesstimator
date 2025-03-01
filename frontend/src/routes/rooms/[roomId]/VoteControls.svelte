@@ -15,7 +15,7 @@
 	}
 </script>
 
-{#each roomData.validSizes as vote}
+{#each roomData.validSizes as vote (vote)}
 	{#if vote === currentUser.vote}
 		<TgButton type="primary" class="m-2" onclick={() => handleVote()}>{vote}</TgButton>
 	{:else}
