@@ -56,7 +56,6 @@ export class PendingOperation {
 				} with TTL ${this.timeToLive}`,
 			);
 			transformer(user);
-			user.username = this.pendingValue;
 		}
 		this.timeToLive--;
 		if (this.timeToLive <= 0) {
