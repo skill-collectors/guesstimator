@@ -23,13 +23,14 @@ test('Basic workflow', async ({ page, browser }) => {
 	);
 
 	// Users vote
-	for (const user of users) {
-		const possibleVotes = ['1', '2', '3', '5', '8', '13', '20'];
-		const randomIndex = Math.floor(Math.random() * possibleVotes.length);
-		const vote = possibleVotes[randomIndex];
-		page.waitForTimeout(500);
-		await addVote(user, vote);
-	}
+	const possibleVotes = ['1', '2', '3', '5', '8', '13', '20'];
+	await Promise.all(
+		users.map((user) => {
+			const randomIndex = Math.floor(Math.random() * possibleVotes.length);
+			const vote = possibleVotes[randomIndex];
+			return addVote(user, vote);
+		}),
+	);
 
 	// Host joins and votes
 	console.log('Host is joining');
