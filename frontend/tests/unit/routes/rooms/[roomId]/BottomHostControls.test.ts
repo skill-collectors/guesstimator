@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import BottomHostControls from '$routes/rooms/[roomId]/BottomHostControls.svelte';
 import userEvent from '@testing-library/user-event';
 import type { Room } from '$lib/services/rooms';
@@ -40,6 +41,7 @@ describe('BottomBottomHostControls', () => {
 		// When
 		const { getByText, getByTestId } = render(BottomHostControls, { roomData });
 		await user.click(getByText('Edit'));
+		await tick();
 		await user.type(getByTestId('newSizesInput'), 'XS S M L XL');
 		await user.click(getByText('Save'));
 
