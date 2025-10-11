@@ -20,7 +20,7 @@
 	import { Operation, PendingOperation } from './PendingOperation';
 
 	let notFound = $state(false);
-	const roomId = $page.params.roomId;
+	const roomId = $page.params.roomId ?? '';
 	const url = $page.url;
 
 	let clearReloadInterval: number;
