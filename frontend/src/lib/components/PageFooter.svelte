@@ -20,7 +20,7 @@
 		href="https://github.com/skill-collectors/guesstimator/issues/new?assignees=&labels=enhancement&template=feature_request.md&title="
 		target="_blank"
 	>
-		feature request
+		request a feature
 	</TgLink>
 	{#if mode !== 'production'}
 		| {mode}
