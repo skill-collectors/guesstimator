@@ -24,7 +24,7 @@
     "@aws-sdk/client-dynamodb": "^3.879.0",
     "@aws-sdk/lib-dynamodb": "^3.879.0",
     "@pulumi/aws": "^6.81.0",
-    "@pulumi/aws-apigateway": "^2.6.2",
+    "@pulumi/aws-apigateway": "^3.0.0",
     "@pulumi/pulumi": "^3.192.0",
     "typescript": "^5.9.2"
   }
