@@ -45,7 +45,7 @@ export class WebSocketPublisher {
     if (roomData == null) {
       return new PublishRoomDataResult([]);
     }
-    console.log(`Sending roomData to all users: ${JSON.stringify(roomData)}`);
+    console.log("Sending roomData to all users", roomData);
     const sendMessageResults: Promise<void>[] = [];
     roomData.users = roomData.users.filter(
       (user) => user.connectionId !== undefined,
@@ -53,7 +53,7 @@ export class WebSocketPublisher {
     for (const recipient of roomData.users) {
       if (recipient.connectionId !== undefined) {
         // parse/stringify to make a deep copy
-        const recipientData: RoomData = JSON.parse(JSON.stringify(roomData));
+        const recipientData: RoomData = structuredClone(roomData);
         // Remove hostKey
         delete recipientData.hostKey;
         for (const user of recipientData.users) {
@@ -88,11 +88,7 @@ export class WebSocketPublisher {
           }
         } else {
           // Hopefully this never happens
-          console.log(
-            `Unknown failure sending message: ${
-              result.reason
-            }: ${JSON.stringify(result.reason)}`,
-          );
+          console.error("Unknown failure sending message", result.reason);
         }
       }
     }
@@ -103,13 +99,11 @@ export class WebSocketPublisher {
     const api = new ApiGatewayManagementApi({
       endpoint: this.endpoint,
     });
-    console.log(
-      `Sending message: ${JSON.stringify({
-        endpoint: this.endpoint,
-        connectionId,
-        message,
-      })}`,
-    );
+    console.log("Sending message", {
+      endpoint: this.endpoint,
+      connectionId,
+      message,
+    });
     try {
       await api.postToConnection({
         ConnectionId: connectionId,
@@ -119,9 +113,9 @@ export class WebSocketPublisher {
         }),
       });
     } catch (err) {
-      console.log(JSON.stringify(err));
+      console.error(err);
       if (err instanceof GoneException) {
-        console.log(`Failed to send message: ${connectionId} is gone.`);
+        console.error(`Failed to send message: ${connectionId} is gone.`);
         throw new ConnectionGoneError(connectionId);
       } else {
         throw err;

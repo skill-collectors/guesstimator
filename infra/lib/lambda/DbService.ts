@@ -204,6 +204,7 @@ export class DbService {
     const pk = `ROOM:${roomId}`;
     const sk = `USER:${userKey}`;
     const updatedOn = new Date().toISOString();
+    const validUsername = username.substring(0, 30);
     await this.client.send(
       new UpdateCommand({
         TableName: this.tableName,
@@ -213,13 +214,15 @@ export class DbService {
         ExpressionAttributeValues: {
           ":pk": pk,
           ":sk": sk,
-          ":username": username,
+          ":username": validUsername,
           ":updatedOn": updatedOn,
         },
       }),
     );
-    console.log(`Added user ${username} with key ${userKey} to room ${roomId}`);
-    return { username };
+    console.log(
+      `Added user ${validUsername} with key ${userKey} to room ${roomId}`,
+    );
+    return { username: validUsername };
   }
   async leave(roomId: string, userKey: string) {
     const pk = `ROOM:${roomId}`;
