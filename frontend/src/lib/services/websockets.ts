@@ -52,11 +52,12 @@ export class GuesstimatorWebSocket {
 		if (this.userKey === undefined) {
 			throw new Error('Cannot join without a userKey');
 		}
-		console.log(`Joining room as ${username}`);
+		const validUsername = username.substring(0, 30);
+		console.log(`Joining room as ${validUsername}`);
 		this.webSocket.send(
 			JSON.stringify({
 				action: 'join',
-				data: { roomId: this.roomId, userKey: this.userKey, username },
+				data: { roomId: this.roomId, userKey: this.userKey, username: validUsername },
 			}),
 		);
 	}
