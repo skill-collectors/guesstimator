@@ -10,22 +10,22 @@
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.152",
+    "@types/aws-lambda": "^8.10.159",
     "@types/node": "^24",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.34.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.3",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.879.0",
-    "@aws-sdk/client-dynamodb": "^3.879.0",
-    "@aws-sdk/lib-dynamodb": "^3.879.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.940.0",
+    "@aws-sdk/client-dynamodb": "^3.940.0",
+    "@aws-sdk/lib-dynamodb": "^3.940.0",
     "@pulumi/aws": "^6.81.0",
     "@pulumi/aws-apigateway": "^2.6.2",
-    "@pulumi/pulumi": "^3.192.0",
+    "@pulumi/pulumi": "^3.209.0",
     "typescript": "^5.9.2"
   }
 }
