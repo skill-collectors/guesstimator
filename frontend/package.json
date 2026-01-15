@@ -22,7 +22,7 @@
 		"@playwright/test": "^1.55.0",
 		"@sveltejs/adapter-auto": "^6.1.1",
 		"@sveltejs/adapter-static": "^3.0.9",
-		"@sveltejs/kit": "^2.37.0",
+		"@sveltejs/kit": "^2.49.5",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@tailwindcss/postcss": "^4.1.12",
 		"@testing-library/jest-dom": "^6.8.0",
