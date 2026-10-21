@@ -9,19 +9,19 @@ import {
   GoneException,
 } from "@aws-sdk/client-apigatewaymanagementapi";
 
-describe("WebSocket Main function", () => {
-  vi.mock("@aws-sdk/client-apigatewaymanagementapi", async () => {
-    const actual = await vi.importActual(
-      "@aws-sdk/client-apigatewaymanagementapi",
-    );
-    const ApiGatewayManagementApi = vi.fn();
-    ApiGatewayManagementApi.prototype.postToConnection = vi.fn();
-    return {
-      ...actual,
-      ApiGatewayManagementApi,
-    };
-  });
+vi.mock("@aws-sdk/client-apigatewaymanagementapi", async () => {
+  const actual = await vi.importActual(
+    "@aws-sdk/client-apigatewaymanagementapi",
+  );
+  const ApiGatewayManagementApi = vi.fn();
+  ApiGatewayManagementApi.prototype.postToConnection = vi.fn();
+  return {
+    ...actual,
+    ApiGatewayManagementApi,
+  };
+});
 
+describe("WebSocket Main function", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -51,7 +51,7 @@ describe("WebSocket Main function", () => {
         );
 
         // Then
-        expect(() =>
+        await expect(
           helper.sendMessage(connectionId, webSocketMessage),
         ).rejects.toThrow(connectionId);
       });

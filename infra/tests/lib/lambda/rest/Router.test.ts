@@ -3,6 +3,14 @@ import { DbService } from "../../../../lib/lambda/DbService";
 import { initRouter } from "../../../../lib/lambda/rest/Router";
 import { stubEvent } from "../Stubs";
 
+vi.mock("../../../../lib/lambda/DbService", () => {
+  const DbService = vi.fn();
+  DbService.prototype.createRoom = vi.fn();
+  DbService.prototype.getRoomMetadata = vi.fn();
+  DbService.prototype.deleteRoom = vi.fn();
+  return { DbService };
+});
+
 describe("Router", () => {
   const stubRoom = {
     roomId: "123",
@@ -19,14 +27,6 @@ describe("Router", () => {
       },
     ],
   };
-
-  vi.mock("../../../../lib/lambda/DbService", () => {
-    const DbService = vi.fn();
-    DbService.prototype.createRoom = vi.fn();
-    DbService.prototype.getRoomMetadata = vi.fn();
-    DbService.prototype.deleteRoom = vi.fn();
-    return { DbService };
-  });
 
   let mockDbService: DbService;
 

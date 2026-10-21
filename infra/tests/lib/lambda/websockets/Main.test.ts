@@ -15,29 +15,29 @@ import { WebSocketPublisher } from "../../../../lib/lambda/websockets/WebSocketH
 import { stubWebSocketEvent } from "../Stubs";
 import { fail } from "assert";
 
-describe("WebSocket Main function", () => {
-  vi.mock("../../../../lib/lambda/DbService", () => {
-    const DbService = vi.fn();
-    DbService.prototype.getRoomMetadata = vi.fn();
-    DbService.prototype.getRoom = vi.fn();
-    DbService.prototype.subscribe = vi.fn();
-    DbService.prototype.join = vi.fn();
-    DbService.prototype.vote = vi.fn();
-    DbService.prototype.setCardsRevealed = vi.fn();
-    DbService.prototype.setValidSizes = vi.fn();
-    DbService.prototype.kickUser = vi.fn();
-    DbService.prototype.leave = vi.fn();
-    DbService.prototype.reconnect = vi.fn();
-    return { DbService };
-  });
-  vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
-    const WebSocketPublisher = vi.fn();
-    WebSocketPublisher.prototype.sendError = vi.fn();
-    WebSocketPublisher.prototype.publishRoomData = vi.fn();
-    WebSocketPublisher.prototype.sendMessage = vi.fn();
-    return { WebSocketPublisher };
-  });
+vi.mock("../../../../lib/lambda/DbService", () => {
+  const DbService = vi.fn();
+  DbService.prototype.getRoomMetadata = vi.fn();
+  DbService.prototype.getRoom = vi.fn();
+  DbService.prototype.subscribe = vi.fn();
+  DbService.prototype.join = vi.fn();
+  DbService.prototype.vote = vi.fn();
+  DbService.prototype.setCardsRevealed = vi.fn();
+  DbService.prototype.setValidSizes = vi.fn();
+  DbService.prototype.kickUser = vi.fn();
+  DbService.prototype.leave = vi.fn();
+  DbService.prototype.reconnect = vi.fn();
+  return { DbService };
+});
+vi.mock("../../../../lib/lambda/websockets/WebSocketHelper", () => {
+  const WebSocketPublisher = vi.fn();
+  WebSocketPublisher.prototype.sendError = vi.fn();
+  WebSocketPublisher.prototype.publishRoomData = vi.fn();
+  WebSocketPublisher.prototype.sendMessage = vi.fn();
+  return { WebSocketPublisher };
+});
 
+describe("WebSocket Main function", () => {
   let mockDbService: MockedObject<DbService>;
   let mockWebSocketPublisher: MockedObject<WebSocketPublisher>;
 

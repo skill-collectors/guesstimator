@@ -11,13 +11,13 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.152",
-    "@types/node": "^24",
+    "@types/node": "^26.6.5",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
-    "vitest": "^3.2.4"
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.879.0",
