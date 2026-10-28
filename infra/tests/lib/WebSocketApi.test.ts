@@ -3,7 +3,7 @@ import {
   APIGatewayProxyResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from "aws-lambda";
-import { describe, it, expect, beforeAll, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import Database from "../../lib/Database";
 import WebSocketApi from "../../lib/WebSocketApi";
 
@@ -26,24 +26,22 @@ pulumi.runtime.setMocks({
   },
 });
 
-describe("infrastructure", () => {
-  beforeAll(async function () {
-    vi.mock("../../lib/lambda/websockets/Main", () => {
-      const mockHandler = function () {
-        return async function (
-          event: APIGatewayProxyWebsocketEventV2,
-        ): Promise<APIGatewayProxyResultV2> {
-          console.log(JSON.stringify(event));
-          return {
-            statusCode: 200,
-            body: "Test",
-          };
-        };
+vi.mock("../../lib/lambda/websockets/Main", () => {
+  const mockHandler = function () {
+    return async function (
+      event: APIGatewayProxyWebsocketEventV2,
+    ): Promise<APIGatewayProxyResultV2> {
+      console.log(JSON.stringify(event));
+      return {
+        statusCode: 200,
+        body: "Test",
       };
-      return { createMainWebSocketFunction: mockHandler };
-    });
-  });
+    };
+  };
+  return { createMainWebSocketFunction: mockHandler };
+});
 
+describe("infrastructure", () => {
   function buildApi() {
     return new WebSocketApi("GuesstimatorWebSocketApi", {
       database: {

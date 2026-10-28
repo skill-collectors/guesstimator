@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { describe, it, expect, beforeAll, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import Api from "../../lib/RestApi";
 import Database from "../../lib/Database";
 
@@ -28,24 +28,22 @@ pulumi.runtime.setMocks({
   },
 });
 
-describe("infrastructure", () => {
-  beforeAll(async function () {
-    vi.mock("../../lib/lambda/rest/Main", () => {
-      const mockHandler = function () {
-        return async function handleDocument(
-          event: APIGatewayProxyEvent,
-        ): Promise<APIGatewayProxyResult> {
-          console.log(JSON.stringify(event));
-          return {
-            statusCode: 200,
-            body: "Test",
-          };
-        };
+vi.mock("../../lib/lambda/rest/Main", () => {
+  const mockHandler = function () {
+    return async function handleDocument(
+      event: APIGatewayProxyEvent,
+    ): Promise<APIGatewayProxyResult> {
+      console.log(JSON.stringify(event));
+      return {
+        statusCode: 200,
+        body: "Test",
       };
-      return { createMainRestFunction: mockHandler };
-    });
-  });
+    };
+  };
+  return { createMainRestFunction: mockHandler };
+});
 
+describe("infrastructure", () => {
   function buildApi() {
     return new Api("GuesstimatorApi", {
       database: {

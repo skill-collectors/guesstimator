@@ -11,101 +11,102 @@ import {
   ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-describe("DbService", () => {
-  vi.mock("@aws-sdk/client-dynamodb", () => {
-    return {
-      DynamoDBClient: vi.fn(),
-    };
-  });
-  vi.mock("@aws-sdk/lib-dynamodb", async () => {
-    const mockClient = {
-      send: vi.fn((command) => {
-        if (command instanceof PutCommand) {
-          return new Promise((resolve) => resolve(1));
-        }
-        if (command instanceof GetCommand) {
-          return new Promise((resolve) =>
-            resolve({
-              Item: {
+vi.mock("@aws-sdk/client-dynamodb", () => {
+  return {
+    DynamoDBClient: vi.fn(),
+  };
+});
+vi.mock("@aws-sdk/lib-dynamodb", async () => {
+  const mockClient = {
+    send: vi.fn((command) => {
+      if (command instanceof PutCommand) {
+        return new Promise((resolve) => resolve(1));
+      }
+      if (command instanceof GetCommand) {
+        return new Promise((resolve) =>
+          resolve({
+            Item: {
+              PK: "ROOM:abc",
+              SK: "ROOM",
+              hostKey: "def",
+              validSizes: "1 2 3",
+              isRevealed: false,
+            },
+          }),
+        );
+      }
+      if (command instanceof QueryCommand) {
+        return new Promise((resolve) =>
+          resolve({
+            Items: [
+              {
                 PK: "ROOM:abc",
                 SK: "ROOM",
                 hostKey: "def",
-                validSizes: "1 2 3",
                 isRevealed: false,
+                validSizes: "1 2 3",
               },
-            }),
-          );
-        }
-        if (command instanceof QueryCommand) {
-          return new Promise((resolve) =>
-            resolve({
-              Items: [
-                {
-                  PK: "ROOM:abc",
-                  SK: "ROOM",
-                  hostKey: "def",
-                  isRevealed: false,
-                  validSizes: "1 2 3",
-                },
-                {
-                  PK: "ROOM:abc",
-                  SK: "USER:ghi",
-                  userId: "jkl",
-                  username: "alice",
-                  vote: "1",
-                },
-              ],
-            }),
-          );
-        }
-        if (command instanceof ScanCommand) {
-          const oneMonthAgo = new Date();
-          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-          return new Promise((resolve) =>
-            resolve({
-              Items: [
-                {
-                  PK: "ROOM:abc",
-                  SK: "ROOM",
-                  hostKey: "def",
-                  isRevealed: false,
-                  validSizes: "1 2 3",
-                  updatedOn: oneMonthAgo.toISOString(),
-                },
-                {
-                  PK: "ROOM:abc",
-                  SK: "USER:ghi",
-                  userId: "jkl",
-                  username: "alice",
-                  vote: "1",
-                  updatedOn: oneMonthAgo.toISOString(),
-                },
-              ],
-            }),
-          );
-        }
-        if (command instanceof BatchWriteCommand) {
-          return new Promise((resolve) => resolve(true));
-        }
-        if (command instanceof UpdateCommand) {
-          return new Promise((resolve) => resolve(true));
-        }
-        if (command instanceof DeleteCommand) {
-          return new Promise((resolve) => resolve(true));
-        }
-        throw Error(`Unimplemented command type ${typeof command}`);
-      }),
-    };
+              {
+                PK: "ROOM:abc",
+                SK: "USER:ghi",
+                userId: "jkl",
+                username: "alice",
+                vote: "1",
+              },
+            ],
+          }),
+        );
+      }
+      if (command instanceof ScanCommand) {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        return new Promise((resolve) =>
+          resolve({
+            Items: [
+              {
+                PK: "ROOM:abc",
+                SK: "ROOM",
+                hostKey: "def",
+                isRevealed: false,
+                validSizes: "1 2 3",
+                updatedOn: oneMonthAgo.toISOString(),
+              },
+              {
+                PK: "ROOM:abc",
+                SK: "USER:ghi",
+                userId: "jkl",
+                username: "alice",
+                vote: "1",
+                updatedOn: oneMonthAgo.toISOString(),
+              },
+            ],
+          }),
+        );
+      }
+      if (command instanceof BatchWriteCommand) {
+        return new Promise((resolve) => resolve(true));
+      }
+      if (command instanceof UpdateCommand) {
+        return new Promise((resolve) => resolve(true));
+      }
+      if (command instanceof DeleteCommand) {
+        return new Promise((resolve) => resolve(true));
+      }
+      throw Error(`Unimplemented command type ${typeof command}`);
+    }),
+  };
 
-    const actual = await vi.importActual("@aws-sdk/lib-dynamodb");
-    const mockedSDK = {
-      ...(actual as Record<string, unknown>),
-      DynamoDBDocumentClient: {
-        from: vi.fn(() => mockClient),
-      },
-    };
-    return mockedSDK;
-  });
+  const actual = await vi.importActual("@aws-sdk/lib-dynamodb");
+  const mockedSDK = {
+    ...(actual as Record<string, unknown>),
+    DynamoDBDocumentClient: {
+      from: vi.fn(() => mockClient),
+    },
+  };
+  return mockedSDK;
+});
+
+describe("DbService", () => {
   const tableName = "TableName";
 
   afterEach(() => {
