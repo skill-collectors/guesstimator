@@ -33,7 +33,7 @@
   ],
   "devDependencies": {
     "vitepress": "^1.6.4",
-    "vitepress-sidebar": "^1.33.0"
+    "vitepress-sidebar": "^1.41.0"
   },
   "overrides": {
     "@sveltejs/vite-plugin-svelte": "^6.0.0",

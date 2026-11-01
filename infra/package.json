@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.152",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "eslint": "^9.34.0",
@@ -20,12 +20,12 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.879.0",
-    "@aws-sdk/client-dynamodb": "^3.879.0",
-    "@aws-sdk/lib-dynamodb": "^3.879.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.1159.0",
+    "@aws-sdk/client-dynamodb": "^3.1159.0",
+    "@aws-sdk/lib-dynamodb": "^3.1159.0",
     "@pulumi/aws": "^6.81.0",
     "@pulumi/aws-apigateway": "^2.6.2",
-    "@pulumi/pulumi": "^3.192.0",
+    "@pulumi/pulumi": "^3.273.0",
     "typescript": "^5.9.2"
   }
 }
